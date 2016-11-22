@@ -16,6 +16,9 @@ import java.util.List;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 
+/**
+ * Abstract Fragment that manages the logic for browser switching.
+ */
 public abstract class BrowserSwitchFragment extends Fragment {
 
     public enum BrowserSwitchResult {
@@ -64,10 +67,21 @@ public abstract class BrowserSwitchFragment extends Fragment {
         outState.putBoolean(EXTRA_BROWSER_SWITCHING, mIsBrowserSwitching);
     }
 
+    /**
+     * @return the url scheme that can be used to return to the app from a web page. This url
+     * scheme should be used to build a return url and passed to the target web page via a query
+     * param when browser switching.
+     */
     public String getReturnUrlScheme() {
         return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
     }
 
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given url.
+     *
+     * @param url the url to open.
+     */
     public void browserSwitch(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,6 +98,12 @@ public abstract class BrowserSwitchFragment extends Fragment {
         browserSwitch(intent);
     }
 
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent.
+     *
+     * @param intent an {@link Intent} containing a url to open.
+     */
     public void browserSwitch(Intent intent) {
         if (!isReturnUrlSetup()) {
             onBrowserSwitchResult(BrowserSwitchResult.ERROR, null);
@@ -94,6 +114,13 @@ public abstract class BrowserSwitchFragment extends Fragment {
         mContext.startActivity(intent);
     }
 
+    /**
+     * The result of a browser switch will be returned in this method.
+     *
+     * @param result The state of the result, one of {@link BrowserSwitchResult#OK},
+     *     {@link BrowserSwitchResult#CANCELED} or {@link BrowserSwitchResult#ERROR}.
+     * @param returnUri The return uri. {@code null} unless the result is {@link BrowserSwitchResult#OK}.
+     */
     public abstract void onBrowserSwitchResult(BrowserSwitchResult result, @Nullable Uri returnUri);
 
     private boolean isReturnUrlSetup() {
