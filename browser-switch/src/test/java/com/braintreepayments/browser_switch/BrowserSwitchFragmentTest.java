@@ -135,6 +135,11 @@ public class BrowserSwitchFragmentTest {
     }
 
     @Test
+    public void getReturnUrlScheme_returnsUrlScheme() {
+        assertEquals("org.robolectric.default.browserswitch", mFragment.getReturnUrlScheme());
+    }
+
+    @Test
     public void browserSwitch_withUrlSetsBrowserSwitchFlag() {
         mFragment.mContext = mock(Context.class);
         assertFalse(mFragment.mIsBrowserSwitching);

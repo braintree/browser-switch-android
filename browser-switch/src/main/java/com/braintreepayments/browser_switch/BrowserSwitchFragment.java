@@ -60,6 +60,10 @@ public abstract class BrowserSwitchFragment extends Fragment {
         outState.putBoolean(EXTRA_BROWSER_SWITCHING, mIsBrowserSwitching);
     }
 
+    public String getReturnUrlScheme() {
+        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+    }
+
     public void browserSwitch(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
