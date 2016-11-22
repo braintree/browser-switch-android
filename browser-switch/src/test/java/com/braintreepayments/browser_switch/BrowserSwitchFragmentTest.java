@@ -2,6 +2,8 @@ package com.braintreepayments.browser_switch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -15,12 +17,17 @@ import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.Collections;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchFragmentTest {
@@ -141,7 +148,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void browserSwitch_withUrlSetsBrowserSwitchFlag() {
-        mFragment.mContext = mock(Context.class);
+        mockContext(mock(Context.class));
         assertFalse(mFragment.mIsBrowserSwitching);
 
         mFragment.browserSwitch("http://example.com/");
@@ -152,7 +159,7 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void browserSwitch_withUrlStartsBrowserSwitch() {
         Context context = mock(Context.class);
-        mFragment.mContext = context;
+        mockContext(context);
 
         mFragment.browserSwitch("http://example.com/");
 
@@ -164,7 +171,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void browserSwitch_withIntentSetsBrowserSwitchFlag() {
-        mFragment.mContext = mock(Context.class);
+        mockContext(mock(Context.class));
         assertFalse(mFragment.mIsBrowserSwitching);
 
         mFragment.browserSwitch(new Intent());
@@ -175,12 +182,22 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void browserSwitch_withIntentStartsBrowserSwitch() {
         Context context = mock(Context.class);
+        mockContext(context);
         Intent intent = new Intent();
         mFragment.mContext = context;
 
         mFragment.browserSwitch(intent);
 
         verify(context).startActivity(intent);
+    }
+
+    private void mockContext(Context context) {
+        when(context.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
+        PackageManager packageManager = mock(PackageManager.class);
+        when(packageManager.queryIntentActivities(any(Intent.class), anyInt()))
+                .thenReturn(Collections.singletonList(new ResolveInfo()));
+        when(context.getPackageManager()).thenReturn(packageManager);
+        mFragment.mContext = context;
     }
 
     private void handleBrowserSwitchResponse(String url) {
