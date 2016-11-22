@@ -73,3 +73,8 @@ public void onBrowserSwitchResult(BrowserSwitchResult result, @Nullable Uri retu
     }
 }
 ```
+
+## License
+
+Android Browser Switch is open source and available under the MIT license. See the
+[LICENSE](LICENSE) file for more info.
