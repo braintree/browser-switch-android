@@ -1,4 +1,4 @@
-package com.braintreepayments.browser_switch;
+package com.braintreepayments.browserswitch;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +7,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.braintreepayments.browser_switch.test.TestActivity;
-import com.braintreepayments.browser_switch.test.TestBrowserSwitchFragment;
+import com.braintreepayments.browserswitch.test.TestActivity;
+import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -19,7 +19,7 @@ dependencies {
 Declare `BrowserSwitchActivity` in your `AndroidManifest.xml`:
 
 ```xml
-<activity android:name="com.braintreepayments.browser_switch.BrowserSwitchActivity"
+<activity android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
     android:launchMode="singleTask">
     <intent-filter>
         <action android:name="android.intent.action.VIEW"/>

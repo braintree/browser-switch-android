@@ -1,9 +1,9 @@
-package com.braintreepayments.browser_switch.test;
+package com.braintreepayments.browserswitch.test;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.braintreepayments.browser_switch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.BrowserSwitchFragment;
 
 public class TestBrowserSwitchFragment extends BrowserSwitchFragment {
 
