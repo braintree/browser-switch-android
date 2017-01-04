@@ -8,6 +8,14 @@ response as the result of user interaction, either cancel or response data from 
 
 ## Setup
 
+Add the library to your dependencies in your `build.gradle`:
+
+```groovy
+dependencies {
+  compile 'com.braintreepayments:browser-switch:1.0.0'
+}
+```
+
 Declare `BrowserSwitchActivity` in your `AndroidManifest.xml`:
 
 ```xml
