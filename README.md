@@ -70,7 +70,7 @@ public void onBrowserSwitchResult(BrowserSwitchResult result, @Nullable Uri retu
             break;
         case ERROR:
             // there was an error browser switching
-            // most likely cause by incorrect setup
+            // most likely caused by incorrect setup
             break;
     }
 }
