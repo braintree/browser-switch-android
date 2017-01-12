@@ -58,16 +58,16 @@ target web page. This url can be loaded to return to the app from the target web
 A browser switch can be initiated by calling:
 
 ```java
-browserSwitchFragment.browserSwitch("http://example.com/");
+browserSwitchFragment.browserSwitch(requestCode, "http://example.com/");
 // or
-browserSwitchFragment.browserSwitch(intent);
+browserSwitchFragment.browserSwitch(requestCode, intent);
 ```
 
 The response will be returned in your implementation of `BrowserSwitchFragment#onBrowserSwitchResult`:
 
 ```java
 @Override
-public void onBrowserSwitchResult(BrowserSwitchResult result, @Nullable Uri returnUri) {
+public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
     switch (result) {
         case OK:
             // the browser switch returned data in the return uri

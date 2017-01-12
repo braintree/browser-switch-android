@@ -54,14 +54,14 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onCreate_restoresSavedInstanceState() {
-        mFragment.mIsBrowserSwitching = true;
+        mFragment.mRequestCode = 42;
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
-        mFragment.mIsBrowserSwitching = false;
+        mFragment.mRequestCode = 0;
 
         mFragment.onCreate(bundle);
 
-        assertTrue(mFragment.mIsBrowserSwitching);
+        assertEquals(42, mFragment.mRequestCode);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_handlesBrowserSwitch() {
-        mFragment.mIsBrowserSwitching = true;
+        mFragment.mRequestCode = 42;
 
         mFragment.onResume();
 
@@ -81,42 +81,42 @@ public class BrowserSwitchFragmentTest {
     }
 
     @Test
-    public void onResume_clearsBrowserSwitchFlag() {
-        mFragment.mIsBrowserSwitching = true;
+    public void onResume_clearsBrowserSwitchRequestCode() {
+        mFragment.mRequestCode = 42;
 
         mFragment.onResume();
 
-        assertFalse(mFragment.mIsBrowserSwitching);
+        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
     }
 
     @Test
     public void onResume_callsOnBrowserSwitchResultForCancels() {
-        mFragment.mIsBrowserSwitching = true;
+        mFragment.mRequestCode = 42;
 
         mFragment.onResume();
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(42, mFragment.requestCode);
         assertEquals(BrowserSwitchFragment.BrowserSwitchResult.CANCELED, mFragment.result);
         assertNull(mFragment.returnUri);
     }
 
     @Test
     public void onResume_callsOnBrowserSwitchResultForOk() {
-        handleBrowserSwitchResponse("http://example.com/?key=value");
-        mFragment.mIsBrowserSwitching = true;
+        handleBrowserSwitchResponse(42, "http://example.com/?key=value");
 
         mFragment.onResume();
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(42, mFragment.requestCode);
         assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, mFragment.result);
         assertEquals("http://example.com/?key=value", mFragment.returnUri.toString());
     }
 
     @Test
     public void onResume_clearsReturnUris() {
-        handleBrowserSwitchResponse("http://example.com/?key=value");
+        handleBrowserSwitchResponse(42, "http://example.com/?key=value");
         assertEquals("http://example.com/?key=value", BrowserSwitchActivity.getReturnUri().toString());
-        mFragment.mIsBrowserSwitching = true;
 
         mFragment.onResume();
 
@@ -128,17 +128,18 @@ public class BrowserSwitchFragmentTest {
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
 
-        assertFalse(bundle.getBoolean("com.braintreepayments.browser_switch.EXTRA_BROWSER_SWITCHING"));
+        assertEquals(Integer.MIN_VALUE,
+                bundle.getInt("com.braintreepayments.browser_switch.EXTRA_REQUEST_CODE"));
     }
 
     @Test
     public void onSaveInstanceState_savesStateWhenBrowserSwitching() {
-        mFragment.mIsBrowserSwitching = true;
+        mFragment.mRequestCode = 42;
 
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
 
-        assertTrue(bundle.getBoolean("com.braintreepayments.browser_switch.EXTRA_BROWSER_SWITCHING"));
+        assertEquals(42, bundle.getInt("com.braintreepayments.browser_switch.EXTRA_REQUEST_CODE"));
     }
 
     @Test
@@ -147,13 +148,13 @@ public class BrowserSwitchFragmentTest {
     }
 
     @Test
-    public void browserSwitch_withUrlSetsBrowserSwitchFlag() {
+    public void browserSwitch_setsRequestCode() {
         mockContext(mock(Context.class));
-        assertFalse(mFragment.mIsBrowserSwitching);
+        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
 
-        mFragment.browserSwitch("http://example.com/");
+        mFragment.browserSwitch(42, "http://example.com/");
 
-        assertTrue(mFragment.mIsBrowserSwitching);
+        assertEquals(42, mFragment.mRequestCode);
     }
 
     @Test
@@ -161,7 +162,7 @@ public class BrowserSwitchFragmentTest {
         Context context = mock(Context.class);
         mockContext(context);
 
-        mFragment.browserSwitch("http://example.com/");
+        mFragment.browserSwitch(42, "http://example.com/");
 
         ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
         verify(context).startActivity(captor.capture());
@@ -170,13 +171,13 @@ public class BrowserSwitchFragmentTest {
     }
 
     @Test
-    public void browserSwitch_withIntentSetsBrowserSwitchFlag() {
+    public void browserSwitch_withIntentSetsRequestCode() {
         mockContext(mock(Context.class));
-        assertFalse(mFragment.mIsBrowserSwitching);
+        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
 
-        mFragment.browserSwitch(new Intent());
+        mFragment.browserSwitch(42, new Intent());
 
-        assertTrue(mFragment.mIsBrowserSwitching);
+        assertEquals(42, mFragment.mRequestCode);
     }
 
     @Test
@@ -186,7 +187,7 @@ public class BrowserSwitchFragmentTest {
         Intent intent = new Intent();
         mFragment.mContext = context;
 
-        mFragment.browserSwitch(intent);
+        mFragment.browserSwitch(42, intent);
 
         verify(context).startActivity(intent);
     }
@@ -200,8 +201,9 @@ public class BrowserSwitchFragmentTest {
         mFragment.mContext = context;
     }
 
-    private void handleBrowserSwitchResponse(String url) {
+    private void handleBrowserSwitchResponse(int requestCode, String url) {
         Robolectric.buildActivity(BrowserSwitchActivity.class,
                 new Intent(Intent.ACTION_VIEW, Uri.parse(url))).setup();
+        mFragment.mRequestCode = requestCode;
     }
 }
