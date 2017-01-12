@@ -1,14 +1,11 @@
 package com.braintreepayments.browserswitch;
 
 import android.app.Fragment;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import java.util.List;
@@ -90,7 +87,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (SDK_INT >= JELLY_BEAN_MR2 && isChromeCustomTabsAvailable()) {
+        if (SDK_INT >= JELLY_BEAN_MR2 && ChromeCustomTabs.isAvailable(mContext)) {
             Bundle extras = new Bundle();
             extras.putBinder("android.support.customtabs.extra.SESSION", null);
             intent.putExtras(extras);
@@ -149,23 +146,5 @@ public abstract class BrowserSwitchFragment extends Fragment {
         List<ResolveInfo> activities = mContext.getPackageManager()
                 .queryIntentActivities(intent, 0);
         return activities != null && activities.size() == 1;
-    }
-
-    private boolean isChromeCustomTabsAvailable() {
-        Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService")
-                .setPackage("com.android.chrome");
-        ServiceConnection connection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {}
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {}
-        };
-
-        boolean chromeCustomTabsAvailable = mContext.bindService(serviceIntent, connection,
-                Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY);
-        mContext.unbindService(connection);
-
-        return chromeCustomTabsAvailable;
     }
 }
