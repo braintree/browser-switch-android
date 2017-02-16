@@ -30,7 +30,9 @@ public abstract class BrowserSwitchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getActivity();
+        if (mContext == null) {
+            mContext = getActivity().getApplicationContext();
+        }
 
         if (savedInstanceState != null) {
             mRequestCode = savedInstanceState.getInt(EXTRA_REQUEST_CODE);

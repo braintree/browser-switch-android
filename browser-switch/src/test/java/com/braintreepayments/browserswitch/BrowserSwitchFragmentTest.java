@@ -49,7 +49,20 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onCreate_setsContext() {
-        assertEquals(mActivity, mFragment.mContext);
+        assertEquals(mActivity.getApplicationContext(), mFragment.mContext);
+    }
+
+    @Test
+    public void onCreate_doesNotOverrideContextIfAlreadySet() {
+        mFragment = new TestBrowserSwitchFragment();
+        Context context = mock(Context.class);
+        mFragment.mContext = context;
+
+        mActivity.getFragmentManager().beginTransaction()
+                .add(mFragment, "test-fragment")
+                .commit();
+
+        assertEquals(context, mFragment.mContext);
     }
 
     @Test
