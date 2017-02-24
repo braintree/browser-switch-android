@@ -67,10 +67,10 @@ uploadArchives {
                 authentication(userName: sonatypeUsername, password: sonatypePassword)
             }
 
-            pom.setArtifactId 'browser_switch'
+            pom.setArtifactId 'browser-switch'
 
             pom.project {
-                name 'browser_switch'
+                name 'browser-switch'
                 groupId = 'com.braintreepayments'
                 version = "${android.defaultConfig.versionName}"
                 packaging 'aar'
