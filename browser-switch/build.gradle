@@ -5,13 +5,13 @@ apply plugin: 'io.codearte.nexus-staging'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "0.1.0"
+        versionName '0.1.0'
     }
 }
 
@@ -49,7 +49,7 @@ signing {
 }
 
 nexusStaging {
-    packageGroup = "com.braintreepayments"
+    packageGroup = 'com.braintreepayments'
 }
 
 def sonatypeUsername = System.properties.containsKey('sonatypeUsername') ? System.properties['sonatypeUsername'] : ''
