@@ -21,7 +21,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         ERROR
     }
 
-    private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browser_switch.EXTRA_REQUEST_CODE";
+    private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;
     protected int mRequestCode;

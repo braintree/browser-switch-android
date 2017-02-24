@@ -142,7 +142,7 @@ public class BrowserSwitchFragmentTest {
         mFragment.onSaveInstanceState(bundle);
 
         assertEquals(Integer.MIN_VALUE,
-                bundle.getInt("com.braintreepayments.browser_switch.EXTRA_REQUEST_CODE"));
+                bundle.getInt("com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE"));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class BrowserSwitchFragmentTest {
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
 
-        assertEquals(42, bundle.getInt("com.braintreepayments.browser_switch.EXTRA_REQUEST_CODE"));
+        assertEquals(42, bundle.getInt("com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE"));
     }
 
     @Test
