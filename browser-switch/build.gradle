@@ -76,12 +76,12 @@ uploadArchives {
                 packaging 'aar'
                 description 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
 
-                url 'https://github.com/braintree/android-browser-switch'
+                url 'https://github.com/braintree/browser-switch-android'
 
                 scm {
-                    url 'scm:git@github.com:braintree/android-browser-switch.git'
-                    connection 'scm:git@github.com:braintree/android-browser-switch.git'
-                    developerConnection 'scm:git@github.com:braintree/android-browser-switch.git'
+                    url 'scm:git@github.com:braintree/browser-switch-android.git'
+                    connection 'scm:git@github.com:braintree/browser-switch-android.git'
+                    developerConnection 'scm:git@github.com:braintree/browser-switch-android.git'
                 }
 
                 developers {

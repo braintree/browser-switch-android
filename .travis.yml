@@ -2,7 +2,7 @@ language: android
 jdk: oraclejdk8
 notifications:
   email:
-    - external-ci-notifications+android-browser-switch@getbraintree.com
+    - external-ci-notifications+browser-switch-android@getbraintree.com
 sudo: true
 android:
   components:
