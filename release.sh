@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Make sure to update the version in build.gradle and the README."
+echo "Make sure to update the version in build.gradle and the README and add a CHANGELOG entry"
 echo "Press enter when you are ready to release."
 read
 
