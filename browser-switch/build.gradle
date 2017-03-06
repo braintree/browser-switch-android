@@ -20,7 +20,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.2.22'
-    testCompile 'org.robolectric:robolectric:3.1.4'
+    testCompile 'org.robolectric:robolectric:3.3'
 }
 
 task javadocs(type: Javadoc) {
