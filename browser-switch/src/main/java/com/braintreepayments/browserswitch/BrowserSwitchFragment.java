@@ -18,7 +18,23 @@ public abstract class BrowserSwitchFragment extends Fragment {
     public enum BrowserSwitchResult {
         OK,
         CANCELED,
-        ERROR
+        ERROR;
+
+        private String mErrorMessage;
+
+        public String getErrorMessage() {
+            return mErrorMessage;
+        }
+
+        private BrowserSwitchResult setErrorMessage(String errorMessage) {
+            mErrorMessage = errorMessage;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return name() + " " + getErrorMessage();
+        }
     }
 
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
@@ -100,12 +116,20 @@ public abstract class BrowserSwitchFragment extends Fragment {
      */
     public void browserSwitch(int requestCode, Intent intent) {
         if (requestCode == Integer.MIN_VALUE) {
-            onBrowserSwitchResult(requestCode, BrowserSwitchResult.ERROR, null);
+            BrowserSwitchResult result = BrowserSwitchResult.ERROR
+                    .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
+            onBrowserSwitchResult(requestCode, result, null);
             return;
         }
 
         if (!isReturnUrlSetup()) {
-            onBrowserSwitchResult(requestCode, BrowserSwitchResult.ERROR, null);
+            BrowserSwitchResult result = BrowserSwitchResult.ERROR
+                    .setErrorMessage("The return url scheme was not set up, incorrectly set up, " +
+                            "or more than one Activity on this device defines the same url " +
+                            "scheme in it's Android Manifest. See " +
+                            "https://github.com/braintree/browser-switch-android for more " +
+                            "information on setting up a return url scheme.");
+            onBrowserSwitchResult(requestCode, result, null);
             return;
         }
 

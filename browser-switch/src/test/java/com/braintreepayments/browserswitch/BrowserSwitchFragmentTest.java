@@ -205,6 +205,62 @@ public class BrowserSwitchFragmentTest {
         verify(context).startActivity(intent);
     }
 
+    @Test
+    public void browserSwitch_withUrlReturnsErrorForInvalidRequestCode() {
+        Context context = mock(Context.class);
+        mockContext(context);
+
+        mFragment.browserSwitch(Integer.MIN_VALUE, "http://example.com/");
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
+        assertNull(mFragment.returnUri);
+    }
+
+    @Test
+    public void browserSwitch_withIntentReturnsErrorForInvalidRequestCode() {
+        Context context = mock(Context.class);
+        mockContext(context);
+
+        mFragment.browserSwitch(Integer.MIN_VALUE, new Intent());
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
+        assertNull(mFragment.returnUri);
+    }
+
+    @Test
+    public void browserSwitch_withUrlReturnsErrorWhenReturnUrlSchemeIsNotSetupInAndroidManifest() {
+        mFragment.browserSwitch(42, "http://example.com/");
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(42, mFragment.requestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
+                "Activity on this device defines the same url scheme in it's Android Manifest. " +
+                "See https://github.com/braintree/browser-switch-android for more information on " +
+                "setting up a return url scheme.", mFragment.result.getErrorMessage());
+        assertNull(mFragment.returnUri);
+    }
+
+    @Test
+    public void browserSwitch_withIntentReturnsErrorWhenReturnUrlSchemeIsNotSetupInAndroidManifest() {
+        mFragment.browserSwitch(42, new Intent());
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(42, mFragment.requestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
+                "Activity on this device defines the same url scheme in it's Android Manifest. " +
+                "See https://github.com/braintree/browser-switch-android for more information on " +
+                "setting up a return url scheme.", mFragment.result.getErrorMessage());
+        assertNull(mFragment.returnUri);
+    }
+
     private void mockContext(Context context) {
         when(context.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
         PackageManager packageManager = mock(PackageManager.class);
