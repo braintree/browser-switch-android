@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## 0.1.3
+
+* Prevent dependency resolution of alpha major versions of support-annotations
+
 ## 0.1.2
 
 * Include a message when an error is returned
