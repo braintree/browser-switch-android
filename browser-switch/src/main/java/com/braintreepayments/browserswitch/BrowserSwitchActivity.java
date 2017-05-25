@@ -34,6 +34,14 @@ public class BrowserSwitchActivity extends Activity {
         return sReturnUri;
     }
 
+    public static boolean isBrowserSwitchComplete() {
+        return getReturnUri() != Uri.EMPTY;
+    }
+
+    public static void prepareForBrowserSwitch() {
+        sReturnUri = Uri.EMPTY;
+    }
+
     /**
      * Clears the return uri.
      */

@@ -140,6 +140,30 @@ public class BrowserSwitchFragmentTest {
     }
 
     @Test
+    public void onResume_doesNotCallOnBrowserSwitchResultUntilComplete() {
+        mockContext(mock(Context.class));
+        mFragment.browserSwitch(42, "http://example.com/");
+
+        mFragment.onResume();
+
+        assertEquals(42, mFragment.mRequestCode);
+        assertFalse(mFragment.onBrowserSwitchResultCalled);
+    }
+
+    @Test
+    public void onResume_callsOnBrowserSwitchResultWhenComplete() {
+        mockContext(mock(Context.class));
+        mFragment.browserSwitch(42, "http://example.com/");
+        handleBrowserSwitchResponse(42, "http://example.com/?key=value");
+
+        mFragment.onResume();
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, mFragment.result);
+    }
+
+    @Test
     public void onSaveInstanceState_savesStateWhenNotBrowserSwitching() {
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
