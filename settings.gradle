@@ -1,1 +1,1 @@
-include ':browser-switch'
+include ':browser-switch', ':demo'
