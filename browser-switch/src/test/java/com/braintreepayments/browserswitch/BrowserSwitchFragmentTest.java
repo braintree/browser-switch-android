@@ -86,7 +86,8 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_handlesBrowserSwitch() {
-        mFragment.mRequestCode = 42;
+        mockContext(mock(Context.class));
+        mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
 
@@ -95,7 +96,8 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_clearsBrowserSwitchRequestCode() {
-        mFragment.mRequestCode = 42;
+        mockContext(mock(Context.class));
+        mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
 
@@ -104,7 +106,8 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_callsOnBrowserSwitchResultForCancels() {
-        mFragment.mRequestCode = 42;
+        mockContext(mock(Context.class));
+        mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
 
