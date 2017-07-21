@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## 0.1.4
+
+* Prevent Chrome Custom Tab from being killed when user leaves
+* Stop using dependency ranges
+
 ## 0.1.3
 
 * Prevent dependency resolution of alpha major versions of support-annotations
