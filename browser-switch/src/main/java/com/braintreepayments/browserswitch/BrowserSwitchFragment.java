@@ -61,7 +61,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (isBrowserSwitching()) {
+        if (isBrowserSwitching() && BrowserSwitchActivity.isBrowserSwitchComplete()) {
             Uri returnUri = BrowserSwitchActivity.getReturnUri();
 
             int requestCode = mRequestCode;
@@ -132,6 +132,8 @@ public abstract class BrowserSwitchFragment extends Fragment {
             onBrowserSwitchResult(requestCode, result, null);
             return;
         }
+
+        BrowserSwitchActivity.prepareForBrowserSwitch();
 
         mRequestCode = requestCode;
         mContext.startActivity(intent);

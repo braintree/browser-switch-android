@@ -10,6 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.ActivityController;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
@@ -70,6 +71,35 @@ public class BrowserSwitchActivityTest {
         BrowserSwitchActivity.clearReturnUri();
 
         assertNull(BrowserSwitchActivity.getReturnUri());
+    }
+
+    @Test
+    public void prepareForBrowserSwitch_setsReturnUriAsEmptyUri() {
+        BrowserSwitchActivity.prepareForBrowserSwitch();
+
+        assertEquals(Uri.EMPTY, BrowserSwitchActivity.getReturnUri());
+    }
+
+    @Test
+    public void isBrowserSwitchComplete_whenAwaitingResponse_returnsFalse() {
+        BrowserSwitchActivity.prepareForBrowserSwitch();
+
+        assertFalse(BrowserSwitchActivity.isBrowserSwitchComplete());
+    }
+
+    @Test
+    public void isBrowserSwitchComplete_whenBrowserSwitchResponse_returnsTrue() {
+        setup("http://example.com?key=value");
+
+        assertTrue(BrowserSwitchActivity.isBrowserSwitchComplete());
+    }
+
+    @Test
+    public void isBrowserSwitchComplete_whenEmptyBrowserSwitchResponse_returnsTrue() {
+        mActivityController = Robolectric.buildActivity(BrowserSwitchActivity.class, new Intent());
+        mActivity = mActivityController.setup().get();
+
+        assertTrue(BrowserSwitchActivity.isBrowserSwitchComplete());
     }
 
     private void setup(String url) {
