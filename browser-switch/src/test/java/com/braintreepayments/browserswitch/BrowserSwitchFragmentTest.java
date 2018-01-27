@@ -2,6 +2,8 @@ package com.braintreepayments.browserswitch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -264,11 +266,54 @@ public class BrowserSwitchFragmentTest {
         assertNull(mFragment.returnUri);
     }
 
+    @Test
+    public void isUrlSchemeDeclaredInAndroidManifest_whenSchemeIsDeclaredCorrectly_returnsTrue() {
+        mFragment = new TestBrowserSwitchFragment();
+        Context context = mock(Context.class);
+        mockContext(context);
+        mFragment.mContext = context;
+
+        assertTrue(BrowserSwitchFragment.isUrlSchemeDeclaredInAndroidManifest(context, "com.braintreepayments.browserswitch"));
+    }
+
+    @Test
+    public void isUrlSchemeDeclaredInAndroidManifest_whenSchemeIsDeclaredIncorrectly_returnsFalse() {
+        mFragment = new TestBrowserSwitchFragment();
+        Context context = mock(Context.class);
+        mockContext(context, false);
+        mFragment.mContext = context;
+
+        assertFalse(BrowserSwitchFragment.isUrlSchemeDeclaredInAndroidManifest(context, "com.braintreepayments.browserswitch"));
+    }
+
     private void mockContext(Context context) {
+        mockContext(context, true);
+    }
+
+    private void mockContext(Context context, boolean hasUrlScheme) {
         when(context.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
         PackageManager packageManager = mock(PackageManager.class);
-        when(packageManager.queryIntentActivities(any(Intent.class), anyInt()))
-                .thenReturn(Collections.singletonList(new ResolveInfo()));
+
+        if (hasUrlScheme) {
+            when(packageManager.queryIntentActivities(any(Intent.class), anyInt()))
+                    .thenReturn(Collections.singletonList(new ResolveInfo()));
+        } else {
+            when(packageManager.queryIntentActivities(any(Intent.class), anyInt()))
+                    .thenReturn(Collections.<ResolveInfo>emptyList());
+        }
+
+        PackageInfo packageInfo = mock(PackageInfo.class);
+        ActivityInfo activityInfo = new ActivityInfo();
+        activityInfo.name = BrowserSwitchActivity.class.getName();
+        activityInfo.launchMode = ActivityInfo.LAUNCH_SINGLE_TASK;
+        ActivityInfo[] activities = new ActivityInfo[1];
+        activities[0] = activityInfo;
+        packageInfo.activities = activities;
+        try {
+            when(packageManager.getPackageInfo(any(String.class), anyInt())).
+                    thenReturn(packageInfo);
+        } catch (PackageManager.NameNotFoundException ignored) {}
+
         when(context.getPackageManager()).thenReturn(packageManager);
         mFragment.mContext = context;
     }

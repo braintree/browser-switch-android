@@ -3,6 +3,9 @@ package com.braintreepayments.browserswitch;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -147,6 +150,47 @@ public abstract class BrowserSwitchFragment extends Fragment {
      */
     public abstract void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
                                                @Nullable Uri returnUri);
+
+    /**
+     * Verifies whether the return URL scheme is declared in the Android manifest.
+     *
+     * @param context the application context.
+     * @param urlScheme the return URL scheme.
+     * @return true if the URL scheme is in the Android manifest.
+     */
+    public static boolean isUrlSchemeDeclaredInAndroidManifest(Context context, String urlScheme) {
+        Intent intent = new Intent(Intent.ACTION_VIEW)
+                .setData(Uri.parse(urlScheme + "://"))
+                .addCategory(Intent.CATEGORY_DEFAULT)
+                .addCategory(Intent.CATEGORY_BROWSABLE);
+
+        ActivityInfo activityInfo = getActivityInfo(context, BrowserSwitchActivity.class);
+        return (activityInfo != null && activityInfo.launchMode == ActivityInfo.LAUNCH_SINGLE_TASK &&
+                isIntentAvailable(context, intent));
+    }
+
+    private static boolean isIntentAvailable(Context context, Intent intent) {
+        List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
+        return activities != null && activities.size() == 1;
+    }
+
+    @Nullable
+    private static ActivityInfo getActivityInfo(Context context, Class klass) {
+        try {
+            PackageInfo packageInfo =
+                    context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
+            ActivityInfo[] activities = packageInfo.activities;
+            if (activities != null) {
+                for (ActivityInfo activityInfo : activities) {
+                    if (activityInfo.name.equals(klass.getName())) {
+                        return activityInfo;
+                    }
+                }
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {}
+
+        return null;
+    }
 
     private boolean isBrowserSwitching() {
         return mRequestCode != Integer.MIN_VALUE;
