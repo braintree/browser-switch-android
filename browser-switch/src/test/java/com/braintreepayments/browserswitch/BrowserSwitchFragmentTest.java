@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
@@ -23,8 +24,9 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,6 +44,14 @@ public class BrowserSwitchFragmentTest {
         mActivity = Robolectric.setupActivity(TestActivity.class);
         mFragment = new TestBrowserSwitchFragment();
 
+        Context mockContext = mock(Context.class);
+
+        PackageManager mockPackageManager = mock(PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(mockPackageManager);
+        when(mockContext.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
+
+        mFragment.mContext = mockContext;
+
         mActivity.getFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
@@ -49,7 +59,13 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onCreate_setsContext() {
-        assertEquals(mActivity.getApplicationContext(), mFragment.mContext);
+        BrowserSwitchFragment fragment = new TestBrowserSwitchFragment();
+
+        mActivity.getFragmentManager().beginTransaction()
+                .add(fragment, "test-fragment")
+                .commit();
+
+        assertEquals(mActivity.getApplicationContext(), fragment.mContext);
     }
 
     @Test
@@ -86,7 +102,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_handlesBrowserSwitch() {
-        mockContext(mock(Context.class));
+        mockContext(returnIntent());
         mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
@@ -96,7 +112,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_clearsBrowserSwitchRequestCode() {
-        mockContext(mock(Context.class));
+        mockContext(returnIntent());
         mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
@@ -106,7 +122,9 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onResume_callsOnBrowserSwitchResultForCancels() {
-        mockContext(mock(Context.class));
+        mockContext(returnIntent());
+        mockContext(switchIntent("http://example.com"));
+
         mFragment.browserSwitch(42, "http://example.com");
 
         mFragment.onResume();
@@ -160,12 +178,13 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void getReturnUrlScheme_returnsUrlScheme() {
-        assertEquals("org.robolectric.default.browserswitch", mFragment.getReturnUrlScheme());
+        assertEquals("com.braintreepayments.browserswitch.browserswitch", mFragment.getReturnUrlScheme());
     }
 
     @Test
     public void browserSwitch_setsRequestCode() {
-        mockContext(mock(Context.class));
+        mockContext(returnIntent());
+        mockContext(switchIntent("http://example.com/"));
         assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
 
         mFragment.browserSwitch(42, "http://example.com/");
@@ -175,43 +194,44 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void browserSwitch_withUrlStartsBrowserSwitch() {
-        Context context = mock(Context.class);
-        mockContext(context);
+        mockContext(returnIntent());
+        mockContext(switchIntent("http://example.com/"));
 
         mFragment.browserSwitch(42, "http://example.com/");
 
         ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
-        verify(context).startActivity(captor.capture());
+        verify(mFragment.mContext).startActivity(captor.capture());
         assertEquals("http://example.com/", captor.getValue().getData().toString());
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, captor.getValue().getFlags());
     }
 
     @Test
     public void browserSwitch_withIntentSetsRequestCode() {
-        mockContext(mock(Context.class));
+        mockContext(returnIntent());
+        mockContext(switchIntent("http://example.com/"));
         assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
 
-        mFragment.browserSwitch(42, new Intent());
+        mFragment.browserSwitch(42, switchIntent("http://example.com/"));
 
         assertEquals(42, mFragment.mRequestCode);
     }
 
     @Test
     public void browserSwitch_withIntentStartsBrowserSwitch() {
-        Context context = mock(Context.class);
-        mockContext(context);
-        Intent intent = new Intent();
-        mFragment.mContext = context;
+        Intent switchIntent = switchIntent("http://example.com/");
 
-        mFragment.browserSwitch(42, intent);
+        mockContext(returnIntent());
+        mockContext(switchIntent);
 
-        verify(context).startActivity(intent);
+        mFragment.browserSwitch(42, switchIntent);
+
+        verify(mFragment.mContext).startActivity(switchIntent);
     }
 
     @Test
     public void browserSwitch_withUrlReturnsErrorForInvalidRequestCode() {
         Context context = mock(Context.class);
-        mockContext(context);
+        mockContext(returnIntent());
 
         mFragment.browserSwitch(Integer.MIN_VALUE, "http://example.com/");
 
@@ -225,7 +245,7 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void browserSwitch_withIntentReturnsErrorForInvalidRequestCode() {
         Context context = mock(Context.class);
-        mockContext(context);
+        mockContext(returnIntent());
 
         mFragment.browserSwitch(Integer.MIN_VALUE, new Intent());
 
@@ -264,18 +284,51 @@ public class BrowserSwitchFragmentTest {
         assertNull(mFragment.returnUri);
     }
 
-    private void mockContext(Context context) {
-        when(context.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
-        PackageManager packageManager = mock(PackageManager.class);
-        when(packageManager.queryIntentActivities(any(Intent.class), anyInt()))
+    @Test
+    public void browserSwitch_returnsErrorWhenNoActivitiesAvailableToHandleIntent() {
+        mockContext(returnIntent());
+
+        Intent browserSwitchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com/"))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        when(mFragment.mContext.getPackageManager().queryIntentActivities(eq(browserSwitchIntent), anyInt()))
+                .thenReturn(Collections.<ResolveInfo>emptyList());
+
+        mFragment.browserSwitch(42, browserSwitchIntent);
+
+        assertTrue(mFragment.onBrowserSwitchResultCalled);
+        assertEquals(42, mFragment.requestCode);
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals("No installed activities can open this URL: http://example.com/", mFragment.result.getErrorMessage());
+        assertNull(mFragment.returnUri);
+    }
+
+    private void mockContext(final Intent intent) {
+        ArgumentMatcher<Intent> intentMatcher = new ArgumentMatcher<Intent>() {
+            @Override
+            public boolean matches(Intent argument) {
+                return argument != null && intent.getData().equals(argument.getData());
+            }
+        };
+
+        when(mFragment.mContext.getPackageManager().queryIntentActivities(argThat(intentMatcher), anyInt()))
                 .thenReturn(Collections.singletonList(new ResolveInfo()));
-        when(context.getPackageManager()).thenReturn(packageManager);
-        mFragment.mContext = context;
     }
 
     private void handleBrowserSwitchResponse(int requestCode, String url) {
         Robolectric.buildActivity(BrowserSwitchActivity.class,
                 new Intent(Intent.ACTION_VIEW, Uri.parse(url))).setup();
         mFragment.mRequestCode = requestCode;
+    }
+
+    private Intent returnIntent() {
+        return new Intent(Intent.ACTION_VIEW)
+                .setData(Uri.parse(mFragment.getReturnUrlScheme() + "://"))
+                .addCategory(Intent.CATEGORY_DEFAULT)
+                .addCategory(Intent.CATEGORY_BROWSABLE);
+    }
+
+    private Intent switchIntent(String url) {
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     }
 }

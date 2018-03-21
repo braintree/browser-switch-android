@@ -131,6 +131,11 @@ public abstract class BrowserSwitchFragment extends Fragment {
                             "information on setting up a return url scheme.");
             onBrowserSwitchResult(requestCode, result, null);
             return;
+        } else if (availableActivities(intent).size() == 0) {
+            BrowserSwitchResult result = BrowserSwitchResult.ERROR
+                    .setErrorMessage(String.format("No installed activities can open this URL: %s", intent.getData().toString()));
+            onBrowserSwitchResult(requestCode, result, null);
+            return;
         }
 
         mRequestCode = requestCode;
@@ -158,8 +163,11 @@ public abstract class BrowserSwitchFragment extends Fragment {
                 .addCategory(Intent.CATEGORY_DEFAULT)
                 .addCategory(Intent.CATEGORY_BROWSABLE);
 
-        List<ResolveInfo> activities = mContext.getPackageManager()
+        return availableActivities(intent).size() == 1;
+    }
+
+    private List<ResolveInfo> availableActivities(Intent intent) {
+        return mContext.getPackageManager()
                 .queryIntentActivities(intent, 0);
-        return activities != null && activities.size() == 1;
     }
 }
