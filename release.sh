@@ -6,13 +6,17 @@ echo "Make sure to update the version in build.gradle and the README and add a C
 echo "Press enter when you are ready to release."
 read
 
-echo "Enter Sonatype username:"
-read username
-export SONATYPE_USERNAME=$(echo "${username}")
+if [ -z "$SONATYPE_USERNAME" ]; then
+  echo "Enter Sonatype username:"
+  read username
+  export SONATYPE_USERNAME=$(echo "${username}")
+fi
 
-echo "Enter Sonatype password:"
-read -s password
-export SONATYPE_PASSWORD=$(echo "${password}")
+if [ -z "$SONATYPE_PASSWORD" ]; then
+  echo "Enter Sonatype password:"
+  read -s password
+  export SONATYPE_PASSWORD=$(echo "${password}")
+fi
 
 ./gradlew --info clean lint test
 ./gradlew :browser-switch:uploadArchives :browser-switch:closeAndPromoteRepository
