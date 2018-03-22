@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## 0.1.5
+
+* Return an error when no activities are available to handle browser switch intent
+* Update compile and target SDK versions to 26
+
 ## 0.1.4
 
 * Prevent Chrome Custom Tab from being killed when user leaves
