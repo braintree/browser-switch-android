@@ -78,7 +78,9 @@ public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @
             break;
         case ERROR:
             // there was an error browser switching
-            // most likely caused by incorrect setup
+            // Some possible issues you may encounter are:
+            // - There are no activities installed that can handle a URL.
+            // - The integration is not setup correctly.
             break;
     }
 }
