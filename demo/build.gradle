@@ -1,18 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.braintreepayments.browserswitch.demo"
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
 }
 
 dependencies {
-    compile project(':browser-switch')
+    implementation project(':browser-switch')
+
+    // Demo should use the latest minor to verify it works with browser-switch
+    // noinspection GradleDynamicVersion
+    implementation 'com.android.support:support-fragment:27.+'
+    // noinspection GradleDynamicVersion
+    implementation 'com.android.support:support-annotations:27.+'
 }
