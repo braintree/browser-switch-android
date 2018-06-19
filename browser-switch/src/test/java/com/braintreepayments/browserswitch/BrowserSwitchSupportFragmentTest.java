@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.braintreepayments.browserswitch.test.TestFragmentActivity;
-import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;
+import com.braintreepayments.browserswitch.test.TestBrowserSwitchSupportFragment;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,17 +32,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
-public class BrowserSwitchFragmentTest {
+public class BrowserSwitchSupportFragmentTest {
 
     private TestFragmentActivity mActivity;
-    private TestBrowserSwitchFragment mFragment;
+    private TestBrowserSwitchSupportFragment mFragment;
 
     @Before
     public void setup() {
         BrowserSwitchActivity.clearReturnUri();
 
         mActivity = Robolectric.setupActivity(TestFragmentActivity.class);
-        mFragment = new TestBrowserSwitchFragment();
+        mFragment = new TestBrowserSwitchSupportFragment();
 
         Context mockContext = mock(Context.class);
 
@@ -52,16 +52,16 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.mContext = mockContext;
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
     }
 
     @Test
     public void onCreate_setsContext() {
-        BrowserSwitchFragment fragment = new TestBrowserSwitchFragment();
+        BrowserSwitchSupportFragment fragment = new TestBrowserSwitchSupportFragment();
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, "test-fragment")
                 .commit();
 
@@ -70,11 +70,11 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onCreate_doesNotOverrideContextIfAlreadySet() {
-        mFragment = new TestBrowserSwitchFragment();
+        mFragment = new TestBrowserSwitchSupportFragment();
         Context context = mock(Context.class);
         mFragment.mContext = context;
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
 
@@ -131,7 +131,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.CANCELED, mFragment.result);
+        assertEquals(BrowserSwitchResult.CANCELED, mFragment.result);
         assertNull(mFragment.returnUri);
     }
 
@@ -143,7 +143,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, mFragment.result);
+        assertEquals(BrowserSwitchResult.OK, mFragment.result);
         assertEquals("http://example.com/?key=value", mFragment.returnUri.toString());
     }
 
@@ -237,7 +237,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.ERROR, mFragment.result);
         assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
     }
@@ -251,7 +251,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.ERROR, mFragment.result);
         assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
     }
@@ -262,7 +262,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.ERROR, mFragment.result);
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
@@ -276,7 +276,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.ERROR, mFragment.result);
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
@@ -298,45 +298,9 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.ERROR, mFragment.result);
         assertEquals("No installed activities can open this URL: http://example.com/", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
-    }
-
-    @Test
-    public void browserSwitchResultConvert_whenPassedOK_converts() {
-        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.OK
-                .setErrorMessage("Error Message is OK");
-
-        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
-                .BrowserSwitchResult.convert(browserSwitchResult);
-
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, result);
-        assertEquals("Error Message is OK", result.getErrorMessage());
-    }
-
-    @Test
-    public void browserSwitchResultConvert_whenPassedCANCELED_converts() {
-        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.CANCELED
-                .setErrorMessage("Error Message is CANCELED");
-
-        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
-                .BrowserSwitchResult.convert(browserSwitchResult);
-
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.CANCELED, result);
-        assertEquals("Error Message is CANCELED", result.getErrorMessage());
-    }
-
-    @Test
-    public void browserSwitchResultConvert_whenPassedERROR_converts() {
-        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.ERROR
-                .setErrorMessage("Error Message is ERROR");
-
-        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
-                .BrowserSwitchResult.convert(browserSwitchResult);
-
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, result);
-        assertEquals("Error Message is ERROR", result.getErrorMessage());
     }
 
     private void mockContext(final Intent intent) {

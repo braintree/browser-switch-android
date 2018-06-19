@@ -1,65 +1,16 @@
 package com.braintreepayments.browserswitch;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
 /**
- * @deprecated {@link Fragment} is deprecated in Android P. Use {@link BrowserSwitchSupportFragment}
  * Abstract Fragment that manages the logic for browser switching.
  */
-@Deprecated
-public abstract class BrowserSwitchFragment extends Fragment {
-
-    /**
-     * Use {@link com.braintreepayments.browserswitch.BrowserSwitchResult}
-     */
-    @Deprecated
-    public enum BrowserSwitchResult {
-        OK,
-        CANCELED,
-        ERROR;
-
-        private String mErrorMessage;
-
-        public String getErrorMessage() {
-            return mErrorMessage;
-        }
-
-        private BrowserSwitchResult setErrorMessage(String errorMessage) {
-            mErrorMessage = errorMessage;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return name() + " " + getErrorMessage();
-        }
-
-        static BrowserSwitchResult convert(@NonNull com.braintreepayments.browserswitch.BrowserSwitchResult result) {
-            BrowserSwitchResult convertedResult = null;
-            switch(result) {
-                case OK:
-                    convertedResult = BrowserSwitchResult.OK;
-                    break;
-                case ERROR:
-                    convertedResult = BrowserSwitchResult.ERROR;
-                    break;
-                case CANCELED:
-                    convertedResult = BrowserSwitchResult.CANCELED;
-                    break;
-            }
-
-            convertedResult.setErrorMessage(result.getErrorMessage());
-
-            return convertedResult;
-        }
-    }
-
+public abstract class BrowserSwitchSupportFragment extends Fragment {
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;
@@ -112,7 +63,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+        return mBrowserSwitch.getReturnUrlScheme(mContext);
     }
 
     /**
@@ -135,11 +86,9 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param intent an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
-        com.braintreepayments.browserswitch.BrowserSwitchResult result =
-                mBrowserSwitch.verifyBrowserSwitch(mContext, requestCode, intent);
-
+        BrowserSwitchResult result = mBrowserSwitch.verifyBrowserSwitch(mContext, requestCode, intent);
         if (result != null) {
-            onBrowserSwitchResult(requestCode, BrowserSwitchResult.convert(result), null);
+            onBrowserSwitchResult(requestCode, result, null);
             return;
         }
 

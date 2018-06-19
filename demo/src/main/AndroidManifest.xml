@@ -6,7 +6,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo">
 
-        <activity android:name=".DemoActivity">
+        <activity android:name=".DemoSupportActivity"/>
+        <activity android:name=".DemoActivity"/>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
