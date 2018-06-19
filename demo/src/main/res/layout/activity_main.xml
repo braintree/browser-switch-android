@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp">
+
+        <Button
+            android:id="@+id/browser_switch_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="startBrowserSwitchFragment"
+            android:text="Browser Switch Fragment"/>
+
+        <Button
+            android:id="@+id/browser_switch_support_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="startBrowserSwitchSupportFragment"
+            android:text="Browser Switch Support Fragment"/>
+
+    </LinearLayout>
+</FrameLayout>
