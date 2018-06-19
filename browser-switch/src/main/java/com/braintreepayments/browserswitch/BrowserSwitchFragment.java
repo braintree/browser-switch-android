@@ -3,18 +3,20 @@ package com.braintreepayments.browserswitch;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import java.util.List;
 
 /**
  * Abstract Fragment that manages the logic for browser switching.
  */
 public abstract class BrowserSwitchFragment extends Fragment {
 
+    /**
+     * Use {@link com.braintreepayments.browserswitch.BrowserSwitchResult}
+     */
+    @Deprecated
     public enum BrowserSwitchResult {
         OK,
         CANCELED,
@@ -35,12 +37,32 @@ public abstract class BrowserSwitchFragment extends Fragment {
         public String toString() {
             return name() + " " + getErrorMessage();
         }
+
+        static BrowserSwitchResult convert(@NonNull com.braintreepayments.browserswitch.BrowserSwitchResult result) {
+            BrowserSwitchResult convertedResult = null;
+            switch(result) {
+                case OK:
+                    convertedResult = BrowserSwitchResult.OK;
+                    break;
+                case ERROR:
+                    convertedResult = BrowserSwitchResult.ERROR;
+                    break;
+                case CANCELED:
+                    convertedResult = BrowserSwitchResult.CANCELED;
+                    break;
+            }
+
+            convertedResult.setErrorMessage(result.getErrorMessage());
+
+            return convertedResult;
+        }
     }
 
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;
     protected int mRequestCode;
+    private BrowserSwitch mBrowserSwitch = new BrowserSwitch();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,11 +121,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param url the url to open.
      */
     public void browserSwitch(int requestCode, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
-
+        Intent intent = mBrowserSwitch.getIntentFromUrl(mContext, url);
         browserSwitch(requestCode, intent);
     }
 
@@ -115,26 +133,11 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param intent an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
-        if (requestCode == Integer.MIN_VALUE) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
-            onBrowserSwitchResult(requestCode, result, null);
-            return;
-        }
+        com.braintreepayments.browserswitch.BrowserSwitchResult result =
+                mBrowserSwitch.verifyBrowserSwitch(mContext, requestCode, intent);
 
-        if (!isReturnUrlSetup()) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage("The return url scheme was not set up, incorrectly set up, " +
-                            "or more than one Activity on this device defines the same url " +
-                            "scheme in it's Android Manifest. See " +
-                            "https://github.com/braintree/browser-switch-android for more " +
-                            "information on setting up a return url scheme.");
-            onBrowserSwitchResult(requestCode, result, null);
-            return;
-        } else if (availableActivities(intent).size() == 0) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage(String.format("No installed activities can open this URL: %s", intent.getData().toString()));
-            onBrowserSwitchResult(requestCode, result, null);
+        if (result != null) {
+            onBrowserSwitchResult(requestCode, BrowserSwitchResult.convert(result), null);
             return;
         }
 
@@ -155,19 +158,5 @@ public abstract class BrowserSwitchFragment extends Fragment {
 
     private boolean isBrowserSwitching() {
         return mRequestCode != Integer.MIN_VALUE;
-    }
-
-    private boolean isReturnUrlSetup() {
-        Intent intent = new Intent(Intent.ACTION_VIEW)
-                .setData(Uri.parse(getReturnUrlScheme() + "://"))
-                .addCategory(Intent.CATEGORY_DEFAULT)
-                .addCategory(Intent.CATEGORY_BROWSABLE);
-
-        return availableActivities(intent).size() == 1;
-    }
-
-    private List<ResolveInfo> availableActivities(Intent intent) {
-        return mContext.getPackageManager()
-                .queryIntentActivities(intent, 0);
     }
 }

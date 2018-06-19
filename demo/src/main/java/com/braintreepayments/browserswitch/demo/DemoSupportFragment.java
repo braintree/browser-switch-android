@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.braintreepayments.browserswitch.BrowserSwitchResult;
 import com.braintreepayments.browserswitch.BrowserSwitchSupportFragment;
 
 public class DemoSupportFragment extends BrowserSwitchSupportFragment implements View.OnClickListener {

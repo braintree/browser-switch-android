@@ -303,6 +303,42 @@ public class BrowserSwitchFragmentTest {
         assertNull(mFragment.returnUri);
     }
 
+    @Test
+    public void browserSwitchResultConvert_whenPassedOK_converts() {
+        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.OK
+                .setErrorMessage("Error Message is OK");
+
+        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
+                .BrowserSwitchResult.convert(browserSwitchResult);
+
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, result);
+        assertEquals("Error Message is OK", result.getErrorMessage());
+    }
+
+    @Test
+    public void browserSwitchResultConvert_whenPassedCANCELED_converts() {
+        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.CANCELED
+                .setErrorMessage("Error Message is CANCELED");
+
+        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
+                .BrowserSwitchResult.convert(browserSwitchResult);
+
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.CANCELED, result);
+        assertEquals("Error Message is CANCELED", result.getErrorMessage());
+    }
+
+    @Test
+    public void browserSwitchResultConvert_whenPassedERROR_converts() {
+        BrowserSwitchResult browserSwitchResult = BrowserSwitchResult.ERROR
+                .setErrorMessage("Error Message is ERROR");
+
+        BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment
+                .BrowserSwitchResult.convert(browserSwitchResult);
+
+        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, result);
+        assertEquals("Error Message is ERROR", result.getErrorMessage());
+    }
+
     private void mockContext(final Intent intent) {
         ArgumentMatcher<Intent> intentMatcher = new ArgumentMatcher<Intent>() {
             @Override

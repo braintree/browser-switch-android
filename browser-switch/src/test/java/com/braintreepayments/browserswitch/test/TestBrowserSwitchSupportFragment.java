@@ -3,6 +3,7 @@ package com.braintreepayments.browserswitch.test;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.braintreepayments.browserswitch.BrowserSwitchResult;
 import com.braintreepayments.browserswitch.BrowserSwitchSupportFragment;
 
 public class TestBrowserSwitchSupportFragment extends BrowserSwitchSupportFragment {

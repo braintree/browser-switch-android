@@ -2,45 +2,20 @@ package com.braintreepayments.browserswitch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import java.util.List;
-
 /**
  * Abstract Fragment that manages the logic for browser switching.
  */
 public abstract class BrowserSwitchSupportFragment extends Fragment {
-
-    public enum BrowserSwitchResult {
-        OK,
-        CANCELED,
-        ERROR;
-
-        private String mErrorMessage;
-
-        public String getErrorMessage() {
-            return mErrorMessage;
-        }
-
-        private BrowserSwitchResult setErrorMessage(String errorMessage) {
-            mErrorMessage = errorMessage;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return name() + " " + getErrorMessage();
-        }
-    }
-
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;
     protected int mRequestCode;
+    private BrowserSwitch mBrowserSwitch = new BrowserSwitch();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +63,7 @@ public abstract class BrowserSwitchSupportFragment extends Fragment {
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+        return mBrowserSwitch.getReturnUrlScheme(mContext);
     }
 
     /**
@@ -99,11 +74,7 @@ public abstract class BrowserSwitchSupportFragment extends Fragment {
      * @param url the url to open.
      */
     public void browserSwitch(int requestCode, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
-
+        Intent intent = mBrowserSwitch.getIntentFromUrl(mContext, url);
         browserSwitch(requestCode, intent);
     }
 
@@ -115,25 +86,8 @@ public abstract class BrowserSwitchSupportFragment extends Fragment {
      * @param intent an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
-        if (requestCode == Integer.MIN_VALUE) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
-            onBrowserSwitchResult(requestCode, result, null);
-            return;
-        }
-
-        if (!isReturnUrlSetup()) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage("The return url scheme was not set up, incorrectly set up, " +
-                            "or more than one Activity on this device defines the same url " +
-                            "scheme in it's Android Manifest. See " +
-                            "https://github.com/braintree/browser-switch-android for more " +
-                            "information on setting up a return url scheme.");
-            onBrowserSwitchResult(requestCode, result, null);
-            return;
-        } else if (availableActivities(intent).size() == 0) {
-            BrowserSwitchResult result = BrowserSwitchResult.ERROR
-                    .setErrorMessage(String.format("No installed activities can open this URL: %s", intent.getData().toString()));
+        BrowserSwitchResult result = mBrowserSwitch.verifyBrowserSwitch(mContext, requestCode, intent);
+        if (result != null) {
             onBrowserSwitchResult(requestCode, result, null);
             return;
         }
@@ -155,19 +109,5 @@ public abstract class BrowserSwitchSupportFragment extends Fragment {
 
     private boolean isBrowserSwitching() {
         return mRequestCode != Integer.MIN_VALUE;
-    }
-
-    private boolean isReturnUrlSetup() {
-        Intent intent = new Intent(Intent.ACTION_VIEW)
-                .setData(Uri.parse(getReturnUrlScheme() + "://"))
-                .addCategory(Intent.CATEGORY_DEFAULT)
-                .addCategory(Intent.CATEGORY_BROWSABLE);
-
-        return availableActivities(intent).size() == 1;
-    }
-
-    private List<ResolveInfo> availableActivities(Intent intent) {
-        return mContext.getPackageManager()
-                .queryIntentActivities(intent, 0);
     }
 }
