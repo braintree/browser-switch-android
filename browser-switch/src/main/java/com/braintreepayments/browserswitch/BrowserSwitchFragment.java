@@ -9,8 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
+ * @deprecated {@link Fragment} is deprecated in Android P. Use {@link BrowserSwitchSupportFragment}
  * Abstract Fragment that manages the logic for browser switching.
  */
+@Deprecated
 public abstract class BrowserSwitchFragment extends Fragment {
 
     /**

@@ -16,12 +16,8 @@ android {
 }
 
 dependencies {
-    // Require the minimum major version.
-    // browser-switch consumers are recommended to use the latest minor/patch version
-    // noinspection GradleDependency
-    implementation 'com.android.support:support-fragment:27.+'
-    // noinspection GradleDependency
-    implementation 'com.android.support:support-annotations:27.+'
+    implementation 'com.android.support:support-fragment:27.0.0'
+    implementation 'com.android.support:support-annotations:27.0.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.8.9'
