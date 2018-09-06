@@ -1,16 +1,17 @@
 package com.braintreepayments.browserswitch.demo;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
-public class DemoActivity extends Activity {
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+
+public class DemoActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, new DemoFragment())
                 .commit();
     }

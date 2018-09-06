@@ -1,14 +1,15 @@
 package com.braintreepayments.browserswitch;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 /**
  * Abstract Fragment that manages the logic for browser switching.

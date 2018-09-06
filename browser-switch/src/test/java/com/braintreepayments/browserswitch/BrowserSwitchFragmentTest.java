@@ -52,7 +52,7 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.mContext = mockContext;
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
     }
@@ -61,7 +61,7 @@ public class BrowserSwitchFragmentTest {
     public void onCreate_setsContext() {
         BrowserSwitchFragment fragment = new TestBrowserSwitchFragment();
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, "test-fragment")
                 .commit();
 
@@ -74,7 +74,7 @@ public class BrowserSwitchFragmentTest {
         Context context = mock(Context.class);
         mFragment.mContext = context;
 
-        mActivity.getFragmentManager().beginTransaction()
+        mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
 

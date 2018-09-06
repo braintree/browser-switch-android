@@ -15,3 +15,7 @@ allprojects {
         jcenter()
     }
 }
+
+ext {
+    androidxVersion = '1.0.0-rc02'
+}
