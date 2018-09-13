@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 /**
  * Abstract Fragment that manages the logic for browser switching.

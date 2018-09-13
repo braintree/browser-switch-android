@@ -3,8 +3,7 @@ package com.braintreepayments.browserswitch;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * <a href="https://developer.android.com/guide/topics/manifest/activity-element.html#lmode">singleTask</a>
