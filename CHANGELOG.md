@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## 0.1.6
+
+* Update to SDK version 28
+
 ## 0.1.5
 
 * Return an error when no activities are available to handle browser switch intent
