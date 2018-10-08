@@ -15,5 +15,6 @@ android {
 
 dependencies {
     implementation project(':browser-switch')
-    implementation 'com.android.support:support-annotations:28.0.0-rc02'
+    implementation "androidx.annotation:annotation:${rootProject.ext.androidxVersion}"
+    implementation "androidx.fragment:fragment:${rootProject.ext.androidxVersion}"
 }

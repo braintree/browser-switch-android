@@ -2,7 +2,6 @@ package com.braintreepayments.browserswitch.demo;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+
+import androidx.annotation.Nullable;
 
 public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
 
