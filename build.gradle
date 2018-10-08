@@ -17,5 +17,5 @@ allprojects {
 }
 
 ext {
-    androidxVersion = '1.0.0-rc02'
+    androidxVersion = '1.0.0'
 }
