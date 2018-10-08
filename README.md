@@ -12,7 +12,7 @@ Add the library to your dependencies in your `build.gradle`:
 
 ```groovy
 dependencies {
-  compile 'com.braintreepayments:browser-switch:0.1.6'
+  compile 'com.braintreepayments:browser-switch:0.2.0'
 }
 ```
 
@@ -43,7 +43,7 @@ If these requirements are not met, an error will be returned and no browser swit
 
 ## Usage
 
-`BrowserSwitchFragment` is an abstract `Fragment` that should be extended and used to start and
+`BrowserSwitchFragment` is an abstract `androidx.fragment.app.Fragment` that should be extended and used to start and
 handle the response from a browser switch.
 
 The url scheme to use to return to your app can be retrieved using:

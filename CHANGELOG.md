@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## 0.2.0
+
+* Using androidx 1.0.0
+* Migrate Fragment to `androidx.fragment.app.Fragment`
+
 ## 0.1.6
 
 * Update to SDK version 28
