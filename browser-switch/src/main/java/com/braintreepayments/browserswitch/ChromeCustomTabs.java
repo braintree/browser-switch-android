@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsService;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
@@ -26,7 +28,7 @@ public class ChromeCustomTabs {
             return false;
         }
 
-        Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService")
+        Intent serviceIntent = new Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION)
                 .setPackage("com.android.chrome");
         ServiceConnection connection = new ServiceConnection() {
             @Override
@@ -55,7 +57,7 @@ public class ChromeCustomTabs {
     public static Intent addChromeCustomTabsExtras(Context context, Intent intent) {
         if (SDK_INT >= JELLY_BEAN_MR2 && ChromeCustomTabs.isAvailable(context)) {
             Bundle extras = new Bundle();
-            extras.putBinder("android.support.customtabs.extra.SESSION", null);
+            extras.putBinder(CustomTabsIntent.EXTRA_SESSION, null);
             intent.putExtras(extras);
             intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
