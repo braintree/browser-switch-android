@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## 0.1.7
+
+* Fix Chrome Custom Tabs interaction when using Jetifier to migrate to AndroidX
+
 ## 0.1.6
 
 * Update to SDK version 28
