@@ -46,6 +46,8 @@ If these requirements are not met, an error will be returned and no browser swit
 `BrowserSwitchFragment` is an abstract `androidx.fragment.app.Fragment` that should be extended and used to start and
 handle the response from a browser switch.
 
+**Note**: The `Activity` that `BrowserSwitchFragment` attaches to cannot have a launch mode of `singleInstance`. `BrowserSwitchFragment` needs access to the calling `Activity` to provide a result and cannot do so if the browser switch happens on a different activity stack.
+
 The url scheme to use to return to your app can be retrieved using:
 
 ```java
