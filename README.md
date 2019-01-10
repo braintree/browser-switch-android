@@ -36,8 +36,7 @@ For example, if the package is `com.your-company.your-app`, then your url scheme
 
 `${applicationId}` is automatically applied with your app's package when using Gradle.
 
-The scheme you define must use all lowercase letters. If your package contains underscores,
-the underscores should be removed when specifying the scheme.
+**Note**: The scheme you define must use all lowercase letters. This is due to [scheme matching on the Android framework being case insensitive](https://developer.android.com/guide/topics/manifest/data-element#scheme). If your package contains underscores, the underscores should be removed when specifying the scheme.
 
 If these requirements are not met, an error will be returned and no browser switch will occur.
 
