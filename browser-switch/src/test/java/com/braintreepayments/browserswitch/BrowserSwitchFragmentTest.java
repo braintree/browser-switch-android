@@ -20,6 +20,8 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.util.Collections;
 
+import androidx.core.content.ContextCompat;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
@@ -200,7 +202,8 @@ public class BrowserSwitchFragmentTest {
         mFragment.browserSwitch(42, "http://example.com/");
 
         ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
-        verify(mFragment.mContext).startActivity(captor.capture());
+        ArgumentCaptor<Bundle> bundleCaptor = ArgumentCaptor.forClass(Bundle.class);
+        ContextCompat.startActivity(verify(mFragment.mContext), captor.capture(), bundleCaptor.capture());
         assertEquals("http://example.com/", captor.getValue().getData().toString());
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, captor.getValue().getFlags());
     }
@@ -225,7 +228,7 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.browserSwitch(42, switchIntent);
 
-        verify(mFragment.mContext).startActivity(switchIntent);
+        ContextCompat.startActivity(verify(mFragment.mContext), switchIntent, null);
     }
 
     @Test
