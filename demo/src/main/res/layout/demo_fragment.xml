@@ -15,6 +15,12 @@
             android:layout_height="wrap_content"
             android:text="Start Browser Switch"/>
 
+        <Button
+            android:id="@+id/style_browser_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start Browser Switch with Animation"/>
+
         <TextView
             android:id="@+id/result"
             android:layout_width="match_parent"

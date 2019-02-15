@@ -1,5 +1,7 @@
 package com.braintreepayments.browserswitch.demo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,12 +13,24 @@ import android.widget.TextView;
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
 
+    private Context mContext;
     private Button mBrowserSwitchButton;
+    private Button mCustomStyleSwitchButton;
     private TextView mResult;
     private TextView mReturnUrl;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mContext = context;
+    }
 
     @Nullable
     @Override
@@ -24,7 +38,9 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         View view = inflater.inflate(R.layout.demo_fragment, null);
 
         mBrowserSwitchButton = (Button) view.findViewById(R.id.browser_switch);
+        mCustomStyleSwitchButton = (Button) view.findViewById(R.id.style_browser_switch);
         mBrowserSwitchButton.setOnClickListener(this);
+        mCustomStyleSwitchButton.setOnClickListener(this);
 
         mResult = (TextView) view.findViewById(R.id.result);
         mReturnUrl = (TextView) view.findViewById(R.id.return_url);
@@ -34,9 +50,23 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        browserSwitch(1, "https://braintree.github.io/popup-bridge-example/" +
-                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
-                + "://");
+        if (v.getId() == mBrowserSwitchButton.getId()) {
+            browserSwitch(1, "https://braintree.github.io/popup-bridge-example/" +
+                    "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
+                    + "://");
+        } else if (v.getId() == mCustomStyleSwitchButton.getId()) {
+            Uri returnUri = Uri.parse("https://braintree.github.io/popup-bridge-example/" +
+                    "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
+                    + "://");
+            Intent browserIntent =
+                    new Intent(Intent.ACTION_VIEW, returnUri)
+                            .addFlags(FLAG_ACTIVITY_NEW_TASK);
+            Bundle startAnimationBundle = ActivityOptionsCompat.makeCustomAnimation(
+                    mContext, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
+            browserSwitch(1, browserIntent, startAnimationBundle);
+        }
+
+
     }
 
     @Override

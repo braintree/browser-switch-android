@@ -9,6 +9,7 @@ import android.os.Bundle;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -116,6 +117,18 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param intent an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
+        browserSwitch(requestCode, intent, null);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent and custom start activity animation.
+     *
+     * @param requestCode the request code used to differentiate requests from one another.
+     * @param intent an {@link Intent} containing a url to open.
+     * @param startAnimationBundle a {@link Bundle} for defining start activity animation.
+     */
+    public void browserSwitch(int requestCode, Intent intent, Bundle startAnimationBundle) {
         if (requestCode == Integer.MIN_VALUE) {
             BrowserSwitchResult result = BrowserSwitchResult.ERROR
                     .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
@@ -140,7 +153,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         }
 
         mRequestCode = requestCode;
-        mContext.startActivity(intent);
+        ContextCompat.startActivity(mContext, intent, startAnimationBundle);
     }
 
     /**
