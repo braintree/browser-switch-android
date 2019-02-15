@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.ChromeCustomTabs;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
@@ -61,6 +62,7 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
             Intent browserIntent =
                     new Intent(Intent.ACTION_VIEW, returnUri)
                             .addFlags(FLAG_ACTIVITY_NEW_TASK);
+            ChromeCustomTabs.addChromeCustomTabsExtras(mContext, browserIntent);
             Bundle startAnimationBundle = ActivityOptionsCompat.makeCustomAnimation(
                     mContext, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
             browserSwitch(1, browserIntent, startAnimationBundle);
