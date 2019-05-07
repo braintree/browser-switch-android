@@ -4,12 +4,12 @@ apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 'android-Q'
     buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 'Q'
         versionCode 8
         versionName '0.2.0'
     }
