@@ -20,8 +20,8 @@ dependencies {
     implementation "androidx.fragment:fragment:${rootProject.ext.androidxVersion}"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.2.22'
-    testImplementation 'org.robolectric:robolectric:4.2'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation 'org.robolectric:robolectric:4.2.1'
 }
 
 task javadocs(type: Javadoc) {
