@@ -2,6 +2,8 @@ package com.braintreepayments.browserswitch;
 
 import android.content.Intent;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -16,14 +18,14 @@ public class ChromeCustomTabsTest {
 
     @Test
     public void isAvailable_returnsFalseIfChromeCustomTabsAreNotSupported() {
-        assertFalse(ChromeCustomTabs.isAvailable(RuntimeEnvironment.application));
+        assertFalse(ChromeCustomTabs.isAvailable(ApplicationProvider.getApplicationContext()));
     }
 
     @Test
     public void addChromeCustomTabsExtras_doesNotModifyTheIntentIfChromeCustomTabsAreNotSupported() {
         Intent intent = mock(Intent.class);
 
-        ChromeCustomTabs.addChromeCustomTabsExtras(RuntimeEnvironment.application, intent);
+        ChromeCustomTabs.addChromeCustomTabsExtras(ApplicationProvider.getApplicationContext(), intent);
 
         verifyZeroInteractions(intent);
     }
