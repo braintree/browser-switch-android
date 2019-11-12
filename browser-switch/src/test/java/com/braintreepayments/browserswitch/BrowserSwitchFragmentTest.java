@@ -13,23 +13,24 @@ import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.Collections;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchFragmentTest {
@@ -199,10 +200,10 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.browserSwitch(42, "http://example.com/");
 
-        ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
-        verify(mFragment.mContext).startActivity(captor.capture());
-        assertEquals("http://example.com/", captor.getValue().getData().toString());
-        assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, captor.getValue().getFlags());
+        Intent launchedIntent = shadowOf(RuntimeEnvironment.application).getNextStartedActivity();
+        assertNotNull(launchedIntent);
+        assertEquals("http://example.com/", launchedIntent.getDataString());
+        assertEquals(0, launchedIntent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     @Test
@@ -225,7 +226,7 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.browserSwitch(42, switchIntent);
 
-        verify(mFragment.mContext).startActivity(switchIntent);
+        assertEquals(switchIntent, shadowOf(RuntimeEnvironment.application).getNextStartedActivity());
     }
 
     @Test
