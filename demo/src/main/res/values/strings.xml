@@ -2,4 +2,8 @@
 <resources>
     <string name="browser_switch_btn_text">Start Browser Switch</string>
     <string name="browser_switch_with_metadata_btn_text">Start Browser Switch With Metadata</string>
+    <string name="browser_switch_selected_color_text">Selected color: %s</string>
+    <string name="browser_switch_success_text">Browser Switch Successful</string>
+    <string name="browser_switch_error_text">Browser Switch Error: %s</string>
+    <string name="browser_switch_cancel_text">Browser Switch Cancelled by User</string>
 </resources>

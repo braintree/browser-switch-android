@@ -101,18 +101,18 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         int statusCode = result.getStatus();
         switch (statusCode) {
             case BrowserSwitchResult.STATUS_OK:
-                resultText = "Browser Switch Successful";
+                resultText = getString(R.string.browser_switch_success_text);
 
                 if (returnUri != null) {
                     String color = returnUri.getQueryParameter("color");
-                    selectedColorText = String.format("Selected color: %s", color);
+                    selectedColorText = getString(R.string.browser_switch_selected_color_text, color);
                 }
                 break;
             case BrowserSwitchResult.STATUS_ERROR:
-                resultText = "Browser Switch Error: " + result.getErrorMessage();
+                resultText = getString(R.string.browser_switch_error_text, result.getErrorMessage());
                 break;
             case BrowserSwitchResult.STATUS_CANCELED:
-                resultText = "Browser Switch Cancelled by User";
+                resultText = getString(R.string.browser_switch_cancel_text);
                 break;
         }
         mBrowserSwitchStatusTextView.setText(resultText);

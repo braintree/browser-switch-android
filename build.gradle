@@ -28,6 +28,9 @@ ext {
     appCompatVersion = "1.1.0"
     annotationVersion = '1.1.0'
     fragmentVersion = '1.2.4'
+    androidxTestRunnerVersion = "1.2.0"
+    androidxTestJunitVersion = "1.1.1"
+    uiAutomatorVersion = "2.2.0"
 }
 
 allprojects {

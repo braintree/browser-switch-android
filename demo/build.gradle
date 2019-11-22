@@ -29,4 +29,7 @@ dependencies {
     implementation "androidx.fragment:fragment:${rootProject.fragmentVersion}"
 
     androidTestImplementation 'com.lukekorth:device-automator:1.0.0'
+    androidTestImplementation "androidx.test:runner:$androidxTestRunnerVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxTestJunitVersion"
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:$uiAutomatorVersion"
 }
