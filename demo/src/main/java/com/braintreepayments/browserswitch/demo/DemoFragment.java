@@ -23,11 +23,11 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.demo_fragment, null);
 
-        mBrowserSwitchButton = (Button) view.findViewById(R.id.browser_switch);
+        mBrowserSwitchButton = view.findViewById(R.id.browser_switch);
         mBrowserSwitchButton.setOnClickListener(this);
 
-        mResult = (TextView) view.findViewById(R.id.result);
-        mReturnUrl = (TextView) view.findViewById(R.id.return_url);
+        mResult = view.findViewById(R.id.result);
+        mReturnUrl = view.findViewById(R.id.return_url);
 
         return view;
     }
