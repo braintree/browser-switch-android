@@ -12,7 +12,7 @@ Add the library to your dependencies in your `build.gradle`:
 
 ```groovy
 dependencies {
-  compile 'com.braintreepayments:browser-switch:0.2.0'
+  compile 'com.braintreepayments:browser-switch:0.2.1'
 }
 ```
 

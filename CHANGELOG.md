@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## 0.2.1
+* Fix querying compatible activities by avoiding CATEGORY_DEFAULT
+* Fix JavaScript exception when no compatible activity is available
+
 ## 0.2.0
 
 * Using androidx 1.0.0
