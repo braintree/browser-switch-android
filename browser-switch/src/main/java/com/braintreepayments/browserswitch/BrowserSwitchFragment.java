@@ -127,7 +127,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
             BrowserSwitchResult result = BrowserSwitchResult.ERROR
                     .setErrorMessage("The return url scheme was not set up, incorrectly set up, " +
                             "or more than one Activity on this device defines the same url " +
-                            "scheme in it's Android Manifest. See " +
+                            "scheme in their Android Manifest. See " +
                             "https://github.com/braintree/browser-switch-android for more " +
                             "information on setting up a return url scheme.");
             onBrowserSwitchResult(requestCode, result, null);
