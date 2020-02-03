@@ -160,9 +160,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
 
     private boolean isReturnUrlSetup() {
         Intent intent = new Intent(Intent.ACTION_VIEW)
-                .setData(Uri.parse(getReturnUrlScheme() + "://"))
-                .addCategory(Intent.CATEGORY_DEFAULT)
-                .addCategory(Intent.CATEGORY_BROWSABLE);
+                .setData(Uri.parse(getReturnUrlScheme() + "://"));
 
         return availableActivities(intent).size() == 1;
     }
