@@ -3,9 +3,9 @@ package com.braintreepayments.browserswitch.demo;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class DemoActivity extends FragmentActivity {
+public class DemoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -29,6 +29,12 @@ public class BrowserSwitchRepository {
         });
     }
 
+    public void markPendingRequestAsFinished(long pendingRequestId) {
+        BrowserSwitchDatabase.databaseWriteExecutor.execute(() -> {
+            pendingRequestDao.updatePendingRequest(pendingRequestId, 1);
+        });
+    }
+
     public void deleteAll() {
         BrowserSwitchDatabase.databaseWriteExecutor.execute(() -> {
             pendingRequestDao.deleteAll();

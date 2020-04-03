@@ -17,7 +17,8 @@ public class PendingRequest {
     @ColumnInfo(name = "success")
     private int didFinish;
 
-    public PendingRequest(int requestCode, int didFinish) {
+    public PendingRequest(long id, int requestCode, int didFinish) {
+        this.id = id;
         this.requestCode = requestCode;
         this.didFinish = didFinish;
     }

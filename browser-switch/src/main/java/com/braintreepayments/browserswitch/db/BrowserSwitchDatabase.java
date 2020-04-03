@@ -24,8 +24,9 @@ public abstract class BrowserSwitchDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (BrowserSwitchDatabase.class) {
                 if (INSTANCE == null) {
+                    // TODO: replace name with app id generated string
                     INSTANCE = Room.databaseBuilder(
-                        context.getApplicationContext(), BrowserSwitchDatabase.class, "word_database"
+                        context.getApplicationContext(), BrowserSwitchDatabase.class, "browser_switch_database"
                     )
                     .build();
                 }

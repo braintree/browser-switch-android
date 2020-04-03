@@ -17,7 +17,7 @@ allprojects {
 }
 
 ext {
-    roomVersion = '2.2.1'
-    archLifecycleVersion = '2.2.0'
-    androidxVersion = '1.0.0'
+    appCompatVersion = "1.1.0"
+    annotationVersion = '1.1.0'
+    fragmentVersion = '1.2.4'
 }

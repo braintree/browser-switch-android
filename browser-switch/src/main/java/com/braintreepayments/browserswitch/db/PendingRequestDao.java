@@ -22,4 +22,7 @@ public interface PendingRequestDao {
 
     @Query("DELETE FROM pending_request")
     void deleteAll();
+
+    @Query("UPDATE pending_request SET success = :didFinish WHERE id = :id")
+    void updatePendingRequest(long id, int didFinish);
 }

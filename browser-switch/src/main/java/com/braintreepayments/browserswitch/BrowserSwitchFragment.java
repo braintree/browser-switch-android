@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 /**
  * Abstract Fragment that manages the logic for browser switching.
  */
-public abstract class BrowserSwitchFragment extends Fragment {
+public abstract class BrowserSwitchFragment extends Fragment implements BrowserSwitchListener {
 
     public enum BrowserSwitchResult {
         OK,
@@ -101,8 +101,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param url the url to open.
      */
     public void browserSwitch(int requestCode, String url) {
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        BrowserSwitch.start(requestCode, Uri.parse(url), activity);
+        BrowserSwitch.start(requestCode, Uri.parse(url), this);
 
         // TODO: remove after refactoring
 //        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
