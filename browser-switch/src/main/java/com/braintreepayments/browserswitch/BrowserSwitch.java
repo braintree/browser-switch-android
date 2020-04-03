@@ -35,14 +35,14 @@ public class BrowserSwitch {
         BrowserSwitchRepository repository =
             BrowserSwitchRepository.newInstance(activity.getApplication());
         // TODO: consider renaming to insertAsync
-        repository.insert(new PendingRequest(BrowserSwitchConstants.PENDING_REQUEST_ID, requestCode, 0));
+        repository.insert(new PendingRequest(BrowserSwitchConstants.PENDING_REQUEST_ID, requestCode, uri.toString(), 0));
 
         // TODO: ensure no memory leaks occur here (i.e. make sure we aren't responsible for removing the observer)
         repository.getPendingRequest().observe(lifecycleOwner, pendingRequest -> {
             if (pendingRequest != null) {
                 if (lifecycleOwner instanceof BrowserSwitchListener) {
                     // TODO: notify error if activity is not a browser switch listener
-                    BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment.BrowserSwitchResult.OK;
+                    BrowserSwitchResult result = BrowserSwitchResult.OK;
                     ((BrowserSwitchListener) lifecycleOwner).onBrowserSwitchEvent(new BrowserSwitchEvent(result, requestCode, uri));
                 }
 

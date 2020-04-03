@@ -17,27 +17,7 @@ import androidx.fragment.app.Fragment;
  */
 public abstract class BrowserSwitchFragment extends Fragment implements BrowserSwitchListener {
 
-    public enum BrowserSwitchResult {
-        OK,
-        CANCELED,
-        ERROR;
 
-        private String mErrorMessage;
-
-        public String getErrorMessage() {
-            return mErrorMessage;
-        }
-
-        private BrowserSwitchResult setErrorMessage(String errorMessage) {
-            mErrorMessage = errorMessage;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return name() + " " + getErrorMessage();
-        }
-    }
 
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
