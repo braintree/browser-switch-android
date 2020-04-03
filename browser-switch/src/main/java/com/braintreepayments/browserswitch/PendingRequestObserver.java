@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference;
 public class PendingRequestObserver implements Observer<PendingRequest> {
 
     public static PendingRequestObserver newInstance(BrowserSwitchListener listener) {
-        // avoid leaking context (i.e. Activity, Fragment) by taking a weak reference here
+        // avoid leaking context (e.g. Activity, Fragment) by taking a weak reference here
         return new PendingRequestObserver(new WeakReference<>(listener));
     }
 
@@ -31,11 +31,8 @@ public class PendingRequestObserver implements Observer<PendingRequest> {
     @Override
     public void onChanged(@Nullable PendingRequest pendingRequest) {
         if (pendingRequest != null) {
-            Uri uri = Uri.parse(pendingRequest.getUrl());
-            int requestCode = pendingRequest.getRequestCode();
             BrowserSwitchEvent event =
-                new BrowserSwitchEvent(BrowserSwitchResult.OK, requestCode, uri);
-
+                    BrowserSwitchEvent.from(pendingRequest, BrowserSwitchResult.OK);
             BrowserSwitchListener listener = listenerRef.get();
             listener.onBrowserSwitchEvent(event);
         }
