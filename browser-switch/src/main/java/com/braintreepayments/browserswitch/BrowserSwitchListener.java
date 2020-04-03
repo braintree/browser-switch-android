@@ -1,5 +1,7 @@
 package com.braintreepayments.browserswitch;
 
-public interface BrowserSwitchListener {
+import androidx.lifecycle.LifecycleOwner;
+
+public interface BrowserSwitchListener extends LifecycleOwner {
     void onBrowserSwitchEvent(BrowserSwitchEvent event);
 }

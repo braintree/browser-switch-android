@@ -38,11 +38,12 @@ public class BrowserSwitchTest {
 
         uri = mock(Uri.class);
         intent = mock(Intent.class);
+
         application = mock(Application.class);
+        repository = mock(BrowserSwitchRepository.class);
 
         activity = mock(AppCompatActivity.class);
         applicationContext = mock(Context.class);
-        repository = mock(BrowserSwitchRepository.class);
 
         // Ref: https://stackoverflow.com/a/11837973
     }
