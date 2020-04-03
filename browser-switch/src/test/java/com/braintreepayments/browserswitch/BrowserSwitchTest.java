@@ -1,83 +1,91 @@
 package com.braintreepayments.browserswitch;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
+
+import net.bytebuddy.build.ToStringPlugin;
+
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ChromeCustomTabs.class })
+@PrepareForTest({ BrowserSwitchRepository.class, ChromeCustomTabs.class })
 public class BrowserSwitchTest {
 
     private Uri uri;
     private Intent intent;
 
-    private Context context;
+    private Application application;
+    private BrowserSwitchRepository repository;
+
+    private AppCompatActivity activity;
     private Context applicationContext;
 
     @Before
-    public void setup() {
+    public void beforeEach() {
         PowerMockito.mockStatic(ChromeCustomTabs.class);
+        PowerMockito.mockStatic(BrowserSwitchRepository.class);
 
         uri = mock(Uri.class);
         intent = mock(Intent.class);
+        application = mock(Application.class);
 
-        context = mock(Context.class);
+        activity = mock(AppCompatActivity.class);
         applicationContext = mock(Context.class);
+        repository = mock(BrowserSwitchRepository.class);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
     }
 
     @Test
-    public void start_setsUriOnIntent() {
-        when(context.getApplicationContext()).thenReturn(applicationContext);
+    public void start_configuresIntentForBrowserSwitching() {
+        BrowserSwitch.start(123, uri, activity, intent);
 
-        BrowserSwitch.start(123, uri, context, intent);
         verify(intent).setData(uri);
-    }
-
-    @Test
-    public void start_setsActionViewOnIntent() {
-        when(context.getApplicationContext()).thenReturn(applicationContext);
-
-        BrowserSwitch.start(123, uri, context, intent);
         verify(intent).setAction(Intent.ACTION_VIEW);
-    }
-
-    @Test
-    public void start_setsIntentFlags() {
-        when(context.getApplicationContext()).thenReturn(applicationContext);
-
-        BrowserSwitch.start(123, uri, context, intent);
         verify(intent).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     @Test
     public void start_startsActivityUsingIntent() {
-        when(context.getApplicationContext()).thenReturn(applicationContext);
+        BrowserSwitch.start(123, uri, activity, intent);
 
-        BrowserSwitch.start(123, uri, context, intent);
         verify(applicationContext).startActivity(intent);
     }
 
     @Test
-    public void start_addsChromeCustomTabsExtras_whenAvailable() {
-        when(context.getApplicationContext()).thenReturn(applicationContext);
+    public void start_whenChromeCustomTabsNotAvailable_doesNothing() {
+        BrowserSwitch.start(123, uri, activity, intent);
+
+        verifyStatic(ChromeCustomTabs.class, never());
+        ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
+    }
+
+    @Test
+    public void start_whenChromeCustomTabsAvailable_addsChromeCustomTabs() {
         when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(true);
 
-        BrowserSwitch.start(123, uri, context, intent);
+        BrowserSwitch.start(123, uri, activity, intent);
         verifyStatic(ChromeCustomTabs.class);
         ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
     }

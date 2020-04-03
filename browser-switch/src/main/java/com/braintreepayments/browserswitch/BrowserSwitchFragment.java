@@ -9,6 +9,7 @@ import android.os.Bundle;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -100,12 +101,16 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param url the url to open.
      */
     public void browserSwitch(int requestCode, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        BrowserSwitch.start(requestCode, Uri.parse(url), activity);
 
-        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
-
-        browserSwitch(requestCode, intent);
+        // TODO: remove after refactoring
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
+//
+//        browserSwitch(requestCode, intent);
     }
 
     /**
@@ -116,6 +121,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * @param intent an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
+        // TODO: determine if this is necessary
         if (requestCode == Integer.MIN_VALUE) {
             BrowserSwitchResult result = BrowserSwitchResult.ERROR
                     .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
