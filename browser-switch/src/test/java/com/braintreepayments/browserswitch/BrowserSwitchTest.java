@@ -9,10 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
 
-import net.bytebuddy.build.ToStringPlugin;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -51,14 +48,16 @@ public class BrowserSwitchTest {
         applicationContext = mock(Context.class);
         repository = mock(BrowserSwitchRepository.class);
 
-        when(activity.getApplication()).thenReturn(application);
-        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
-
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        // Ref: https://stackoverflow.com/a/11837973
     }
 
     @Test
     public void start_configuresIntentForBrowserSwitching() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
         BrowserSwitch.start(123, uri, activity, intent);
 
         verify(intent).setData(uri);
@@ -68,6 +67,11 @@ public class BrowserSwitchTest {
 
     @Test
     public void start_startsActivityUsingIntent() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
         BrowserSwitch.start(123, uri, activity, intent);
 
         verify(applicationContext).startActivity(intent);
@@ -75,6 +79,11 @@ public class BrowserSwitchTest {
 
     @Test
     public void start_whenChromeCustomTabsNotAvailable_doesNothing() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
         BrowserSwitch.start(123, uri, activity, intent);
 
         verifyStatic(ChromeCustomTabs.class, never());
@@ -83,7 +92,11 @@ public class BrowserSwitchTest {
 
     @Test
     public void start_whenChromeCustomTabsAvailable_addsChromeCustomTabs() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
         when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(true);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         BrowserSwitch.start(123, uri, activity, intent);
         verifyStatic(ChromeCustomTabs.class);
