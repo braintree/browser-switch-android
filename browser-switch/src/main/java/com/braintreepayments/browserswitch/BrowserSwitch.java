@@ -20,16 +20,18 @@ public class BrowserSwitch {
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, Fragment fragment) {
-        start(requestCode, uri, fragment.getActivity(), fragment, new Intent());
+        BrowserSwitchListener listener = (BrowserSwitchListener) fragment;
+        start(requestCode, uri, fragment.getActivity(), listener, new Intent());
     }
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, FragmentActivity activity) {
-        start(requestCode, uri, activity, activity, new Intent());
+        BrowserSwitchListener listener = (BrowserSwitchListener) activity;
+        start(requestCode, uri, activity, listener, new Intent());
     }
 
     @VisibleForTesting
-    static void start(int requestCode, Uri uri, FragmentActivity activity, LifecycleOwner lifecycleOwner, Intent intent) {
+    static void start(int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener, Intent intent) {
 
         // write request code to db
         BrowserSwitchRepository repository =
@@ -37,21 +39,8 @@ public class BrowserSwitch {
         // TODO: consider renaming to insertAsync
         repository.insert(new PendingRequest(BrowserSwitchConstants.PENDING_REQUEST_ID, requestCode, uri.toString(), 0));
 
-        // TODO: ensure no memory leaks occur here (i.e. make sure we aren't responsible for removing the observer)
-        repository.getPendingRequest().observe(lifecycleOwner, pendingRequest -> {
-            if (pendingRequest != null) {
-                if (lifecycleOwner instanceof BrowserSwitchListener) {
-                    // TODO: notify error if activity is not a browser switch listener
-                    BrowserSwitchResult result = BrowserSwitchResult.OK;
-                    ((BrowserSwitchListener) lifecycleOwner).onBrowserSwitchEvent(new BrowserSwitchEvent(result, requestCode, uri));
-                }
-
-                // delete all pending events now that we've notified completion; this is backwards
-                // compatible with previous versions of browser switch
-                repository.deleteAll();
-                repository.getPendingRequest().removeObservers(lifecycleOwner);
-            }
-        });
+        PendingRequestObserver observer = PendingRequestObserver.newInstance(activity.getApplication(), listener);
+        repository.getPendingRequest().observe(listener, observer);
 
         intent.setData(uri);
         intent.setAction(Intent.ACTION_VIEW);

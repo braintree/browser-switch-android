@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.braintreepayments.browserswitch.BrowserSwitchEvent;
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.BrowserSwitchListener;
+import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
 import androidx.annotation.Nullable;
 
@@ -42,6 +44,7 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
 
     @Override
     public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
+        // TODO: remove when fragment code de-coupled
         mResult.setText("Result: " + result.name());
         mReturnUrl.setText("Return url: " + returnUri);
     }
