@@ -31,10 +31,12 @@ public class PendingRequestObserver implements Observer<PendingRequest> {
     @Override
     public void onChanged(@Nullable PendingRequest pendingRequest) {
         if (pendingRequest != null) {
-            BrowserSwitchEvent event =
-                    BrowserSwitchEvent.from(pendingRequest, BrowserSwitchResult.OK);
             BrowserSwitchListener listener = listenerRef.get();
-            listener.onBrowserSwitchEvent(event);
+            if (listener != null) {
+                BrowserSwitchEvent event =
+                        BrowserSwitchEvent.from(pendingRequest, BrowserSwitchResult.OK);
+                listener.onBrowserSwitchEvent(event);
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ package com.braintreepayments.browserswitch;
 
 import android.net.Uri;
 
-import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
 import com.braintreepayments.browserswitch.db.PendingRequest;
 
 import org.junit.Before;
@@ -20,17 +19,19 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @PrepareForTest({ Uri.class })
 public class BrowserEventTest {
 
-    Uri uri;
-    PendingRequest pendingRequest;
+    private Uri uri;
+    private PendingRequest pendingRequest;
 
     @Before
     public void beforeEach() {
         mockStatic(Uri.class);
+
+        uri = mock(Uri.class);
+        pendingRequest = mock(PendingRequest.class);
     }
 
     @Test
     public void fromPendingRequest() {
-        PendingRequest pendingRequest = mock(PendingRequest.class);
         when(pendingRequest.getRequestCode()).thenReturn(123);
         when(pendingRequest.getUrl()).thenReturn("https://example.com");
         when(Uri.parse("https://example.com")).thenReturn(uri);

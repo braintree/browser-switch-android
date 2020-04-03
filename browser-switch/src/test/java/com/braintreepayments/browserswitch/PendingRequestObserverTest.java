@@ -11,6 +11,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.lang.ref.WeakReference;
 
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -22,13 +23,13 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @PrepareForTest({ BrowserSwitchRepository.class, BrowserSwitchEvent.class })
 public class PendingRequestObserverTest {
 
-    WeakReference<BrowserSwitchListener> listenerRef;
-    BrowserSwitchListener listener;
+    private WeakReference<BrowserSwitchListener> listenerRef;
+    private BrowserSwitchListener listener;
 
-    PendingRequest pendingRequest;
-    BrowserSwitchEvent browserSwitchEvent;
+    private PendingRequest pendingRequest;
+    private BrowserSwitchEvent browserSwitchEvent;
 
-    PendingRequestObserver sut;
+    private PendingRequestObserver sut;
 
     @Before
     public void beforeEach() {
@@ -43,6 +44,29 @@ public class PendingRequestObserverTest {
     }
 
     @Test
+    public void onChanged_whenPendingRequestIsNull_doesNothing() {
+        sut = PendingRequestObserver.newInstance(listenerRef);
+        sut.onChanged(null);
+
+        verify(listener, never()).onBrowserSwitchEvent(any());
+    }
+
+    @Test
+    public void onChange_whenPendingRequestIsNonNull_andListenerIsNull_doesNothing() {
+        when(BrowserSwitchEvent.from(pendingRequest, BrowserSwitchResult.OK)).thenReturn(browserSwitchEvent);
+        sut = PendingRequestObserver.newInstance(listenerRef);
+
+        Exception capturedException = null;
+        try {
+            sut.onChanged(pendingRequest);
+        } catch (Exception e) {
+            capturedException = e;
+        } finally {
+            assertNull(capturedException);
+        }
+    }
+
+    @Test
     public void onChanged_whenPendingRequestIsNonNull_notifiesListenerOfEvent() {
         when(listenerRef.get()).thenReturn(listener);
         when(BrowserSwitchEvent.from(pendingRequest, BrowserSwitchResult.OK)).thenReturn(browserSwitchEvent);
@@ -51,13 +75,5 @@ public class PendingRequestObserverTest {
         sut.onChanged(pendingRequest);
 
         verify(listener).onBrowserSwitchEvent(browserSwitchEvent);
-    }
-
-    @Test
-    public void onChanged_whenPendingRequestIsNull_doesNothing() {
-        sut = PendingRequestObserver.newInstance(listenerRef);
-        sut.onChanged(null);
-
-        verify(listener, never()).onBrowserSwitchEvent(any());
     }
 }
