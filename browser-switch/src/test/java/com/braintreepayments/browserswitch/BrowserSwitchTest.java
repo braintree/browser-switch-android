@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 
@@ -14,6 +15,7 @@ import com.braintreepayments.browserswitch.db.PendingRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -28,6 +30,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @PrepareForTest({ BrowserSwitchRepository.class, ChromeCustomTabs.class, PendingRequestObserver.class })
 public class BrowserSwitchTest {
 
+    private static abstract class ListenerFragment extends Fragment implements BrowserSwitchListener {}
     private static abstract class ListenerFragmentActivity extends FragmentActivity implements BrowserSwitchListener {}
 
     private Uri uri;
@@ -39,8 +42,10 @@ public class BrowserSwitchTest {
     private LiveData<PendingRequest> pendingRequest;
     private PendingRequestObserver pendingRequestObserver;
 
-    private ListenerFragmentActivity activity;
     private Context applicationContext;
+
+    private ListenerFragment fragment;
+    private ListenerFragmentActivity activity;
 
     @Before
     public void beforeEach() {
@@ -54,6 +59,7 @@ public class BrowserSwitchTest {
         application = mock(Application.class);
         repository = mock(BrowserSwitchRepository.class);
 
+        fragment = mock(ListenerFragment.class);
         activity = mock(ListenerFragmentActivity.class);
         applicationContext = mock(Context.class);
 
@@ -91,6 +97,36 @@ public class BrowserSwitchTest {
         BrowserSwitch.start(123, uri, activity, intent);
 
         verify(applicationContext).startActivity(intent);
+    }
+
+    @Test
+    public void start_withFragmentActivity_addsFragmentActivityAsListener() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, activity)).thenReturn(pendingRequestObserver);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, activity, intent);
+        verify(pendingRequest).observe(activity, pendingRequestObserver);
+    }
+
+    @Test
+    public void start_withFragment_addsFragmentAsListener() {
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, fragment)).thenReturn(pendingRequestObserver);
+
+        // Ref: https://github.com/mockito/mockito/wiki/What%27s-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
+        // Ref: https://github.com/powermock/powermock/wiki/mockito#mockito-mock-maker-inline
+        when(fragment.getActivity()).thenReturn(activity);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, fragment, intent);
+        verify(pendingRequest).observe(fragment, pendingRequestObserver);
     }
 
     @Test
