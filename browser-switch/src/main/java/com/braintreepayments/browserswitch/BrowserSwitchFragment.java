@@ -17,8 +17,6 @@ import androidx.fragment.app.Fragment;
  */
 public abstract class BrowserSwitchFragment extends Fragment implements BrowserSwitchListener {
 
-
-
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;

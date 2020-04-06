@@ -1,8 +1,11 @@
 package com.braintreepayments.browserswitch.db;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
+
+import com.braintreepayments.browserswitch.BrowserSwitchConstants;
 
 public class BrowserSwitchRepository {
 
@@ -39,5 +42,10 @@ public class BrowserSwitchRepository {
         BrowserSwitchDatabase.databaseWriteExecutor.execute(() -> {
             pendingRequestDao.deleteAll();
         });
+    }
+
+    public void updatePendingRequest(int requestCode, Uri uri) {
+        // TODO: unit test
+        insert(new PendingRequest(BrowserSwitchConstants.PENDING_REQUEST_ID, requestCode, uri.toString(), 0));
     }
 }

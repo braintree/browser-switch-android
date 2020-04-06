@@ -5,22 +5,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
 
 import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
+import com.braintreepayments.browserswitch.db.PendingRequest;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BrowserSwitchRepository.class, ChromeCustomTabs.class })
+@PrepareForTest({ BrowserSwitchRepository.class, ChromeCustomTabs.class, PendingRequestObserver.class })
 public class BrowserSwitchTest {
+
+    private static abstract class ListenerFragmentActivity extends FragmentActivity implements BrowserSwitchListener {}
 
     private Uri uri;
     private Intent intent;
@@ -28,13 +36,17 @@ public class BrowserSwitchTest {
     private Application application;
     private BrowserSwitchRepository repository;
 
-    private AppCompatActivity activity;
+    private LiveData<PendingRequest> pendingRequest;
+    private PendingRequestObserver pendingRequestObserver;
+
+    private ListenerFragmentActivity activity;
     private Context applicationContext;
 
     @Before
     public void beforeEach() {
-        PowerMockito.mockStatic(ChromeCustomTabs.class);
-        PowerMockito.mockStatic(BrowserSwitchRepository.class);
+        mockStatic(ChromeCustomTabs.class);
+        mockStatic(BrowserSwitchRepository.class);
+        mockStatic(PendingRequestObserver.class);
 
         uri = mock(Uri.class);
         intent = mock(Intent.class);
@@ -42,61 +54,73 @@ public class BrowserSwitchTest {
         application = mock(Application.class);
         repository = mock(BrowserSwitchRepository.class);
 
-        activity = mock(AppCompatActivity.class);
+        activity = mock(ListenerFragmentActivity.class);
         applicationContext = mock(Context.class);
+
+        pendingRequest = (LiveData<PendingRequest>) mock(LiveData.class);
+        pendingRequestObserver = mock(PendingRequestObserver.class);
 
         // Ref: https://stackoverflow.com/a/11837973
     }
 
     @Test
     public void start_configuresIntentForBrowserSwitching() {
-//        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
-//
-//        when(activity.getApplication()).thenReturn(application);
-//        when(activity.getApplicationContext()).thenReturn(applicationContext);
-//
-//        BrowserSwitch.start(123, uri, activity, intent);
-//
-//        verify(intent).setData(uri);
-//        verify(intent).setAction(Intent.ACTION_VIEW);
-//        verify(intent).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, activity)).thenReturn(pendingRequestObserver);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, activity, intent);
+
+        verify(intent).setData(uri);
+        verify(intent).setAction(Intent.ACTION_VIEW);
+        verify(intent).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     @Test
     public void start_startsActivityUsingIntent() {
-//        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
-//
-//        when(activity.getApplication()).thenReturn(application);
-//        when(activity.getApplicationContext()).thenReturn(applicationContext);
-//
-//        BrowserSwitch.start(123, uri, activity, intent);
-//
-//        verify(applicationContext).startActivity(intent);
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, activity)).thenReturn(pendingRequestObserver);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, activity, intent);
+
+        verify(applicationContext).startActivity(intent);
     }
 
     @Test
     public void start_whenChromeCustomTabsNotAvailable_doesNothing() {
-//        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
-//
-//        when(activity.getApplication()).thenReturn(application);
-//        when(activity.getApplicationContext()).thenReturn(applicationContext);
-//
-//        BrowserSwitch.start(123, uri, activity, intent);
-//
-//        verifyStatic(ChromeCustomTabs.class, never());
-//        ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, activity)).thenReturn(pendingRequestObserver);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, activity, intent);
+
+        verifyStatic(ChromeCustomTabs.class, never());
+        ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
     }
 
     @Test
     public void start_whenChromeCustomTabsAvailable_addsChromeCustomTabs() {
-//        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
-//        when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(true);
-//
-//        when(activity.getApplication()).thenReturn(application);
-//        when(activity.getApplicationContext()).thenReturn(applicationContext);
-//
-//        BrowserSwitch.start(123, uri, activity, intent);
-//        verifyStatic(ChromeCustomTabs.class);
-//        ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
+        when(BrowserSwitchRepository.newInstance(application)).thenReturn(repository);
+        when(PendingRequestObserver.newInstance(application, activity)).thenReturn(pendingRequestObserver);
+        when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(true);
+
+        when(activity.getApplication()).thenReturn(application);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(repository.getPendingRequest()).thenReturn(pendingRequest);
+
+        BrowserSwitch.start(123, uri, activity, intent);
+
+        verifyStatic(ChromeCustomTabs.class);
+        ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
     }
 }

@@ -20,24 +20,31 @@ public class BrowserSwitch {
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, Fragment fragment) {
-        BrowserSwitchListener listener = (BrowserSwitchListener) fragment;
-        start(requestCode, uri, fragment.getActivity(), listener, new Intent());
+        start(requestCode, uri, fragment, new Intent());
     }
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, FragmentActivity activity) {
-        BrowserSwitchListener listener = (BrowserSwitchListener) activity;
-        start(requestCode, uri, activity, listener, new Intent());
+        start(requestCode, uri, activity, new Intent());
     }
 
     @VisibleForTesting
-    static void start(int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener, Intent intent) {
+    static void start(int requestCode, Uri uri, Fragment fragment, Intent intent) {
+        BrowserSwitchListener listener = (BrowserSwitchListener) fragment;
+        start(requestCode, uri, fragment.getActivity(), listener, intent);
+    }
+
+    @VisibleForTesting
+    static void start(int requestCode, Uri uri, FragmentActivity activity, Intent intent) {
+        BrowserSwitchListener listener = (BrowserSwitchListener) activity;
+        start(requestCode, uri, activity, listener, intent);
+    }
+
+    private static void start(int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener, Intent intent) {
 
         // write request code to db
-        BrowserSwitchRepository repository =
-            BrowserSwitchRepository.newInstance(activity.getApplication());
-        // TODO: consider renaming to insertAsync
-        repository.insert(new PendingRequest(BrowserSwitchConstants.PENDING_REQUEST_ID, requestCode, uri.toString(), 0));
+        BrowserSwitchRepository repository = BrowserSwitchRepository.newInstance(activity.getApplication());
+        repository.updatePendingRequest(requestCode, uri);
 
         PendingRequestObserver observer = PendingRequestObserver.newInstance(activity.getApplication(), listener);
         repository.getPendingRequest().observe(listener, observer);
