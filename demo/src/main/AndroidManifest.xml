@@ -5,26 +5,26 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo"
-        android:theme="@style/AppTheme"
-        >
-
+        android:theme="@style/AppTheme">
         <activity android:name=".DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
+        <activity
+            android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
             android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <data android:scheme="${applicationId}.browserswitch"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="${applicationId}.browserswitch" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

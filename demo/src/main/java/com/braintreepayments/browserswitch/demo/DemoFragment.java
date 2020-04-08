@@ -43,15 +43,16 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     }
 
     @Override
+    public void onBrowserSwitchEvent(BrowserSwitchEvent event) {
+        mResult.setText("Result: " + event.result.name());
+        mReturnUrl.setText("Return url: " + event.returnUri);
+    }
+
+    @Override
     public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
         // TODO: remove when fragment code de-coupled
         mResult.setText("Result: " + result.name());
         mReturnUrl.setText("Return url: " + returnUri);
     }
 
-    @Override
-    public void onBrowserSwitchEvent(BrowserSwitchEvent event) {
-        mResult.setText("Result: " + event.result.name());
-        mReturnUrl.setText("Return url: " + event.returnUri);
-    }
 }

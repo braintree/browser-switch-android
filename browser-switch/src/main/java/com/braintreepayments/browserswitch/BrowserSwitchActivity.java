@@ -29,11 +29,11 @@ public class BrowserSwitchActivity extends AppCompatActivity {
         // TODO: consider renaming to insertAsync
         repository.markPendingRequestAsFinished(BrowserSwitchConstants.PENDING_REQUEST_ID);
 
-//        sReturnUri = null;
-//        if (getIntent() != null && getIntent().getData() != null) {
-//            sReturnUri = getIntent().getData();
-//        }
-//
+        sReturnUri = null;
+        if (getIntent() != null && getIntent().getData() != null) {
+            sReturnUri = getIntent().getData();
+        }
+
         finish();
     }
 

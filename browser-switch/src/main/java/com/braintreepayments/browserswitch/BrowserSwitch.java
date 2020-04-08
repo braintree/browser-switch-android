@@ -7,23 +7,31 @@ import android.net.Uri;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
-import com.braintreepayments.browserswitch.db.PendingRequest;
 
 public class BrowserSwitch {
 
     private BrowserSwitch() {
         throw new AssertionError("BrowserSwitch should not be instantiated.");
-    };
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static BrowserSwitchEvent getResult() {
+        // TODO: implement
+        return null;
+    }
+
+    public static String getReturnUrlScheme(Context context) {
+        // TODO: implement
+        return null;
+    }
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, Fragment fragment) {
         start(requestCode, uri, fragment, new Intent());
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, FragmentActivity activity) {
         start(requestCode, uri, activity, new Intent());
     }

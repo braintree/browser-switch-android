@@ -15,7 +15,6 @@ import com.braintreepayments.browserswitch.db.PendingRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -158,5 +157,11 @@ public class BrowserSwitchTest {
 
         verifyStatic(ChromeCustomTabs.class);
         ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
+    }
+
+    @Test
+    public void getReturnUrlScheme_returnsUrlSchemeUsingPackageNameFromContext() {
+        when(applicationContext.getPackageName()).thenReturn("")
+        BrowserSwitch.getReturnUrlScheme(applicationContext);
     }
 }

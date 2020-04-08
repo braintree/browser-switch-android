@@ -29,24 +29,22 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         if (mContext == null) {
             mContext = getActivity().getApplicationContext();
         }
-
-        if (savedInstanceState != null) {
-            mRequestCode = savedInstanceState.getInt(EXTRA_REQUEST_CODE);
-        } else {
-            mRequestCode = Integer.MIN_VALUE;
-        }
+//
+//        if (savedInstanceState != null) {
+//            mRequestCode = savedInstanceState.getInt(EXTRA_REQUEST_CODE);
+//        } else {
+//            mRequestCode = Integer.MIN_VALUE;
+//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (isBrowserSwitching()) {
-            Uri returnUri = BrowserSwitchActivity.getReturnUri();
-
-            int requestCode = mRequestCode;
-            mRequestCode = Integer.MIN_VALUE;
-            BrowserSwitchActivity.clearReturnUri();
+        BrowserSwitchEvent result = BrowserSwitch.getResult();
+        if (result != null) {
+            Uri returnUri = result.returnUri;
+            int requestCode = result.requestCode;
 
             if (returnUri != null) {
                 onBrowserSwitchResult(requestCode, BrowserSwitchResult.OK, returnUri);
@@ -54,12 +52,26 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
                 onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
             }
         }
+
+//        if (isBrowserSwitching()) {
+//            Uri returnUri = BrowserSwitchActivity.getReturnUri();
+//
+//            int requestCode = mRequestCode;
+//            mRequestCode = Integer.MIN_VALUE;
+//            BrowserSwitchActivity.clearReturnUri();
+//
+//            if (returnUri != null) {
+//                onBrowserSwitchResult(requestCode, BrowserSwitchResult.OK, returnUri);
+//            } else {
+//                onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
+//            }
+//        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(EXTRA_REQUEST_CODE, mRequestCode);
+//        outState.putInt(EXTRA_REQUEST_CODE, mRequestCode);
     }
 
     /**
@@ -68,7 +80,8 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+        return BrowserSwitch.getReturnUrlScheme();
+//        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
     }
 
     /**
@@ -122,7 +135,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
             return;
         }
 
-        mRequestCode = requestCode;
+//        mRequestCode = requestCode;
         mContext.startActivity(intent);
     }
 
@@ -137,9 +150,9 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     public abstract void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
                                                @Nullable Uri returnUri);
 
-    private boolean isBrowserSwitching() {
-        return mRequestCode != Integer.MIN_VALUE;
-    }
+//    private boolean isBrowserSwitching() {
+//        return mRequestCode != Integer.MIN_VALUE;
+//    }
 
     private boolean isReturnUrlSetup() {
         Intent intent = new Intent(Intent.ACTION_VIEW)
