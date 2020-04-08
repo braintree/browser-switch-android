@@ -15,7 +15,7 @@ import com.braintreepayments.browserswitch.db.PendingRequest;
  * Activity used to receive the response from a browser switch. This Activity contains no UI and
  * finishes during {@link Activity#onCreate(Bundle)}.
  */
-public class BrowserSwitchActivity extends AppCompatActivity {
+public class BrowserSwitchActivity extends Activity {
 
     private static Uri sReturnUri;
 

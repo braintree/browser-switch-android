@@ -160,6 +160,8 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void onSaveInstanceState_savesStateWhenNotBrowserSwitching() {
         Bundle bundle = new Bundle();
+        bundle.putInt("com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE", Integer.MAX_VALUE);
+
         mFragment.onSaveInstanceState(bundle);
 
         assertEquals(Integer.MIN_VALUE,

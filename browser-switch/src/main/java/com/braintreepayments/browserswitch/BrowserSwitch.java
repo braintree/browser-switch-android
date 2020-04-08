@@ -23,8 +23,7 @@ public class BrowserSwitch {
     }
 
     public static String getReturnUrlScheme(Context context) {
-        // TODO: implement
-        return null;
+        return context.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
     }
 
     @SuppressWarnings("WeakerAccess")
