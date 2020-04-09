@@ -83,14 +83,14 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onCreate_restoresSavedInstanceState() {
-        mFragment.mRequestCode = 42;
+        mFragment.setRequestCode(42);
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
-        mFragment.mRequestCode = 0;
+        mFragment.setRequestCode(0);
 
         mFragment.onCreate(bundle);
 
-        assertEquals(42, mFragment.mRequestCode);
+        assertEquals(42, mFragment.getRequestCode());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.onResume();
 
-        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
+        assertEquals(Integer.MIN_VALUE, mFragment.getRequestCode());
     }
 
     @Test
@@ -170,7 +170,7 @@ public class BrowserSwitchFragmentTest {
 
     @Test
     public void onSaveInstanceState_savesStateWhenBrowserSwitching() {
-        mFragment.mRequestCode = 42;
+        mFragment.setRequestCode(42);
 
         Bundle bundle = new Bundle();
         mFragment.onSaveInstanceState(bundle);
@@ -187,11 +187,11 @@ public class BrowserSwitchFragmentTest {
     public void browserSwitch_setsRequestCode() {
         mockContext(returnIntent());
         mockContext(switchIntent("http://example.com/"));
-        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
+        assertEquals(Integer.MIN_VALUE, mFragment.getRequestCode());
 
         mFragment.browserSwitch(42, "http://example.com/");
 
-        assertEquals(42, mFragment.mRequestCode);
+        assertEquals(42, mFragment.getRequestCode());
     }
 
     @Test
@@ -211,11 +211,11 @@ public class BrowserSwitchFragmentTest {
     public void browserSwitch_withIntentSetsRequestCode() {
         mockContext(returnIntent());
         mockContext(switchIntent("http://example.com/"));
-        assertEquals(Integer.MIN_VALUE, mFragment.mRequestCode);
+        assertEquals(Integer.MIN_VALUE, mFragment.getRequestCode());
 
         mFragment.browserSwitch(42, switchIntent("http://example.com/"));
 
-        assertEquals(42, mFragment.mRequestCode);
+        assertEquals(42, mFragment.getRequestCode());
     }
 
     @Test
@@ -320,7 +320,7 @@ public class BrowserSwitchFragmentTest {
     private void handleBrowserSwitchResponse(int requestCode, String url) {
         Robolectric.buildActivity(BrowserSwitchActivity.class,
                 new Intent(Intent.ACTION_VIEW, Uri.parse(url))).setup();
-        mFragment.mRequestCode = requestCode;
+        mFragment.setRequestCode(requestCode);
     }
 
     private Intent returnIntent() {

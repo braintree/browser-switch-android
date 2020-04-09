@@ -19,7 +19,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     protected Context mContext;
-    protected int mRequestCode;
+    private int mRequestCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,6 +149,14 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     public abstract void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
                                                @Nullable Uri returnUri);
+
+    public int getRequestCode() {
+        return mRequestCode;
+    }
+
+    public void setRequestCode(int newCode) {
+        mRequestCode = newCode;
+    }
 
     private boolean isBrowserSwitching() {
         return mRequestCode != Integer.MIN_VALUE;
