@@ -50,7 +50,7 @@ public class BrowserSwitchFragmentTest {
         when(mockContext.getPackageManager()).thenReturn(mockPackageManager);
         when(mockContext.getPackageName()).thenReturn("com.braintreepayments.browserswitch");
 
-        mFragment.mContext = mockContext;
+        mFragment.setContext(mockContext);
 
         mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
@@ -65,20 +65,20 @@ public class BrowserSwitchFragmentTest {
                 .add(fragment, "test-fragment")
                 .commit();
 
-        assertEquals(mActivity.getApplicationContext(), fragment.mContext);
+        assertEquals(mActivity.getApplicationContext(), fragment.getContext());
     }
 
     @Test
     public void onCreate_doesNotOverrideContextIfAlreadySet() {
         mFragment = new TestBrowserSwitchFragment();
         Context context = mock(Context.class);
-        mFragment.mContext = context;
+        mFragment.setContext(context);
 
         mActivity.getSupportFragmentManager().beginTransaction()
                 .add(mFragment, "test-fragment")
                 .commit();
 
-        assertEquals(context, mFragment.mContext);
+        assertEquals(context, mFragment.getContext());
     }
 
     @Test
@@ -202,7 +202,7 @@ public class BrowserSwitchFragmentTest {
         mFragment.browserSwitch(42, "http://example.com/");
 
         ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
-        verify(mFragment.mContext).startActivity(captor.capture());
+        verify(mFragment.getContext()).startActivity(captor.capture());
         assertEquals("http://example.com/", captor.getValue().getData().toString());
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, captor.getValue().getFlags());
     }
@@ -227,7 +227,7 @@ public class BrowserSwitchFragmentTest {
 
         mFragment.browserSwitch(42, switchIntent);
 
-        verify(mFragment.mContext).startActivity(switchIntent);
+        verify(mFragment.getContext()).startActivity(switchIntent);
     }
 
     @Test
@@ -293,7 +293,7 @@ public class BrowserSwitchFragmentTest {
         Intent browserSwitchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com/"))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        when(mFragment.mContext.getPackageManager().queryIntentActivities(eq(browserSwitchIntent), anyInt()))
+        when(mFragment.getContext().getPackageManager().queryIntentActivities(eq(browserSwitchIntent), anyInt()))
                 .thenReturn(Collections.<ResolveInfo>emptyList());
 
         mFragment.browserSwitch(42, browserSwitchIntent);
@@ -313,7 +313,7 @@ public class BrowserSwitchFragmentTest {
             }
         };
 
-        when(mFragment.mContext.getPackageManager().queryIntentActivities(argThat(intentMatcher), anyInt()))
+        when(mFragment.getContext().getPackageManager().queryIntentActivities(argThat(intentMatcher), anyInt()))
                 .thenReturn(Collections.singletonList(new ResolveInfo()));
     }
 
