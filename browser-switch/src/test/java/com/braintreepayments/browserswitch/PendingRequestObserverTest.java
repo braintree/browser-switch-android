@@ -8,6 +8,7 @@ import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
 import com.braintreepayments.browserswitch.db.PendingRequest;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BrowserSwitchRepository.class, BrowserSwitchEvent.class })
 public class PendingRequestObserverTest {

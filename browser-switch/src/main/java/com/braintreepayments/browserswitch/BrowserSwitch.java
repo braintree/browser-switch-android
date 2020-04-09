@@ -3,6 +3,7 @@ package com.braintreepayments.browserswitch;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
@@ -12,27 +13,24 @@ import com.braintreepayments.browserswitch.db.BrowserSwitchRepository;
 
 public class BrowserSwitch {
 
-    private BrowserSwitch() {
-        throw new AssertionError("BrowserSwitch should not be instantiated.");
+    private int mRequestCode;
+    private Context mContext;
+
+    public void setRequestCode(int newCode) {
+        mRequestCode = newCode;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    public static BrowserSwitchEvent getResult() {
-        // TODO: implement
-        return null;
+    public int getRequestCode() {
+        return mRequestCode;
     }
 
-    public static String getReturnUrlScheme(Context context) {
-        return context.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+    public static String getReturnUrlScheme() {
+        return BuildConfig.APPLICATION_ID + ".browserswitch";
     }
 
     @SuppressWarnings("WeakerAccess")
     public static void start(int requestCode, Uri uri, Fragment fragment) {
         start(requestCode, uri, fragment, new Intent());
-    }
-
-    public static void start(int requestCode, Uri uri, FragmentActivity activity) {
-        start(requestCode, uri, activity, new Intent());
     }
 
     @VisibleForTesting
@@ -66,5 +64,38 @@ public class BrowserSwitch {
         }
 
         applicationContext.startActivity(intent);
+    }
+
+    // TODO: Do we want context here? Can we delete it?
+    public void setContext(Context newContext) {
+        mContext = newContext;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public void onCreate(FragmentActivity activity, int requestCode) {
+        if (getContext() == null) {
+            setContext(activity.getApplicationContext());
+        }
+
+        setRequestCode(requestCode);
+    }
+
+    public void onResume() {
+        if (isBrowserSwitching()) {
+            Uri returnUri = BrowserSwitchActivity.getReturnUri();
+
+            int requestCode = getRequestCode();
+//            mRequestCode = Integer.MIN_VALUE;
+            BrowserSwitchActivity.clearReturnUri();
+
+            if (returnUri != null) {
+                onBrowserSwitchResult(requestCode, BrowserSwitchResult.OK, returnUri);
+            } else {
+                onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
+            }
+        }
     }
 }

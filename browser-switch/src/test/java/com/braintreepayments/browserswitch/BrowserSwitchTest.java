@@ -162,6 +162,6 @@ public class BrowserSwitchTest {
     @Test
     public void getReturnUrlScheme_returnsUrlSchemeUsingPackageNameFromContext() {
         when(applicationContext.getPackageName()).thenReturn("");
-        BrowserSwitch.getReturnUrlScheme(applicationContext);
+        BrowserSwitch.getReturnUrlScheme();
     }
 }

@@ -10,37 +10,39 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Abstract Fragment that manages the logic for browser switching.
  */
 public abstract class BrowserSwitchFragment extends Fragment implements BrowserSwitchListener {
 
-    private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
+    public static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
-    private Context mContext;
-    private int mRequestCode;
+    private final BrowserSwitch mBrowserSwitch;
+
+    public BrowserSwitchFragment() {
+        mBrowserSwitch = new BrowserSwitch();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (mContext == null) {
-            mContext = getActivity().getApplicationContext();
-        }
+        FragmentActivity activity = getActivity();
 
         if (savedInstanceState != null) {
-            mRequestCode = savedInstanceState.getInt(EXTRA_REQUEST_CODE);
+            mBrowserSwitch.onCreate(activity, savedInstanceState.getInt(BrowserSwitchFragment.EXTRA_REQUEST_CODE));
         } else {
-            mRequestCode = Integer.MIN_VALUE;
+            mBrowserSwitch.onCreate(activity, Integer.MIN_VALUE);
         }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        BrowserSwitchEvent result = BrowserSwitch.getResult();
+//        BrowserSwitchEvent result = BrowserSwitch.getResult();
 //        if (result != null) {
 //            Uri returnUri = result.returnUri;
 //            int requestCode = result.requestCode;
@@ -52,27 +54,13 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
 //            }
 //        }
 
-
-
-        if (isBrowserSwitching()) {
-            Uri returnUri = BrowserSwitchActivity.getReturnUri();
-
-            int requestCode = mRequestCode;
-//            mRequestCode = Integer.MIN_VALUE;
-            BrowserSwitchActivity.clearReturnUri();
-
-            if (returnUri != null) {
-                onBrowserSwitchResult(requestCode, BrowserSwitchResult.OK, returnUri);
-            } else {
-                onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
-            }
-        }
+        mBrowserSwitch.onResume();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(EXTRA_REQUEST_CODE, mRequestCode);
+        outState.putInt(EXTRA_REQUEST_CODE, getRequestCode());
     }
 
     /**
@@ -81,7 +69,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return BrowserSwitch.getReturnUrlScheme(mContext);
+        return BrowserSwitch.getReturnUrlScheme();
     }
 
     /**
@@ -98,7 +86,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
+        ChromeCustomTabs.addChromeCustomTabsExtras(getContext(), intent);
 
         browserSwitch(requestCode, intent);
     }
@@ -135,8 +123,8 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
             return;
         }
 
-        mRequestCode = requestCode;
-        mContext.startActivity(intent);
+        setRequestCode(requestCode);
+        getContext().startActivity(intent);
     }
 
     /**
@@ -151,23 +139,23 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
                                                @Nullable Uri returnUri);
 
     public int getRequestCode() {
-        return mRequestCode;
+        return mBrowserSwitch.getRequestCode();
     }
 
     public void setRequestCode(int newCode) {
-        mRequestCode = newCode;
+        mBrowserSwitch.setRequestCode(newCode);
     }
 
     public Context getContext() {
-        return mContext;
+        return mBrowserSwitch.getContext();
     }
 
     public void setContext(Context newContext) {
-        mContext = newContext;
+        mBrowserSwitch.setContext(newContext);
     }
 
     private boolean isBrowserSwitching() {
-        return mRequestCode != Integer.MIN_VALUE;
+        return getRequestCode() != Integer.MIN_VALUE;
     }
 
     private boolean isReturnUrlSetup() {
@@ -180,7 +168,8 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     }
 
     private List<ResolveInfo> availableActivities(Intent intent) {
-        return mContext.getPackageManager()
+        return getContext()
+                .getPackageManager()
                 .queryIntentActivities(intent, 0);
     }
 }
