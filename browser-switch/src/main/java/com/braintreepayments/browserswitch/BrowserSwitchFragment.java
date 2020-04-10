@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 /**
  * Abstract Fragment that manages the logic for browser switching.
  */
-public abstract class BrowserSwitchFragment extends Fragment {
+public abstract class BrowserSwitchFragment extends Fragment implements BrowserSwitchListener {
 
     private final BrowserSwitch mBrowserSwitch;
 
@@ -99,7 +99,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * with the given url.
      *
      * @param requestCode the request code used to differentiate requests from one another.
-     * @param url the url to open.
+     * @param url         the url to open.
      */
     public void browserSwitch(int requestCode, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -115,21 +115,9 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * with the given intent.
      *
      * @param requestCode the request code used to differentiate requests from one another.
-     * @param intent an {@link Intent} containing a url to open.
+     * @param intent      an {@link Intent} containing a url to open.
      */
     public void browserSwitch(int requestCode, Intent intent) {
         mBrowserSwitch.browserSwitch(requestCode, intent);
     }
-
-    /**
-     * The result of a browser switch will be returned in this method.
-     *
-     * @param requestCode the request code used to start this completed request.
-     * @param result The state of the result, one of {@link BrowserSwitchResult#OK},
-     *     {@link BrowserSwitchResult#CANCELED} or {@link BrowserSwitchResult#ERROR}.
-     * @param returnUri The return uri. {@code null} unless the result is {@link BrowserSwitchResult#OK}.
-     */
-    public abstract void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
-                                               @Nullable Uri returnUri);
-
 }

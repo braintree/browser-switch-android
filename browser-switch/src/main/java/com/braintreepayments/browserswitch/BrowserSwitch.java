@@ -9,12 +9,12 @@ import android.os.Bundle;
 import java.util.List;
 
 class BrowserSwitch {
-    private final BrowserSwitchFragment mListener;
+    private final BrowserSwitchListener mListener;
     private Context mContext;
     private int mRequestCode;
 
-    public BrowserSwitch(BrowserSwitchFragment browserSwitchFragment) {
-        mListener = browserSwitchFragment;
+    public BrowserSwitch(BrowserSwitchListener listener) {
+        mListener = listener;
     }
 
     public Context getContext() {
