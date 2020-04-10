@@ -16,31 +16,27 @@ class BrowserSwitch {
         mListener = listener;
     }
 
-    public Context getContext() {
+    Context getContext() {
         return mContext;
     }
 
-    public void setContext(Context context) {
+    void setContext(Context context) {
         mContext = context;
     }
 
-    public int getRequestCode() {
+    int getRequestCode() {
         return mRequestCode;
     }
 
-    public void setRequestCode(int newRequestCode) {
+    void setRequestCode(int newRequestCode) {
         mRequestCode = newRequestCode;
     }
 
-    public void onCreate(BrowserSwitchData data) {
+    void onCreate(BrowserSwitchData data) {
         setRequestCode(data.getRequestCode());
     }
 
-    public boolean isBrowserSwitching() {
-        return getRequestCode() != Integer.MIN_VALUE;
-    }
-
-    public void onResume() {
+    void onResume() {
         if (isBrowserSwitching()) {
             Uri returnUri = BrowserSwitchActivity.getReturnUri();
 
@@ -56,7 +52,7 @@ class BrowserSwitch {
         }
     }
 
-    public void onSaveInstanceState(BrowserSwitchData data) {
+    void onSaveInstanceState(BrowserSwitchData data) {
         data.setRequestCode(getRequestCode());
     }
 
@@ -95,6 +91,10 @@ class BrowserSwitch {
         getContext().startActivity(intent);
     }
 
+    private boolean isBrowserSwitching() {
+        return getRequestCode() != Integer.MIN_VALUE;
+    }
+
     private boolean isReturnUrlSetup() {
         Intent intent = new Intent(Intent.ACTION_VIEW)
                 .setData(Uri.parse(getReturnUrlScheme() + "://"))
@@ -114,7 +114,7 @@ class BrowserSwitch {
      * scheme should be used to build a return url and passed to the target web page via a query
      * param when browser switching.
      */
-    public String getReturnUrlScheme() {
+    String getReturnUrlScheme() {
         return getContext().getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
     }
 }
