@@ -90,7 +90,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return getContext().getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+        return mBrowserSwitch.getReturnUrlScheme();
     }
 
     /**
