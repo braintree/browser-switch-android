@@ -1,10 +1,9 @@
 package com.braintreepayments.browserswitch;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 /**
  * <a href="https://developer.android.com/guide/topics/manifest/activity-element.html#lmode">singleTask</a>
@@ -13,32 +12,15 @@ import androidx.annotation.Nullable;
  */
 public class BrowserSwitchActivity extends Activity {
 
-    private static Uri sReturnUri;
+    @VisibleForTesting
+    // TODO: Refactor browser-switch-android to allow injection of a custom url scheme
+    // via manifest. Ref: https://developer.android.com/studio/build/manifest-build-variables
+    BrowserSwitchClient browserSwitchClient = BrowserSwitchClient.newInstance(null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sReturnUri = null;
-        if (getIntent() != null && getIntent().getData() != null) {
-            sReturnUri = getIntent().getData();
-        }
-
+        browserSwitchClient.captureResult(getIntent(), this);
         finish();
-    }
-
-    /**
-     * @return the uri returned from the browser switch, or {@code null}.
-     */
-    @Nullable
-    public static Uri getReturnUri() {
-        return sReturnUri;
-    }
-
-    /**
-     * Clears the return uri.
-     */
-    public static void clearReturnUri() {
-        sReturnUri = null;
     }
 }

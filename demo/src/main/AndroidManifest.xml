@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.braintreepayments.browserswitch.demo">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.braintreepayments.browserswitch.demo"
+    >
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="Browser Switch Demo">
-
+        android:label="Browser Switch Demo"
+        android:theme="@style/AppTheme"
+        >
         <activity android:name=".DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -13,8 +16,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
-            android:launchMode="singleTask">
+        <activity
+            android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
+            android:launchMode="singleTask"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <data android:scheme="${applicationId}.browserswitch"/>

@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.6.1'
         classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
     }
 }
@@ -17,5 +17,7 @@ allprojects {
 }
 
 ext {
-    androidxVersion = '1.0.0'
+    appCompatVersion = "1.1.0"
+    annotationVersion = '1.1.0'
+    fragmentVersion = '1.2.4'
 }

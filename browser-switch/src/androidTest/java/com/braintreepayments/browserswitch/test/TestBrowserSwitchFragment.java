@@ -2,10 +2,10 @@ package com.braintreepayments.browserswitch.test;
 
 import android.net.Uri;
 
+import androidx.annotation.Nullable;
+
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
-
-import androidx.annotation.Nullable;
 
 public class TestBrowserSwitchFragment extends BrowserSwitchFragment {
 
@@ -15,8 +15,7 @@ public class TestBrowserSwitchFragment extends BrowserSwitchFragment {
     public Uri returnUri;
 
     @Override
-    public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
-                                      @Nullable Uri returnUri) {
+    public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
         onBrowserSwitchResultCalled = true;
         this.requestCode = requestCode;
         this.result = result;

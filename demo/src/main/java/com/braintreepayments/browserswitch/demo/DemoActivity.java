@@ -3,10 +3,10 @@ package com.braintreepayments.browserswitch.demo;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-public class DemoActivity extends FragmentActivity {
+public class DemoActivity extends AppCompatActivity {
 
     private static final String FRAGMENT_TAG = DemoFragment.class.getSimpleName();
 
