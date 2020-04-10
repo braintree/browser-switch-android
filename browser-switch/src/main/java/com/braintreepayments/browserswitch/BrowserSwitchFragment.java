@@ -16,20 +16,26 @@ import androidx.fragment.app.Fragment;
  */
 public abstract class BrowserSwitchFragment extends Fragment {
 
+    private final BrowserSwitch mBrowserSwitch;
+
     public void setContext(Context context) {
-        mContext = context;
+        mBrowserSwitch.setContext(context);
     }
 
     public Context getContext() {
-        return mContext;
+        return mBrowserSwitch.getContext();
     }
 
     public void setRequestCode(int newRequestCode) {
-        mRequestCode = newRequestCode;
+        mBrowserSwitch.setRequestCode(newRequestCode);
     }
 
     public int getRequestCode() {
-        return mRequestCode;
+        return mBrowserSwitch.getRequestCode();
+    }
+
+    public BrowserSwitchFragment() {
+        mBrowserSwitch = new BrowserSwitch();
     }
 
     public enum BrowserSwitchResult {
@@ -55,9 +61,6 @@ public abstract class BrowserSwitchFragment extends Fragment {
     }
 
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
-
-    private Context mContext;
-    private int mRequestCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
