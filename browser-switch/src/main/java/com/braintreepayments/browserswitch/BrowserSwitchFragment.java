@@ -24,6 +24,14 @@ public abstract class BrowserSwitchFragment extends Fragment {
         return mContext;
     }
 
+    public void setRequestCode(int newRequestCode) {
+        mRequestCode = newRequestCode;
+    }
+
+    public int getRequestCode() {
+        return mRequestCode;
+    }
+
     public enum BrowserSwitchResult {
         OK,
         CANCELED,
@@ -49,7 +57,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
     private Context mContext;
-    protected int mRequestCode;
+    private int mRequestCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,9 +68,9 @@ public abstract class BrowserSwitchFragment extends Fragment {
         }
 
         if (savedInstanceState != null) {
-            mRequestCode = savedInstanceState.getInt(EXTRA_REQUEST_CODE);
+            setRequestCode(savedInstanceState.getInt(EXTRA_REQUEST_CODE));
         } else {
-            mRequestCode = Integer.MIN_VALUE;
+            setRequestCode(Integer.MIN_VALUE);
         }
     }
 
@@ -73,8 +81,8 @@ public abstract class BrowserSwitchFragment extends Fragment {
         if (isBrowserSwitching()) {
             Uri returnUri = BrowserSwitchActivity.getReturnUri();
 
-            int requestCode = mRequestCode;
-            mRequestCode = Integer.MIN_VALUE;
+            int requestCode = getRequestCode();
+            setRequestCode(Integer.MIN_VALUE);
             BrowserSwitchActivity.clearReturnUri();
 
             if (returnUri != null) {
@@ -88,7 +96,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(EXTRA_REQUEST_CODE, mRequestCode);
+        outState.putInt(EXTRA_REQUEST_CODE, getRequestCode());
     }
 
     /**
@@ -147,7 +155,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
             return;
         }
 
-        mRequestCode = requestCode;
+        setRequestCode(requestCode);
         getContext().startActivity(intent);
     }
 
@@ -163,7 +171,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
                                                @Nullable Uri returnUri);
 
     private boolean isBrowserSwitching() {
-        return mRequestCode != Integer.MIN_VALUE;
+        return getRequestCode() != Integer.MIN_VALUE;
     }
 
     private boolean isReturnUrlSetup() {
