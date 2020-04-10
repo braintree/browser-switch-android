@@ -45,9 +45,9 @@ class BrowserSwitch {
             BrowserSwitchActivity.clearReturnUri();
 
             if (returnUri != null) {
-                mListener.onBrowserSwitchResult(requestCode, BrowserSwitchFragment.BrowserSwitchResult.OK, returnUri);
+                mListener.onBrowserSwitchResult(requestCode, BrowserSwitchResult.ok(), returnUri);
             } else {
-                mListener.onBrowserSwitchResult(requestCode, BrowserSwitchFragment.BrowserSwitchResult.CANCELED, null);
+                mListener.onBrowserSwitchResult(requestCode, BrowserSwitchResult.cancelled(), null);
             }
         }
     }
@@ -65,15 +65,14 @@ class BrowserSwitch {
      */
     public void browserSwitch(int requestCode, Intent intent) {
         if (requestCode == Integer.MIN_VALUE) {
-            BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment.BrowserSwitchResult.ERROR
-                    .setErrorMessage("Request code cannot be Integer.MIN_VALUE");
+            BrowserSwitchResult result = BrowserSwitchResult.error("Request code cannot be Integer.MIN_VALUE");
             mListener.onBrowserSwitchResult(requestCode, result, null);
             return;
         }
 
         if (!isReturnUrlSetup()) {
-            BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment.BrowserSwitchResult.ERROR
-                    .setErrorMessage("The return url scheme was not set up, incorrectly set up, " +
+            BrowserSwitchResult result = BrowserSwitchResult.error(
+                    "The return url scheme was not set up, incorrectly set up, " +
                             "or more than one Activity on this device defines the same url " +
                             "scheme in it's Android Manifest. See " +
                             "https://github.com/braintree/browser-switch-android for more " +
@@ -81,8 +80,8 @@ class BrowserSwitch {
             mListener.onBrowserSwitchResult(requestCode, result, null);
             return;
         } else if (availableActivities(intent).size() == 0) {
-            BrowserSwitchFragment.BrowserSwitchResult result = BrowserSwitchFragment.BrowserSwitchResult.ERROR
-                    .setErrorMessage(String.format("No installed activities can open this URL: %s", intent.getData().toString()));
+            BrowserSwitchResult result = BrowserSwitchResult.error(
+                    String.format("No installed activities can open this URL: %s", intent.getData().toString()));
             mListener.onBrowserSwitchResult(requestCode, result, null);
             return;
         }

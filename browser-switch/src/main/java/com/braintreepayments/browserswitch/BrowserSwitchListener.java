@@ -10,11 +10,11 @@ interface BrowserSwitchListener {
      * The result of a browser switch will be returned in this method.
      *
      * @param requestCode the request code used to start this completed request.
-     * @param result The state of the result, one of {@link BrowserSwitchFragment.BrowserSwitchResult#OK},
-     *     {@link BrowserSwitchFragment.BrowserSwitchResult#CANCELED} or {@link BrowserSwitchFragment.BrowserSwitchResult#ERROR}.
-     * @param returnUri The return uri. {@code null} unless the result is {@link BrowserSwitchFragment.BrowserSwitchResult#OK}.
+     * @param result The state of the result, one of {@link BrowserSwitchResult#OK},
+     *     {@link BrowserSwitchResult#CANCELED} or {@link BrowserSwitchResult#ERROR}.
+     * @param returnUri The return uri. {@code null} unless the result is {@link BrowserSwitchResult#OK}.
      */
-    void onBrowserSwitchResult(int requestCode, BrowserSwitchFragment.BrowserSwitchResult result,
+    void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result,
                                                @Nullable Uri returnUri);
 
 

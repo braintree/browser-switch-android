@@ -38,28 +38,6 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         mBrowserSwitch = new BrowserSwitch(this);
     }
 
-    public enum BrowserSwitchResult {
-        OK,
-        CANCELED,
-        ERROR;
-
-        private String mErrorMessage;
-
-        public String getErrorMessage() {
-            return mErrorMessage;
-        }
-
-        protected BrowserSwitchResult setErrorMessage(String errorMessage) {
-            mErrorMessage = errorMessage;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return name() + " " + getErrorMessage();
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

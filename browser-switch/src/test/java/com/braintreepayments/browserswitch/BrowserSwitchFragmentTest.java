@@ -131,7 +131,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.CANCELED, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.CANCELED, mFragment.result.getStatus());
         assertNull(mFragment.returnUri);
     }
 
@@ -143,7 +143,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.OK, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.OK, mFragment.result.getStatus());
         assertEquals("http://example.com/?key=value", mFragment.returnUri.toString());
     }
 
@@ -237,7 +237,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.ERROR, mFragment.result.getStatus());
         assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
     }
@@ -251,7 +251,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(Integer.MIN_VALUE, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.ERROR, mFragment.result.getStatus());
         assertEquals("Request code cannot be Integer.MIN_VALUE", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
     }
@@ -262,7 +262,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.ERROR, mFragment.result.getStatus());
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
@@ -276,7 +276,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.ERROR, mFragment.result.getStatus());
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
@@ -298,7 +298,7 @@ public class BrowserSwitchFragmentTest {
 
         assertTrue(mFragment.onBrowserSwitchResultCalled);
         assertEquals(42, mFragment.requestCode);
-        assertEquals(BrowserSwitchFragment.BrowserSwitchResult.ERROR, mFragment.result);
+        assertEquals(BrowserSwitchResult.Status.ERROR, mFragment.result.getStatus());
         assertEquals("No installed activities can open this URL: http://example.com/", mFragment.result.getErrorMessage());
         assertNull(mFragment.returnUri);
     }
