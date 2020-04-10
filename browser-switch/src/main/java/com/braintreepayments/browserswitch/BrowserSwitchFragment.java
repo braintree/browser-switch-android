@@ -60,8 +60,6 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         }
     }
 
-    public static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +68,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
             setContext(getActivity().getApplicationContext());
         }
 
-        mBrowserSwitch.onCreate(savedInstanceState);
+        mBrowserSwitch.onCreate(new BundleBrowserSwitchData(savedInstanceState));
     }
 
     @Override
@@ -82,7 +80,8 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mBrowserSwitch.onSaveInstanceState(outState);
+
+        mBrowserSwitch.onSaveInstanceState(new BundleBrowserSwitchData(outState));
     }
 
     /**

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Bundle;
 
 import java.util.List;
 
@@ -33,12 +32,8 @@ class BrowserSwitch {
         mRequestCode = newRequestCode;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            setRequestCode(savedInstanceState.getInt(BrowserSwitchFragment.EXTRA_REQUEST_CODE));
-        } else {
-            setRequestCode(Integer.MIN_VALUE);
-        }
+    public void onCreate(BrowserSwitchData data) {
+        setRequestCode(data.getRequestCode());
     }
 
     public boolean isBrowserSwitching() {
@@ -61,8 +56,8 @@ class BrowserSwitch {
         }
     }
 
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(BrowserSwitchFragment.EXTRA_REQUEST_CODE, getRequestCode());
+    public void onSaveInstanceState(BrowserSwitchData data) {
+        data.setRequestCode(getRequestCode());
     }
 
     /**
