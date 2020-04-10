@@ -16,6 +16,14 @@ import androidx.fragment.app.Fragment;
  */
 public abstract class BrowserSwitchFragment extends Fragment {
 
+    public void setContext(Context context) {
+        mContext = context;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
     public enum BrowserSwitchResult {
         OK,
         CANCELED,
@@ -40,15 +48,15 @@ public abstract class BrowserSwitchFragment extends Fragment {
 
     private static final String EXTRA_REQUEST_CODE = "com.braintreepayments.browserswitch.EXTRA_REQUEST_CODE";
 
-    protected Context mContext;
+    private Context mContext;
     protected int mRequestCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (mContext == null) {
-            mContext = getActivity().getApplicationContext();
+        if (getContext() == null) {
+            setContext(getActivity().getApplicationContext());
         }
 
         if (savedInstanceState != null) {
@@ -89,7 +97,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
      * param when browser switching.
      */
     public String getReturnUrlScheme() {
-        return mContext.getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
+        return getContext().getPackageName().toLowerCase().replace("_", "") + ".browserswitch";
     }
 
     /**
@@ -103,7 +111,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        ChromeCustomTabs.addChromeCustomTabsExtras(mContext, intent);
+        ChromeCustomTabs.addChromeCustomTabsExtras(getContext(), intent);
 
         browserSwitch(requestCode, intent);
     }
@@ -140,7 +148,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         }
 
         mRequestCode = requestCode;
-        mContext.startActivity(intent);
+        getContext().startActivity(intent);
     }
 
     /**
@@ -168,7 +176,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
     }
 
     private List<ResolveInfo> availableActivities(Intent intent) {
-        return mContext.getPackageManager()
+        return getContext().getPackageManager()
                 .queryIntentActivities(intent, 0);
     }
 }
