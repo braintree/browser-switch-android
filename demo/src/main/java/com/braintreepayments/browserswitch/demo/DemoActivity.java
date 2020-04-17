@@ -11,8 +11,10 @@ public class DemoActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportFragmentManager().beginTransaction()
-                .add(android.R.id.content, new DemoFragment())
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, new DemoFragment())
+                    .commit();
+        }
     }
 }
