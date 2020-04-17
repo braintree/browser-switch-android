@@ -1,7 +1,5 @@
 package com.braintreepayments.browserswitch;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -58,51 +56,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
         } else {
             mRequestCode = Integer.MIN_VALUE;
         }
-        requireActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
-
     }
-
-    @Override
-    public void onDestroy() {
-        requireActivity().getApplication().unregisterActivityLifecycleCallbacks(lifecycleCallbacks);
-        super.onDestroy();
-    }
-
-    private Application.ActivityLifecycleCallbacks lifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) { }
-
-        @Override
-        public void onActivityStarted(Activity activity) { }
-
-        @Override
-        public void onActivityResumed(Activity activity) { }
-
-        @Override
-        public void onActivityPaused(Activity activity) { }
-
-        @Override
-        public void onActivityStopped(Activity activity) { }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) { }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-            // https://stackoverflow.com/questions/39726547/i-want-to-close-chrome-custom-tab-when-action-button-is-clicked
-            // Relaunch ourselves, bringing ourselves to the front, when the BrowserSwitchActivity
-            // self-finishes.
-            if (activity instanceof BrowserSwitchActivity) {
-                Activity myActivity = getActivity();
-                if (myActivity != null) {
-                    Intent initialIntent = myActivity.getIntent();
-                    Intent relaunchIntent = new Intent(initialIntent)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    myActivity.startActivity(relaunchIntent);
-                }
-            }
-        }
-    };
 
     @Override
     public void onResume() {
@@ -120,6 +74,9 @@ public abstract class BrowserSwitchFragment extends Fragment {
             } else {
                 onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
             }
+            BrowserSwitchActivityDestroyedCallback.unregister(requireActivity().getApplication());
+        } else {
+            BrowserSwitchActivityDestroyedCallback.register(requireActivity().getApplication(), requireActivity().getIntent());
         }
     }
 
