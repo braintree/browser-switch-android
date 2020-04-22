@@ -33,7 +33,7 @@ public class BrowserSwitchActivityTest {
         mActivityController = Robolectric.buildActivity(BrowserSwitchActivity.class);
         mActivity = mActivityController.setup().get();
 
-        assertNull(BrowserSwitchActivity.getReturnUri());
+        assertNull(BrowserSwitchActivity.getReturnUri(mActivity));
         assertTrue(mActivity.isFinishing());
     }
 
@@ -42,7 +42,7 @@ public class BrowserSwitchActivityTest {
         mActivityController = Robolectric.buildActivity(BrowserSwitchActivity.class, new Intent());
         mActivity = mActivityController.setup().get();
 
-        assertNull(BrowserSwitchActivity.getReturnUri());
+        assertNull(BrowserSwitchActivity.getReturnUri(mActivity));
         assertTrue(mActivity.isFinishing());
     }
 
@@ -50,7 +50,7 @@ public class BrowserSwitchActivityTest {
     public void returnUriIsUriFromIntent() {
         setup("http://example.com?key=value");
 
-        assertEquals("http://example.com?key=value", BrowserSwitchActivity.getReturnUri().toString());
+        assertEquals("http://example.com?key=value", BrowserSwitchActivity.getReturnUri(mActivity).toString());
         assertTrue(mActivity.isFinishing());
     }
 
@@ -58,18 +58,18 @@ public class BrowserSwitchActivityTest {
     public void getReturnUri_returnsUri() {
         setup("http://example.com?key=value");
 
-        assertEquals("http://example.com?key=value", BrowserSwitchActivity.getReturnUri().toString());
+        assertEquals("http://example.com?key=value", BrowserSwitchActivity.getReturnUri(mActivity).toString());
         assertTrue(mActivity.isFinishing());
     }
 
     @Test
     public void clearReturnUri_clearsReturnUri() {
         setup("http://example.com?key=value");
-        assertNotNull(BrowserSwitchActivity.getReturnUri());
+        assertNotNull(BrowserSwitchActivity.getReturnUri(mActivity));
 
-        BrowserSwitchActivity.clearReturnUri();
+        BrowserSwitchActivity.clearReturnUri(mActivity);
 
-        assertNull(BrowserSwitchActivity.getReturnUri());
+        assertNull(BrowserSwitchActivity.getReturnUri(mActivity));
     }
 
     private void setup(String url) {

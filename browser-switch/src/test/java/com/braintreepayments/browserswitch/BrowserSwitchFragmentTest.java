@@ -40,7 +40,7 @@ public class BrowserSwitchFragmentTest {
 
     @Before
     public void setup() {
-        BrowserSwitchActivity.clearReturnUri();
+        BrowserSwitchActivity.clearReturnUri(RuntimeEnvironment.application);
 
         mActivity = Robolectric.setupActivity(TestActivity.class);
         mFragment = new TestBrowserSwitchFragment();
@@ -151,11 +151,11 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void onResume_clearsReturnUris() {
         handleBrowserSwitchResponse(42, "http://example.com/?key=value");
-        assertEquals("http://example.com/?key=value", BrowserSwitchActivity.getReturnUri().toString());
+        assertEquals("http://example.com/?key=value", BrowserSwitchActivity.getReturnUri(mActivity).toString());
 
         mFragment.onResume();
 
-        assertNull(BrowserSwitchActivity.getReturnUri());
+        assertNull(BrowserSwitchActivity.getReturnUri(mActivity));
     }
 
     @Test
