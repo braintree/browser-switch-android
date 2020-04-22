@@ -28,14 +28,14 @@ public class BrowserSwitchActivityDestroyedCallback implements Application.Activ
      * @param intent the intent of the activity to launch when the BrowserSwitchActivity is destroyed
      */
     @MainThread
-    static void register(@NonNull Application application, @NonNull Intent intent) {
+    public static void register(@NonNull Application application, @NonNull Intent intent) {
         unregister(application);
         sInstance = new BrowserSwitchActivityDestroyedCallback(intent);
         application.registerActivityLifecycleCallbacks(sInstance);
     }
 
     @MainThread
-    static void unregister(@NonNull Application application) {
+    public static void unregister(@NonNull Application application) {
         if (sInstance != null) {
             application.unregisterActivityLifecycleCallbacks(sInstance);
             sInstance = null;
