@@ -2,10 +2,12 @@ package com.braintreepayments.browserswitch;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -17,6 +19,7 @@ public class BrowserSwitchActivity extends Activity {
 
     private static final String PREF_FILE = "BraintreeBrowserSwitch";
     private static final String PREF_KEY_RETURN_URI = "browser_switch_return_uri";
+    private static Intent sReturnIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,20 @@ public class BrowserSwitchActivity extends Activity {
                     .apply();
         }
 
+        if (sReturnIntent != null) {
+            Intent relaunchActivityIntent = new Intent(sReturnIntent)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(relaunchActivityIntent);
+        }
         finish();
+    }
+
+    public static void setReturnIntent(@NonNull Intent returnIntent) {
+        sReturnIntent = returnIntent;
+    }
+
+    public static void clearReturnIntent() {
+        sReturnIntent = null;
     }
 
     /**

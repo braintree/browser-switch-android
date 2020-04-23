@@ -70,15 +70,13 @@ public abstract class BrowserSwitchFragment extends Fragment {
             int requestCode = mRequestCode;
             mRequestCode = Integer.MIN_VALUE;
             BrowserSwitchActivity.clearReturnUri(activity);
+            BrowserSwitchActivity.clearReturnIntent();
 
             if (returnUri != null) {
                 onBrowserSwitchResult(requestCode, BrowserSwitchResult.OK, returnUri);
             } else {
                 onBrowserSwitchResult(requestCode, BrowserSwitchResult.CANCELED, null);
             }
-            BrowserSwitchActivityDestroyedCallback.unregister(activity.getApplication());
-        } else {
-            BrowserSwitchActivityDestroyedCallback.register(activity.getApplication(), activity.getIntent());
         }
     }
 
@@ -143,6 +141,7 @@ public abstract class BrowserSwitchFragment extends Fragment {
             return;
         }
 
+        BrowserSwitchActivity.setReturnIntent(requireActivity().getIntent());
         mRequestCode = requestCode;
         requireActivity().startActivity(intent);
     }
