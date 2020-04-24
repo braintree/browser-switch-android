@@ -3,6 +3,7 @@
     package="com.braintreepayments.browserswitch.demo">
 
     <application
+        android:name=".DemoApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo">
 
