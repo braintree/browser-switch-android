@@ -47,7 +47,7 @@ public class BrowserSwitchClient {
      * @param uri the url to open.
      * @param fragment the fragment used to start browser switch
      */
-    void start(int requestCode, Uri uri, Fragment fragment) {
+    public void start(int requestCode, Uri uri, Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
             start(requestCode, uri, fragment, (BrowserSwitchListener) fragment);
         } else {
@@ -64,7 +64,7 @@ public class BrowserSwitchClient {
      * @param fragment the fragment used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener) {
+    public void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
             start(requestCode, uri, activity, listener);
@@ -82,7 +82,7 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      */
     @SuppressWarnings("SameParameterValue")
-    void start(int requestCode, Uri uri, FragmentActivity activity) {
+    public void start(int requestCode, Uri uri, FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
             start(requestCode, uri, activity, (BrowserSwitchListener) activity);
         } else {
@@ -114,7 +114,7 @@ public class BrowserSwitchClient {
      * @param intent the intent to use to initiate a browser switch
      * @param fragment the fragment used to start browser switch
      */
-    void start(int requestCode, Intent intent, Fragment fragment) {
+    public void start(int requestCode, Intent intent, Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
             start(requestCode, intent, fragment, (BrowserSwitchListener) fragment);
         } else {
@@ -131,7 +131,7 @@ public class BrowserSwitchClient {
      * @param fragment the fragment used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    void start(
+    public void start(
         int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
@@ -150,7 +150,7 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      */
     @SuppressWarnings("SameParameterValue")
-    void start(int requestCode, Intent intent, FragmentActivity activity) {
+    public void start(int requestCode, Intent intent, FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
             start(requestCode, intent, activity, (BrowserSwitchListener) activity);
         } else {
@@ -167,7 +167,7 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    void start(
+    public void start(
         int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
@@ -231,7 +231,7 @@ public class BrowserSwitchClient {
      *
      * @param fragment the BrowserSwitchListener that will receive a pending browser switch result
      */
-    void deliverResult(Fragment fragment) {
+    public void deliverResult(Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
             deliverResult(fragment, (BrowserSwitchListener) fragment);
         } else {
@@ -247,7 +247,7 @@ public class BrowserSwitchClient {
      * @param fragment the BrowserSwitchListener that will receive a pending browser switch result
      * @param listener the listener that will receive browser switch callbacks
      */
-    void deliverResult(Fragment fragment, BrowserSwitchListener listener) {
+    public void deliverResult(Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
             deliverResult(activity, listener);
@@ -266,7 +266,7 @@ public class BrowserSwitchClient {
      *
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
-    void deliverResult(FragmentActivity activity) {
+    public void deliverResult(FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
             deliverResult(activity, (BrowserSwitchListener) activity);
         } else {

@@ -84,6 +84,41 @@ public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @
             // - The integration is not setup correctly.
             break;
     }
+j}
+```
+
+## BrowserSwitchClient
+
+For more fine-grained control over browser switching, `BrowserSwitchClient` can be used in scenarios where a custom `BrowserSwitchListener` is preferred. 
+
+```java
+public class CustomFragment extends Fragment {
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    ...
+
+    browserSwitchListener = new BrowserSwitchListener() {
+      @Override
+      public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
+        // custom listener logic goes here
+      }
+    }; 
+
+    browserSwitchClient = BrowserSwitchClient.newInstance();
+    browserSwitchClient.start(requestCode, Uri.parse("http://example.com/"), browserSwitchListener);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    ...
+
+    // call 'deliverResult' in onResume to ensure that all pending
+    // browser switch results are delivered to the listener
+    browserSwitchClient.deliverResult(this, browserSwitchListener);
+  }
 }
 ```
 
