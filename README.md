@@ -110,7 +110,7 @@ public class CustomFragment extends Fragment {
     }; 
 
     browserSwitchClient = BrowserSwitchClient.newInstance();
-    browserSwitchClient.start(requestCode, Uri.parse("http://example.com/"), browserSwitchListener);
+    browserSwitchClient.start(requestCode, Uri.parse("http://example.com/"), this, browserSwitchListener);
   }
 
   @Override
