@@ -1,3 +1,7 @@
+# Android Browser Switch
+
+[![Build Status](https://travis-ci.org/braintree/browser-switch-android.svg?branch=master)](https://travis-ci.org/braintree/browser-switch-android)
+
 Android Browser Switch makes it easy to open a url in a browser or
 [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) and receive a
 response as the result of user interaction, either cancel or response data from the web page.
