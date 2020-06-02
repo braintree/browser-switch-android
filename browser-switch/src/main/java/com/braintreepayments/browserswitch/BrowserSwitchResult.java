@@ -2,8 +2,8 @@ package com.braintreepayments.browserswitch;
 
 public class BrowserSwitchResult {
 
-    private int status;
-    private String errorMessage;
+    final private int status;
+    final private String errorMessage;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_CANCELLED = 2;

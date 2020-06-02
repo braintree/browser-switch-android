@@ -12,30 +12,27 @@ import androidx.fragment.app.FragmentActivity;
 @SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
-    private BrowserSwitchConfig config;
-    private ActivityFinder activityFinder;
-    private BrowserSwitchPersistentStore persistentStore;
-    private String returnUrlScheme;
+    final private BrowserSwitchConfig config;
+    final private ActivityFinder activityFinder;
+    final private BrowserSwitchPersistentStore persistentStore;
+    final private String returnUrlScheme;
 
     public static BrowserSwitchClient newInstance(String returnUrlScheme) {
         return new BrowserSwitchClient(
             BrowserSwitchConfig.newInstance(), ActivityFinder.newInstance(),
-            BrowserSwitchPersistentStore.getInstance(), returnUrlScheme
-        );
+            BrowserSwitchPersistentStore.getInstance(), returnUrlScheme);
     }
 
     @VisibleForTesting
     static BrowserSwitchClient newInstance(
         BrowserSwitchConfig config, ActivityFinder activityFinder,
-        BrowserSwitchPersistentStore persistentStore, String returnUrlScheme
-    ) {
+        BrowserSwitchPersistentStore persistentStore, String returnUrlScheme) {
         return new BrowserSwitchClient(config, activityFinder, persistentStore, returnUrlScheme);
     }
 
     private BrowserSwitchClient(
             BrowserSwitchConfig config, ActivityFinder activityFinder,
-            BrowserSwitchPersistentStore persistentStore, String returnUrlScheme
-    ) {
+            BrowserSwitchPersistentStore persistentStore, String returnUrlScheme) {
         this.config = config;
         this.activityFinder = activityFinder;
         this.persistentStore = persistentStore;
@@ -103,8 +100,7 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     public void start(
-        int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener
-    ) {
+        int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, uri);
         start(requestCode, intent, activity, listener);
@@ -136,8 +132,7 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     void start(
-        int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener
-    ) {
+        int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
             start(requestCode, intent, activity, listener);
@@ -173,8 +168,7 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     void start(
-        int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener
-    ) {
+        int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
         if (errorMessage == null) {

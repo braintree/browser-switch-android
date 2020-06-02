@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;

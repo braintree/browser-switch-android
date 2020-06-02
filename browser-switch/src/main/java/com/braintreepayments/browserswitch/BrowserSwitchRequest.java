@@ -9,7 +9,7 @@ class BrowserSwitchRequest {
 
     private Uri uri;
     private String state;
-    private int requestCode;
+    final private int requestCode;
 
     static final String PENDING = "PENDING";
     static final String SUCCESS = "SUCCESS";

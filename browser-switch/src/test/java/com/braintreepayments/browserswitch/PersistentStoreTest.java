@@ -12,10 +12,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -29,7 +27,7 @@ public class PersistentStoreTest {
     private SharedPreferences.Editor sharedPreferencesEditor;
 
     @Before
-    public void beforEach() {
+    public void beforeEach() {
         context = mock(Context.class);
         applicationContext = mock(Context.class);
 
