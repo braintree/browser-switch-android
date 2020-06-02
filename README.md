@@ -84,7 +84,7 @@ public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @
             // - The integration is not setup correctly.
             break;
     }
-j}
+}
 ```
 
 ## BrowserSwitchClient
