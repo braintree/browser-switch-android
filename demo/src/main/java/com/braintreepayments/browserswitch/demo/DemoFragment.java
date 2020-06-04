@@ -56,7 +56,7 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
             case BrowserSwitchResult.STATUS_ERROR:
                 resultText = "Browser Switch Error: " + result.getErrorMessage();
                 break;
-            case BrowserSwitchResult.STATUS_CANCELLED:
+            case BrowserSwitchResult.STATUS_CANCELED:
                 resultText = "Browser Switch Cancelled by User";
                 break;
         }

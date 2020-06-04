@@ -298,7 +298,7 @@ public class BrowserSwitchClient {
                 uri = request.getUri();
                 result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_OK);
             } else {
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELLED);
+                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED);
             }
             listener.onBrowserSwitchResult(requestCode, result, uri);
         }

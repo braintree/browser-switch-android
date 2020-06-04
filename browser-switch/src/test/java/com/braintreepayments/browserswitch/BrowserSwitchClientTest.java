@@ -302,7 +302,7 @@ public class BrowserSwitchClientTest {
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
-        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_CANCELLED);
+        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_CANCELED);
         assertNull(result.getErrorMessage());
 
         verify(persistentStore).clearActiveRequest(applicationContext);
