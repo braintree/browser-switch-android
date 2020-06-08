@@ -32,6 +32,8 @@ public class BrowserCustomTabsClient extends CustomTabsServiceConnection {
     @Override
     public void onCustomTabsServiceConnected(@NonNull ComponentName name, @NonNull CustomTabsClient client) {
         customTabsClient = client;
+        customTabsClient.warmup(0L);
+
         Log.d(TAG, "Custom Tabs Service Connected");
         customTabsSession = customTabsClient.newSession(new BrowserCustomTabsCallback());
 
