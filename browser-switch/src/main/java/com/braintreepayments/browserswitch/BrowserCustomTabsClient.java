@@ -2,6 +2,7 @@ package com.braintreepayments.browserswitch;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
@@ -39,6 +40,9 @@ public class BrowserCustomTabsClient extends CustomTabsServiceConnection {
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder(customTabsSession)
                 .build();
+
+        // Ref: https://stackoverflow.com/a/39974051
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         customTabsIntent.launchUrl(context, targetUri);
     }
 
