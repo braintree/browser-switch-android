@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static com.braintreepayments.browserswitch.PersistentStore.PREFERENCES_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,7 @@ public class PersistentStoreTest {
         when(context.getApplicationContext()).thenReturn(applicationContext);
 
         when(
-            applicationContext.getSharedPreferences("BraintreeApi", Context.MODE_PRIVATE)
+            applicationContext.getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE)
         ).thenReturn(sharedPreferences);
         when(sharedPreferences.edit()).thenReturn(sharedPreferencesEditor);
     }

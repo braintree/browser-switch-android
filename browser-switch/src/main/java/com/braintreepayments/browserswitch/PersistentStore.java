@@ -3,9 +3,12 @@ package com.braintreepayments.browserswitch;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.VisibleForTesting;
+
 class PersistentStore {
 
-    private static final String PREFERENCES_KEY =
+    @VisibleForTesting
+    static final String PREFERENCES_KEY =
         "com.braintreepayament.browserswitch.persistentstore";
 
     static void put(String key, String value, Context context) {

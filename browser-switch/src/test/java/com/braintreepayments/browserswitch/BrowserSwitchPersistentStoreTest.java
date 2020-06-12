@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static com.braintreepayments.browserswitch.BrowserSwitchPersistentStore.REQUEST_KEY;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +39,7 @@ public class BrowserSwitchPersistentStoreTest {
     @Test
     public void getActiveRequest_whenPersistentStoreContainsRequest_parsesAndReturnsActiveRequest() throws JSONException {
         String activeRequestJson = "{\"active\":\"request\"}";
-        when(PersistentStore.get("browserSwitch", context)).thenReturn(activeRequestJson);
+        when(PersistentStore.get(REQUEST_KEY, context)).thenReturn(activeRequestJson);
         when(BrowserSwitchRequest.fromJson(activeRequestJson)).thenReturn(browserSwitchRequest);
 
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
@@ -48,7 +49,7 @@ public class BrowserSwitchPersistentStoreTest {
 
     @Test
     public void getActiveRequest_whenPersistentStoreDoesNotContainRequest_returnsNull() {
-        when(PersistentStore.get("browserSwitch", context)).thenReturn(null);
+        when(PersistentStore.get(REQUEST_KEY, context)).thenReturn(null);
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         BrowserSwitchRequest result = sut.getActiveRequest(context);
         assertNull(result);
@@ -56,7 +57,7 @@ public class BrowserSwitchPersistentStoreTest {
 
     @Test
     public void getActiveRequest_whenPersistentStoreContainsInvalidRequestJson_returnsNull() throws JSONException {
-        when(PersistentStore.get("browserSwitch", context)).thenReturn("invalid json");
+        when(PersistentStore.get(REQUEST_KEY, context)).thenReturn("invalid json");
         when(BrowserSwitchRequest.fromJson("invalid json")).thenThrow(new JSONException("json invalid"));
 
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
@@ -73,7 +74,7 @@ public class BrowserSwitchPersistentStoreTest {
         sut.putActiveRequest(browserSwitchRequest, context);
 
         verifyStatic(PersistentStore.class);
-        PersistentStore.put("browserSwitch", requestJson, context);
+        PersistentStore.put(REQUEST_KEY, requestJson, context);
     }
 
     @Test
@@ -93,6 +94,6 @@ public class BrowserSwitchPersistentStoreTest {
         sut.clearActiveRequest(context);
 
         verifyStatic(PersistentStore.class);
-        PersistentStore.remove("browserSwitch", context);
+        PersistentStore.remove(REQUEST_KEY, context);
     }
 }
