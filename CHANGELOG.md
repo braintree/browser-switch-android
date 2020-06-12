@@ -1,5 +1,14 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Create BrowserSwitchClient to allow browser switch behavior through composition as well as inheritance.
+* Update minSdkVersion from 15 to 21 (thanks! @calvarez-ov)
+* Update Gradle build tools version to 3.6.3
+* Breaking Changes
+  * BrowserSwitchActivity::getReturnUri() has been removed
+  * BrowserSwitchActivity::clearReturnUri() has been removed
+
 ## 0.2.0
 
 * Using androidx 1.0.0

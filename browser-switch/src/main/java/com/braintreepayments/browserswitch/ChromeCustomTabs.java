@@ -18,7 +18,7 @@ public class ChromeCustomTabs {
     /**
      * Checks to see if this device supports Chrome Custom Tabs and if Chrome Custom Tabs are available.
      *
-     * @param context
+     * @param context Application context
      * @return {@code true} if Chrome Custom Tabs are supported and available.
      */
     public static boolean isAvailable(Context context) {
@@ -47,7 +47,7 @@ public class ChromeCustomTabs {
      * Adds the required extras and flags to an {@link Intent} for using Chrome Custom Tabs. If
      * Chrome Custom Tabs are not available or supported no change will be made to the {@link Intent}.
      *
-     * @param context
+     * @param context Application context
      * @param intent The {@link Intent} to add the extras and flags to for Chrome Custom Tabs.
      * @return The {@link Intent} supplied with additional extras and flags if Chrome Custom Tabs
      *         are supported and available.
