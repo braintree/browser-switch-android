@@ -87,7 +87,7 @@ public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @
 }
 ```
 
-## BrowserSwitchClient
+## Alternative Usage: BrowserSwitchClient
 
 For more fine-grained control over browser switching, `BrowserSwitchClient` can be used in scenarios where a custom `BrowserSwitchListener` is preferred. 
 
