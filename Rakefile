@@ -2,6 +2,21 @@
 require 'rake'
 require 'io/console'
 
+task :default => :tests
+
+desc "Run Android lint"
+task :lint do
+  sh "./gradlew clean lint"
+end
+
+desc "Run Android unit tests and tests on a device or emulator"
+task :tests => [:unit_tests, :integration_tests]
+
+desc "Run Android unit tests"
+task :unit_tests => :lint do
+  sh "./gradlew --continue test"
+end
+
 # TODO: run integration tests against older versions of Android (23 and lower)
 # that do not support chrome custom tabs; and on newer versions of Android (24 and higher) that
 # do support chrome custom tabs
@@ -14,11 +29,6 @@ task :integration_tests do
     puts "Please connect a device or start an emulator and try again"
     exit 1
   end
-end
-
-desc "Run Android unit tests"
-task :unit_tests => :lint do
-  sh "./gradlew --continue test"
 end
 
 desc "Interactive release to publish new version"
