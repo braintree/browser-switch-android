@@ -3,11 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 
-version "1.0.0"
-if (rootProject.hasProperty('buildType')) {
-    // append build type to end of version string
-    version += "-${rootProject.buildType}"
-}
+version '0.2.0'
 
 android {
     compileSdkVersion 28
