@@ -43,7 +43,7 @@ task :release => :unit_tests do
 
   prompt_for_sonatype_username_and_password
 
-  sh "./gradlew clean :browser-switch:uploadArchives"
+  sh "./gradlew clean :browser-switch:publishToSonatype"
   sh "./gradlew closeAndReleaseRepository"
 
   post_release(version)

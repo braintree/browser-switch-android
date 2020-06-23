@@ -78,19 +78,22 @@ artifacts {
     archives sourcesJar
 }
 
+def sonatypeUsername = System.env['SONATYPE_USERNAME']
+def sonatypePassword = System.env['SONATYPE_PASSWORD']
+
+nexusStaging {
+    packageGroup = 'com.braintreepayments'
+    stagingProfileId = 'd2424106a9f1f'
+    username = sonatypeUsername
+    password = sonatypePassword
+}
+
 signing {
     required {
         !version.endsWith("DEVELOPMENT")
     }
-    sign configurations.archives
+    sign publishing.publications
 }
-
-nexusStaging {
-    packageGroup = 'com.braintreepayments'
-}
-
-def sonatypeUsername = System.env['SONATYPE_USERNAME']
-def sonatypePassword = System.env['SONATYPE_PASSWORD']
 
 afterEvaluate {
     publishing {
@@ -106,8 +109,8 @@ afterEvaluate {
 
                 pom {
                     name = 'browser-switch'
-                    packaging 'aar'
-                    description 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
+                    packaging = 'aar'
+                    description = 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
                     url = 'https://github.com/braintree/browser-switch-android'
 
                     scm {
@@ -139,8 +142,6 @@ afterEvaluate {
 nexusPublishing {
     repositories {
         sonatype {
-            nexusUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            snapshotRepositoryUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
             username = sonatypeUsername
             password = sonatypePassword
         }
