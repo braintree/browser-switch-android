@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'signing'
+apply plugin: "de.marcphilipp.nexus-publish"
 
 version '1.0.1-SNAPSHOT'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.2'
 
     defaultConfig {
         minSdkVersion 21
@@ -91,62 +92,58 @@ nexusStaging {
 def sonatypeUsername = System.env['SONATYPE_USERNAME']
 def sonatypePassword = System.env['SONATYPE_PASSWORD']
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
 
-            if (version.endsWith("DEVELOPMENT")) {
-                repository(url: 'file:///tmp/maven/')
-            } else {
-                repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-                snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-            }
-
-            pom.setArtifactId 'browser-switch'
-
-            pom.project {
-                name 'browser-switch'
+                // You can then customize attributes of the publication as shown below.
                 groupId = 'com.braintreepayments'
+                artifactId = 'browser-switch'
                 version = "${android.defaultConfig.versionName}"
-                packaging 'aar'
-                description 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
 
-                url 'https://github.com/braintree/browser-switch-android'
+                pom {
+                    name = 'browser-switch'
+                    packaging 'aar'
+                    description 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
+                    url = 'https://github.com/braintree/browser-switch-android'
 
-                scm {
-                    url 'scm:git@github.com:braintree/browser-switch-android.git'
-                    connection 'scm:git@github.com:braintree/browser-switch-android.git'
-                    developerConnection 'scm:git@github.com:braintree/browser-switch-android.git'
-                }
-
-                developers {
-                    developer {
-                        id 'devs'
-                        name 'Braintree Payments'
+                    scm {
+                        url = 'scm:git@github.com:braintree/browser-switch-android.git'
+                        connection = 'scm:git@github.com:braintree/browser-switch-android.git'
+                        developerConnection = 'scm:git@github.com:braintree/browser-switch-android.git'
                     }
-                }
 
-                licenses {
-                    license {
-                        name 'MIT'
-                        url 'http://opensource.org/licenses/MIT'
-                        distribution 'repo'
+                    developers {
+                        developer {
+                            id = 'devs'
+                            name = 'Braintree Payments'
+                        }
                     }
-                }
-            }
 
-            pom.whenConfigured { MavenPom pom ->
-                pom.dependencies.each {
-                    if (it.artifactId == 'support-annotations') {
-                        it.optional = true
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'http://opensource.org/licenses/MIT'
+                            distribution = 'repo'
+                        }
                     }
                 }
             }
         }
     }
+
+    nexusPublishing {
+        repositories {
+            sonatype {
+                nexusUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                snapshotRepositoryUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+    }
 }
+
