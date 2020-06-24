@@ -110,7 +110,7 @@ afterEvaluate {
                 pom {
                     name = 'browser-switch'
                     packaging = 'aar'
-                    description = 'A library making it easy to open a url in a browser or Chrome Custom Tab and receive a response from the web page.'
+                    description = 'Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page.'
                     url = 'https://github.com/braintree/browser-switch-android'
 
                     scm {
