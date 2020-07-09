@@ -1,11 +1,5 @@
 # browser-switch-android Release Notes
 
-## unreleased
-
-* Upgrade Android Gradle Plugin to version 4.0.0
-* Upgrade Gradle to version 6.1.1
-* Update Android Build Tools to version 29.0.2
-
 ## 1.0.0
 
 * Create BrowserSwitchClient to allow browser switch behavior through composition as well as inheritance.
