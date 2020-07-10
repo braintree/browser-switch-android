@@ -90,7 +90,7 @@ nexusStaging {
 
 signing {
     required {
-        !version.endsWith("DEVELOPMENT")
+        !version.endsWith("SNAPSHOT") && !version.endsWith("DEVELOPMENT")
     }
     sign publishing.publications
 }
