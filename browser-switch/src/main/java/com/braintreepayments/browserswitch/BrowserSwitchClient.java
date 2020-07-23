@@ -9,6 +9,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import org.json.JSONObject;
+
 @SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
@@ -55,6 +57,11 @@ public class BrowserSwitchClient {
         }
     }
 
+    // TODO: write docs
+    public void start(int requestCode, Uri uri, Fragment fragment, JSONObject metadata) {
+        // TODO: implement
+    }
+
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with the given url from an Android fragment. The fragment must be attached to activity when invoking this method.
@@ -71,6 +78,11 @@ public class BrowserSwitchClient {
         } else {
             throw new IllegalStateException("Fragment must be attached to an activity.");
         }
+    }
+
+    // TODO: write docs
+    public void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener, JSONObject metadata) {
+        // TODO: implement
     }
 
     /**
@@ -90,6 +102,11 @@ public class BrowserSwitchClient {
         }
     }
 
+    // TODO: write docs
+    public void start(int requestCode, Uri uri, FragmentActivity activity, JSONObject metadata) {
+        // TODO: implement
+    }
+
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with the given url from an Android activity.
@@ -100,10 +117,16 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     public void start(
-        int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener) {
+            int requestCode, Uri uri, FragmentActivity activity,BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, uri);
         start(requestCode, intent, activity, listener);
+    }
+
+    // TODO: write docs
+    public void start(int requestCode, Uri uri, FragmentActivity activity,
+                      BrowserSwitchListener listener, JSONObject metadata) {
+        // TODO: implement
     }
 
     /**
@@ -120,6 +143,11 @@ public class BrowserSwitchClient {
         } else {
             throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
         }
+    }
+
+    // TODO: write docs
+    public void start(int requestCode, Intent intent, Fragment fragment, JSONObject metadata) {
+        // TODO: implement
     }
 
     /**
@@ -141,6 +169,12 @@ public class BrowserSwitchClient {
         }
     }
 
+    // TODO: write docs
+    public void start(int requestCode, Intent intent, Fragment fragment,
+        BrowserSwitchListener listener, JSONObject metadata) {
+        // TODO: implement
+    }
+
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with the given intent from an Android activity.
@@ -156,6 +190,12 @@ public class BrowserSwitchClient {
         } else {
             throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
         }
+    }
+
+    // TODO: write docs
+    public void start(int requestCode, Intent intent, FragmentActivity activity,
+        JSONObject metadata) {
+        // TODO: implement
     }
 
     /**
@@ -181,6 +221,12 @@ public class BrowserSwitchClient {
                 new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
             listener.onBrowserSwitchResult(requestCode, result, null);
         }
+    }
+
+    // TODO: write docs
+    public void start(int requestCode, Intent intent, FragmentActivity activity,
+        BrowserSwitchListener listener, JSONObject metadata) {
+        // TODO: implement
     }
 
     private String assertCanPerformBrowserSwitch(int requestCode, Context context, Intent intent) {
