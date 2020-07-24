@@ -58,7 +58,7 @@ public class BrowserSwitchClient {
     }
 
     // TODO: write docs
-    public void start(int requestCode, Uri uri, Fragment fragment, JSONObject metadata) {
+    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
         // TODO: implement
     }
 

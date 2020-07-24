@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.BrowserSwitchOptions;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
 public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
@@ -35,9 +36,13 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        browserSwitch(1, "https://braintree.github.io/popup-bridge-example/" +
-                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
-                + "://");
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(1)
+                .url("https://braintree.github.io/popup-bridge-example/" +
+                        "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
+                        + "://");
+
+        browserSwitch(browserSwitchOptions);
     }
 
     @Override

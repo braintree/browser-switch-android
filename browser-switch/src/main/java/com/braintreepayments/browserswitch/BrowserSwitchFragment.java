@@ -68,6 +68,11 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         browserSwitchClient.start(requestCode, intent, this);
     }
 
+    //TODO: write docs
+    public void browserSwitch(BrowserSwitchOptions browserSwitchOptions) {
+        browserSwitchClient.start(browserSwitchOptions, this);
+    }
+
     /**
      * The result of a browser switch will be returned in this method.
      *
