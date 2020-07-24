@@ -15,10 +15,14 @@ import com.braintreepayments.browserswitch.BrowserSwitchFragment;
 import com.braintreepayments.browserswitch.BrowserSwitchOptions;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
 
     private TextView mResult;
     private TextView mReturnUrl;
+    private TextView mMetadata;
 
     @Nullable
     @Override
@@ -30,6 +34,7 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
 
         mResult = view.findViewById(R.id.result);
         mReturnUrl = view.findViewById(R.id.return_url);
+        mMetadata = view.findViewById(R.id.metadata);
 
         return view;
     }
@@ -42,10 +47,21 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
                 "://";
 
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .metadata(buildMetadataObject())
                 .requestCode(1)
                 .url(Uri.parse(url));
 
         browserSwitch(browserSwitchOptions);
+    }
+
+    private JSONObject buildMetadataObject() {
+        try {
+            return new JSONObject()
+                    .put("testKey", "testValue");
+        } catch (JSONException ignore) {
+            // do nothing
+        }
+        return null;
     }
 
     @Override
@@ -70,5 +86,10 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         }
         mResult.setText(resultText);
         mReturnUrl.setText(returnUrl);
+        try {
+            mMetadata.setText(result.getRequestMetadata().getString("testKey"));
+        } catch (JSONException ignore) {
+            // do nothing
+        }
     }
 }
