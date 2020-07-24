@@ -1,14 +1,21 @@
 package com.braintreepayments.browserswitch;
 
+import android.content.Intent;
 import android.net.Uri;
 
 import org.json.JSONObject;
 
 public class BrowserSwitchOptions {
 
+    private Intent intent;
+    private JSONObject metadata;
     private int requestCode;
     private Uri url;
-    private JSONObject metadata;
+
+    public BrowserSwitchOptions intent(Intent intent) {
+        this.intent = intent;
+        return this;
+    }
 
     public BrowserSwitchOptions metadata(JSONObject metadata) {
         this.metadata = metadata;
@@ -23,6 +30,10 @@ public class BrowserSwitchOptions {
     public BrowserSwitchOptions url(Uri url) {
         this.url = url;
         return this;
+    }
+
+    public Intent getIntent() {
+        return intent;
     }
 
     public JSONObject getMetadata() {

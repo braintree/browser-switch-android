@@ -9,8 +9,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import org.json.JSONObject;
-
 @SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
@@ -50,16 +48,11 @@ public class BrowserSwitchClient {
      * @param fragment the fragment used to start browser switch
      */
     public void start(int requestCode, Uri uri, Fragment fragment) {
-        if (fragment instanceof BrowserSwitchListener) {
-            start(requestCode, uri, fragment, (BrowserSwitchListener) fragment);
-        } else {
-            throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
-        }
-    }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
 
-    // TODO: write docs
-    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
-        // TODO: implement
+        start(browserSwitchOptions, fragment);
     }
 
     /**
@@ -72,17 +65,11 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     public void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener) {
-        FragmentActivity activity = fragment.getActivity();
-        if (activity != null) {
-            start(requestCode, uri, activity, listener);
-        } else {
-            throw new IllegalStateException("Fragment must be attached to an activity.");
-        }
-    }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
 
-    // TODO: write docs
-    public void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener, JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, fragment, listener);
     }
 
     /**
@@ -95,16 +82,11 @@ public class BrowserSwitchClient {
      */
     @SuppressWarnings("SameParameterValue")
     public void start(int requestCode, Uri uri, FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            start(requestCode, uri, activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
-        }
-    }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
 
-    // TODO: write docs
-    public void start(int requestCode, Uri uri, FragmentActivity activity, JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, activity);
     }
 
     /**
@@ -116,17 +98,12 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-            int requestCode, Uri uri, FragmentActivity activity,BrowserSwitchListener listener) {
-        Context appContext = activity.getApplicationContext();
-        Intent intent = config.createIntentToLaunchUriInBrowser(appContext, uri);
-        start(requestCode, intent, activity, listener);
-    }
+    public void start(int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
 
-    // TODO: write docs
-    public void start(int requestCode, Uri uri, FragmentActivity activity,
-                      BrowserSwitchListener listener, JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, activity, listener);
     }
 
     /**
@@ -138,16 +115,11 @@ public class BrowserSwitchClient {
      * @param fragment the fragment used to start browser switch
      */
     public void start(int requestCode, Intent intent, Fragment fragment) {
-        if (fragment instanceof BrowserSwitchListener) {
-            start(requestCode, intent, fragment, (BrowserSwitchListener) fragment);
-        } else {
-            throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
-        }
-    }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
 
-    // TODO: write docs
-    public void start(int requestCode, Intent intent, Fragment fragment, JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, fragment);
     }
 
     /**
@@ -159,20 +131,12 @@ public class BrowserSwitchClient {
      * @param fragment the fragment used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-        int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
-        FragmentActivity activity = fragment.getActivity();
-        if (activity != null) {
-            start(requestCode, intent, activity, listener);
-        } else {
-            throw new IllegalStateException("Fragment must be attached to an activity.");
-        }
-    }
+    public void start(int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
 
-    // TODO: write docs
-    public void start(int requestCode, Intent intent, Fragment fragment,
-        BrowserSwitchListener listener, JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, fragment, listener);
     }
 
     /**
@@ -185,17 +149,11 @@ public class BrowserSwitchClient {
      */
     @SuppressWarnings("SameParameterValue")
     public void start(int requestCode, Intent intent, FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            start(requestCode, intent, activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
-        }
-    }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
 
-    // TODO: write docs
-    public void start(int requestCode, Intent intent, FragmentActivity activity,
-        JSONObject metadata) {
-        // TODO: implement
+        start(browserSwitchOptions, activity);
     }
 
     /**
@@ -207,9 +165,55 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-        int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
+    public void start(int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+
+        start(browserSwitchOptions, activity, listener);
+    }
+
+    // TODO: write docs
+    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
+        if (fragment instanceof BrowserSwitchListener) {
+            start(browserSwitchOptions, fragment, (BrowserSwitchListener) fragment);
+        } else {
+            throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
+        }
+    }
+
+    // TODO: write docs
+    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment, BrowserSwitchListener listener) {
+        FragmentActivity activity = fragment.getActivity();
+        if (activity != null) {
+            start(browserSwitchOptions, activity, listener);
+        } else {
+            throw new IllegalStateException("Fragment must be attached to an activity.");
+        }
+    }
+
+    // TODO: write docs
+    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) {
+        if (activity instanceof BrowserSwitchListener) {
+            start(browserSwitchOptions, activity, (BrowserSwitchListener) activity);
+        } else {
+            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
+        }
+    }
+
+    // TODO: write docs
+    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
+
+        Intent intent;
+        if(browserSwitchOptions.getIntent() != null) {
+            intent = browserSwitchOptions.getIntent();
+        } else {
+            intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+        }
+
+        int requestCode = browserSwitchOptions.getRequestCode();
+
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
         if (errorMessage == null) {
             BrowserSwitchRequest request = new BrowserSwitchRequest(
@@ -218,15 +222,9 @@ public class BrowserSwitchClient {
             appContext.startActivity(intent);
         } else {
             BrowserSwitchResult result =
-                new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
+                    new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
             listener.onBrowserSwitchResult(requestCode, result, null);
         }
-    }
-
-    // TODO: write docs
-    public void start(int requestCode, Intent intent, FragmentActivity activity,
-        BrowserSwitchListener listener, JSONObject metadata) {
-        // TODO: implement
     }
 
     private String assertCanPerformBrowserSwitch(int requestCode, Context context, Intent intent) {
