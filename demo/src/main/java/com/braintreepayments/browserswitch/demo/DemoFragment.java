@@ -36,11 +36,14 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        String url = "https://braintree.github.io/popup-bridge-example/" +
+                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
+                getReturnUrlScheme() +
+                "://";
+
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
-                .url("https://braintree.github.io/popup-bridge-example/" +
-                        "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" + getReturnUrlScheme()
-                        + "://");
+                .url(Uri.parse(url));
 
         browserSwitch(browserSwitchOptions);
     }
