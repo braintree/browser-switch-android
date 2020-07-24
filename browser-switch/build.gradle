@@ -41,6 +41,8 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.7'
     testImplementation 'org.powermock:powermock-classloading-xstream:2.0.7'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.7'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
+
     testImplementation 'org.robolectric:robolectric:4.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -109,7 +111,6 @@ afterEvaluate {
                         url = 'scm:git@github.com:braintree/browser-switch-android.git'
                         connection = 'scm:git@github.com:braintree/browser-switch-android.git'
                         developerConnection = 'scm:git@github.com:braintree/browser-switch-android.git'
-
                     }
 
                     developers {

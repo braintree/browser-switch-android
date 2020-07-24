@@ -28,7 +28,7 @@ public class BrowserSwitchResult {
     BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage) {
         this(status, errorMessage, null);
     }
-    
+
     BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage, JSONObject requestMetadata) {
         this.status = status;
         this.errorMessage = errorMessage;

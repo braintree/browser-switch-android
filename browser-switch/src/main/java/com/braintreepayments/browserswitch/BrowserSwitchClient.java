@@ -217,7 +217,7 @@ public class BrowserSwitchClient {
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
         if (errorMessage == null) {
             BrowserSwitchRequest request = new BrowserSwitchRequest(
-                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING);
+                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING, null);
             persistentStore.putActiveRequest(request, appContext);
             appContext.startActivity(intent);
         } else {

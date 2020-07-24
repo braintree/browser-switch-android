@@ -10,6 +10,7 @@ class BrowserSwitchRequest {
     private Uri uri;
     private String state;
     final private int requestCode;
+    private JSONObject metadata;
 
     static final String PENDING = "PENDING";
     static final String SUCCESS = "SUCCESS";
@@ -19,13 +20,15 @@ class BrowserSwitchRequest {
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
         String state = jsonObject.getString("state");
-        return new BrowserSwitchRequest(requestCode, Uri.parse(url), state);
+        JSONObject metadata = jsonObject.getJSONObject("metadata");
+        return new BrowserSwitchRequest(requestCode, Uri.parse(url), state, metadata);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri uri, String state) {
+    BrowserSwitchRequest(int requestCode, Uri uri, String state, JSONObject metadata) {
         this.uri = uri;
         this.state = state;
         this.requestCode = requestCode;
+        this.metadata = metadata;
     }
 
     void setUri(Uri value) {
@@ -44,6 +47,14 @@ class BrowserSwitchRequest {
         return state;
     }
 
+    public JSONObject getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(JSONObject metadata) {
+        this.metadata = metadata;
+    }
+
     void setState(String state) {
         this.state = state;
     }
@@ -53,6 +64,7 @@ class BrowserSwitchRequest {
         result.put("requestCode", requestCode);
         result.put("url", uri.toString());
         result.put("state", state);
+        result.put("metadata", metadata);
         return result.toString();
     }
 }

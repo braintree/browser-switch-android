@@ -266,7 +266,7 @@ public class BrowserSwitchClientTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS);
+            new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS, null);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
@@ -290,7 +290,7 @@ public class BrowserSwitchClientTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING);
+                new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING, null);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
