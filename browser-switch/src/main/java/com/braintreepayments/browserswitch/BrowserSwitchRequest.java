@@ -20,7 +20,7 @@ class BrowserSwitchRequest {
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
         String state = jsonObject.getString("state");
-        JSONObject metadata = jsonObject.getJSONObject("metadata");
+        JSONObject metadata = jsonObject.optJSONObject("metadata");
         return new BrowserSwitchRequest(requestCode, Uri.parse(url), state, metadata);
     }
 
@@ -64,7 +64,9 @@ class BrowserSwitchRequest {
         result.put("requestCode", requestCode);
         result.put("url", uri.toString());
         result.put("state", state);
-        result.put("metadata", metadata);
+        if (metadata != null) {
+            result.put("metadata", metadata);
+        }
         return result.toString();
     }
 }

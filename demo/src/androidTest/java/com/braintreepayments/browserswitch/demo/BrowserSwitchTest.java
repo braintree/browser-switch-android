@@ -20,7 +20,7 @@ public class BrowserSwitchTest {
     }
 
     @Test(timeout = 60000)
-    public void start() {
+    public void startWithoutMetadata() {
         onDevice(withText("Start Browser Switch")).perform(click());
         onDevice(withText("Red")).waitForExists().perform(click());
 
