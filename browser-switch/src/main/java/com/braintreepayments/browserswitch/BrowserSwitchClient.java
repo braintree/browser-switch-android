@@ -173,7 +173,14 @@ public class BrowserSwitchClient {
         start(browserSwitchOptions, activity, listener);
     }
 
-    // TODO: write docs
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android fragment. The fragment
+     * must be attached to activity when invoking this method.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param fragment the fragment used to start browser switch
+     */
     public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
             start(browserSwitchOptions, fragment, (BrowserSwitchListener) fragment);
@@ -182,7 +189,15 @@ public class BrowserSwitchClient {
         }
     }
 
-    // TODO: write docs
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android fragment. The fragment
+     * must be attached to activity when invoking this method.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param fragment the fragment used to start browser switch
+     * @param listener the listener that will receive browser switch callbacks
+     */
     public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
@@ -192,7 +207,13 @@ public class BrowserSwitchClient {
         }
     }
 
-    // TODO: write docs
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param activity the activity used to start browser switch
+     */
     public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
             start(browserSwitchOptions, activity, (BrowserSwitchListener) activity);
@@ -201,7 +222,14 @@ public class BrowserSwitchClient {
         }
     }
 
-    // TODO: write docs
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param activity the activity used to start browser switch
+     * @param listener the listener that will receive browser switch callbacks
+     */
     public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
 
