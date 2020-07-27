@@ -47,7 +47,7 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param uri the url to open.
-     * @param fragment the fragment used to start browser switch
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(int requestCode, Uri uri, Fragment fragment) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
@@ -80,7 +80,7 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param uri the url to open.
-     * @param activity the activity used to start browser switch
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(int requestCode, Uri uri, FragmentActivity activity) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
@@ -113,7 +113,7 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param intent the intent to use to initiate a browser switch
-     * @param fragment the fragment used to start browser switch
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(int requestCode, Intent intent, Fragment fragment) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
@@ -146,7 +146,7 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param intent the intent to use to initiate a browser switch
-     * @param activity the activity used to start browser switch
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(int requestCode, Intent intent, FragmentActivity activity) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
@@ -179,7 +179,7 @@ public class BrowserSwitchClient {
      * must be attached to activity when invoking this method.
      *
      * @param browserSwitchOptions {@link BrowserSwitchOptions}
-     * @param fragment the fragment used to start browser switch
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
@@ -212,7 +212,7 @@ public class BrowserSwitchClient {
      * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
      * @param browserSwitchOptions {@link BrowserSwitchOptions}
-     * @param activity the activity used to start browser switch
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
