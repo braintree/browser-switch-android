@@ -25,14 +25,17 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BrowserSwitchClientTest {
 
     static abstract class FragmentListener extends Fragment implements BrowserSwitchListener {}
+    static abstract class ActivityListener extends FragmentActivity implements BrowserSwitchListener {}
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -43,8 +46,11 @@ public class BrowserSwitchClientTest {
 
     private Uri uri;
 
-    private FragmentListener fragmentListener;
-    private FragmentActivity activity;
+    private Fragment plainFragment;
+    private FragmentActivity plainActivity;
+
+    private ActivityListener activityAndListener;
+    private FragmentListener fragmentAndListener;
 
     private Context applicationContext;
     private BrowserSwitchListener browserSwitchListener;
@@ -60,8 +66,12 @@ public class BrowserSwitchClientTest {
         persistentStore = mock(BrowserSwitchPersistentStore.class);
 
         uri = mock(Uri.class);
-        activity = mock(FragmentActivity.class);
-        fragmentListener = mock(FragmentListener.class);
+
+        plainActivity = mock(FragmentActivity.class);
+        activityAndListener = mock(ActivityListener.class);
+
+        plainFragment = mock(Fragment.class);
+        fragmentAndListener = mock(FragmentListener.class);
 
         applicationContext = mock(Context.class);
         browserSwitchListener = mock(BrowserSwitchListener.class);
@@ -70,22 +80,17 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void start_whenAbleToBrowserSwitch_initiatesBrowserSwitch() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+    public void startWithOptionsAndExplicitListener_withUri_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
-                .thenReturn(queryIntent);
+        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme)).thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
-                .thenReturn(browserSwitchIntent);
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri)).thenReturn(browserSwitchIntent);
 
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
-                .thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
-                .thenReturn(true);
+        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
+        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
 
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
@@ -96,7 +101,42 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, fragmentListener, browserSwitchListener);
+        sut.start(options, plainActivity, browserSwitchListener);
+
+        verify(applicationContext).startActivity(browserSwitchIntent);
+
+        ArgumentCaptor<BrowserSwitchRequest> captor =
+                ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(captor.capture(), same(applicationContext));
+
+        BrowserSwitchRequest browserSwitchRequest = captor.getValue();
+        assertEquals(browserSwitchRequest.getRequestCode(), 123);
+        assertEquals(browserSwitchRequest.getUri(), uri);
+        assertEquals(browserSwitchRequest.getState(), BrowserSwitchRequest.PENDING);
+        assertSame(browserSwitchRequest.getMetadata(), metadata);
+    }
+
+    @Test
+    public void startWithOptionsAndExplicitListener_withIntent_initiatesBrowserSwitch() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+
+        Intent queryIntent = mock(Intent.class);
+        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme)).thenReturn(queryIntent);
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
+        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
+
+        when(browserSwitchIntent.getData()).thenReturn(uri);
+
+        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .intent(browserSwitchIntent)
+                .metadata(metadata);
+        sut.start(options, plainActivity, browserSwitchListener);
 
         verify(applicationContext).startActivity(browserSwitchIntent);
 
@@ -112,9 +152,8 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void start_whenRequestCodeIsIntegerMinValue_notifiesListenerOfError() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+    public void startWithOptionsAndExplicitListener_whenRequestCodeIsIntegerMinValue_notifiesListenerOfError() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
         when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
@@ -136,10 +175,10 @@ public class BrowserSwitchClientTest {
                 .requestCode(Integer.MIN_VALUE)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, fragmentListener, browserSwitchListener);
+        sut.start(options, plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
-            ArgumentCaptor.forClass(BrowserSwitchResult.class);
+                ArgumentCaptor.forClass(BrowserSwitchResult.class);
         verify(browserSwitchListener).onBrowserSwitchResult(anyInt(), captor.capture(), isNull());
 
         BrowserSwitchResult result = captor.getValue();
@@ -148,9 +187,8 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void start_whenIsNotConfiguredForBrowserSwitch_notifiesListenerOfError() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+    public void startWithOptions_whenIsNotConfiguredForBrowserSwitch_notifiesListenerOfError() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
         when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
@@ -172,7 +210,7 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, fragmentListener, browserSwitchListener);
+        sut.start(options, plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
@@ -187,9 +225,8 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void start_whenNoActivityFoundCanOpenURL_notifiesListenerOfError() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+    public void startWithOptions_whenNoActivityFoundCanOpenURL_notifiesListenerOfError() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
         when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
@@ -214,7 +251,7 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, fragmentListener, browserSwitchListener);
+        sut.start(options, plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor = ArgumentCaptor.forClass(BrowserSwitchResult.class);
         verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), isNull());
@@ -225,60 +262,15 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void startWithUri_whenFragmentIsNotBrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Fragment must implement BrowserSwitchListener.");
-
-        Fragment fragment = mock(Fragment.class);
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, uri, fragment);
-    }
-
-    @Test
-    public void startWithIntent_whenFragmentIsNotABrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Fragment must implement BrowserSwitchListener.");
-
-        Intent intent = mock(Intent.class);
-        Fragment fragment = mock(Fragment.class);
-
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, intent, fragment);
-    }
-
-    @Test
     public void startWithOptions_whenFragmentIsNotABrowserSwitchListener_throwsIllegalArgumentException() {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Fragment must implement BrowserSwitchListener.");
 
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(123);
-        Fragment fragment = mock(Fragment.class);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(browserSwitchOptions, fragment);
-    }
-
-    @Test
-    public void startWithUri_whenFragmentIsNotAttachedToAnActivity_throwsIllegalStateException() {
-        exceptionRule.expect(IllegalStateException.class);
-        exceptionRule.expectMessage("Fragment must be attached to an activity.");
-
-        when(fragmentListener.getActivity()).thenReturn(null);
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, uri, fragmentListener);
-    }
-
-    @Test
-    public void startWithIntent_whenFragmentIsNotAttachedToAnActivity_throwsIllegalStateException() {
-        exceptionRule.expect(IllegalStateException.class);
-        exceptionRule.expectMessage("Fragment must be attached to an activity.");
-
-        when(fragmentListener.getActivity()).thenReturn(null);
-
-        Intent intent = mock(Intent.class);
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, intent, fragmentListener);
+        sut.start(browserSwitchOptions, plainFragment);
     }
 
     @Test
@@ -286,32 +278,13 @@ public class BrowserSwitchClientTest {
         exceptionRule.expect(IllegalStateException.class);
         exceptionRule.expectMessage("Fragment must be attached to an activity.");
 
-        when(fragmentListener.getActivity()).thenReturn(null);
+        when(fragmentAndListener.getActivity()).thenReturn(null);
 
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(123);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(browserSwitchOptions, fragmentListener);
-    }
-
-    @Test
-    public void startWithUri_whenActivityIsNotBrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
-
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, uri, activity);
-    }
-
-    @Test
-    public void startWithIntent_whenActivityIsNotBrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
-
-        Intent intent = mock(Intent.class);
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, intent, activity);
+        sut.start(browserSwitchOptions, fragmentAndListener);
     }
 
     @Test
@@ -323,13 +296,183 @@ public class BrowserSwitchClientTest {
                 .requestCode(123);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(browserSwitchOptions, activity);
+        sut.start(browserSwitchOptions, plainActivity);
+    }
+
+    @Test
+    public void convenience_startWithOptionsAndActivityListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions();
+        sut.start(browserSwitchOptions, activityAndListener);
+        verify(sut).start(browserSwitchOptions, activityAndListener, activityAndListener);
+    }
+
+    @Test
+    public void convenience_startWithOptionsAndFragmentListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions();
+        sut.start(browserSwitchOptions, fragmentAndListener);
+        verify(sut).start(browserSwitchOptions, plainActivity, fragmentAndListener);
+    }
+
+    @Test
+    public void convenience_startWithIntentAndActivityAndExplicitListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        sut.start(123, browserSwitchIntent, plainActivity, browserSwitchListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(browserSwitchListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getIntent(), browserSwitchIntent);
+        assertNull(browserSwitchOptions.getUrl());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithIntentAndActivityListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        sut.start(123, browserSwitchIntent, activityAndListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(activityAndListener), same(activityAndListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getIntent(), browserSwitchIntent);
+        assertNull(browserSwitchOptions.getUrl());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithIntentAndFragmentAndExplicitListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        when(plainFragment.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        sut.start(123, browserSwitchIntent, plainFragment, browserSwitchListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(browserSwitchListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getIntent(), browserSwitchIntent);
+        assertNull(browserSwitchOptions.getUrl());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithIntentAndFragmentListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        sut.start(123, browserSwitchIntent, fragmentAndListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(fragmentAndListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getIntent(), browserSwitchIntent);
+        assertNull(browserSwitchOptions.getUrl());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithUriAndActivityAndExplicitListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.start(123, uri, plainActivity, browserSwitchListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(browserSwitchListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getUrl(), uri);
+        assertNull(browserSwitchOptions.getIntent());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithUriAndActivityListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.start(123, uri, activityAndListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(activityAndListener), same(activityAndListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getUrl(), uri);
+        assertNull(browserSwitchOptions.getIntent());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithUriAndFragmentAndExplicitListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        when(plainFragment.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.start(123, uri, plainFragment, browserSwitchListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(browserSwitchListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getUrl(), uri);
+        assertNull(browserSwitchOptions.getIntent());
+        assertNull(browserSwitchOptions.getMetadata());
+    }
+
+    @Test
+    public void convenience_startWithUriAndFragmentListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.start(123, uri, fragmentAndListener);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor = ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+        verify(sut).start(captor.capture(), same(plainActivity), same(fragmentAndListener));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertSame(browserSwitchOptions.getUrl(), uri);
+        assertNull(browserSwitchOptions.getIntent());
+        assertNull(browserSwitchOptions.getMetadata());
     }
 
     @Test
     public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -337,7 +480,7 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentListener, browserSwitchListener);
+        sut.deliverResult(fragmentAndListener, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
@@ -354,8 +497,8 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsPending_clearsResultStoreAndNotifiesResultCANCELLED() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -363,7 +506,7 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentListener, browserSwitchListener);
+        sut.deliverResult(fragmentAndListener, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
@@ -380,15 +523,15 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsNull_doesNothing() {
-        when(fragmentListener.getActivity()).thenReturn(activity);
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentListener, browserSwitchListener);
+        sut.deliverResult(fragmentAndListener, browserSwitchListener);
 
         verify(browserSwitchListener, never()).onBrowserSwitchResult(anyInt(), any(), any());
-        verify(persistentStore, never()).clearActiveRequest(activity);
+        verify(persistentStore, never()).clearActiveRequest(plainActivity);
     }
 
     @Test
@@ -406,9 +549,9 @@ public class BrowserSwitchClientTest {
         exceptionRule.expect(IllegalStateException.class);
         exceptionRule.expectMessage("Fragment must be attached to an activity.");
 
-        when(fragmentListener.getActivity()).thenReturn(null);
+        when(fragmentAndListener.getActivity()).thenReturn(null);
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentListener);
+        sut.deliverResult(fragmentAndListener);
     }
 
     @Test
@@ -417,7 +560,7 @@ public class BrowserSwitchClientTest {
         exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(activity);
+        sut.deliverResult(plainActivity);
     }
 
     @Test
