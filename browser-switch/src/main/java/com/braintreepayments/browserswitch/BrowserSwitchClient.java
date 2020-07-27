@@ -9,6 +9,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import org.json.JSONObject;
+
 @SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
@@ -338,11 +340,15 @@ public class BrowserSwitchClient {
 
             Uri uri = null;
             BrowserSwitchResult result;
+
+            JSONObject metadata = request.getMetadata();
             if (request.getState().equalsIgnoreCase(BrowserSwitchRequest.SUCCESS)) {
                 uri = request.getUri();
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_OK);
+                result = new BrowserSwitchResult(
+                        BrowserSwitchResult.STATUS_OK, null, metadata);
             } else {
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED);
+                result = new BrowserSwitchResult(
+                        BrowserSwitchResult.STATUS_CANCELED, null, metadata);
             }
             listener.onBrowserSwitchResult(requestCode, result, uri);
         }

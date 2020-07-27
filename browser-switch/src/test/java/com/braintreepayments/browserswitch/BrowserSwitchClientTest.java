@@ -7,6 +7,7 @@ import android.net.Uri;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -265,8 +267,9 @@ public class BrowserSwitchClientTest {
         when(fragmentListener.getActivity()).thenReturn(activity);
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
+        JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS, null);
+            new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
@@ -280,6 +283,7 @@ public class BrowserSwitchClientTest {
         assertNotNull(result);
         assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_OK);
         assertNull(result.getErrorMessage());
+        assertSame(result.getRequestMetadata(), requestMetadata);
 
         verify(persistentStore).clearActiveRequest(applicationContext);
     }
@@ -289,8 +293,9 @@ public class BrowserSwitchClientTest {
         when(fragmentListener.getActivity()).thenReturn(activity);
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
+        JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING, null);
+                new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
@@ -304,6 +309,7 @@ public class BrowserSwitchClientTest {
         assertNotNull(result);
         assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_CANCELED);
         assertNull(result.getErrorMessage());
+        assertSame(result.getRequestMetadata(), requestMetadata);
 
         verify(persistentStore).clearActiveRequest(applicationContext);
     }
