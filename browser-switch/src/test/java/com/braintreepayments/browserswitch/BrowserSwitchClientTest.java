@@ -471,7 +471,6 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
-        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         JSONObject requestMetadata = new JSONObject();
@@ -480,7 +479,7 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentAndListener, browserSwitchListener);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
@@ -497,7 +496,6 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsPending_clearsResultStoreAndNotifiesResultCANCELLED() {
-        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         JSONObject requestMetadata = new JSONObject();
@@ -506,7 +504,7 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentAndListener, browserSwitchListener);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
@@ -523,12 +521,11 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsNull_doesNothing() {
-        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragmentAndListener, browserSwitchListener);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
         verify(browserSwitchListener, never()).onBrowserSwitchResult(anyInt(), any(), any());
         verify(persistentStore, never()).clearActiveRequest(plainActivity);
@@ -539,9 +536,8 @@ public class BrowserSwitchClientTest {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Fragment must implement BrowserSwitchListener.");
 
-        Fragment fragment = mock(Fragment.class);
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.deliverResult(fragment);
+        sut.deliverResult(plainFragment);
     }
 
     @Test
@@ -561,6 +557,37 @@ public class BrowserSwitchClientTest {
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
         sut.deliverResult(plainActivity);
+    }
+
+    @Test
+    public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.deliverResult(activityAndListener);
+        verify(sut).deliverResult(activityAndListener, activityAndListener);
+    }
+
+    @Test
+    public void convenience_deliverResultWithFragmentAndExplicitListener_forwardsInvocationToPrimaryDeliverResultMethod() {
+        when(plainFragment.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.deliverResult(plainFragment, browserSwitchListener);
+        verify(sut).deliverResult(plainActivity, browserSwitchListener);
+    }
+
+    @Test
+    public void convenience_deliverResultWithFragmentListener_forwardsInvocationToPrimaryDeliverResultMethod() {
+        when(fragmentAndListener.getActivity()).thenReturn(plainActivity);
+
+        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
+
+        sut.deliverResult(fragmentAndListener);
+        verify(sut).deliverResult(plainActivity, fragmentAndListener);
     }
 
     @Test
