@@ -53,7 +53,10 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     @SuppressWarnings("WeakerAccess")
     public void browserSwitch(int requestCode, String url) {
-        browserSwitchClient.start(requestCode, Uri.parse(url), this);
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(Uri.parse(url));
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     /**
@@ -65,7 +68,10 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     @SuppressWarnings("WeakerAccess")
     public void browserSwitch(int requestCode, Intent intent) {
-        browserSwitchClient.start(requestCode, intent, this);
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     //TODO: write docs
