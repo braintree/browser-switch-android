@@ -20,44 +20,73 @@ import org.json.JSONObject;
 
 public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
 
-    private TextView mResult;
-    private TextView mReturnUrl;
-    private TextView mMetadata;
+    private static final String TEST_KEY = "testKey";
+    private static final String TEST_VALUE = "testValue";
+
+    private TextView mBrowserSwitchStatusTextView;
+    private TextView mSelectedColorTextView;
+    private TextView mMetadataTextView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.demo_fragment, container, false);
 
-        Button browserSwitchButton = view.findViewById(R.id.browser_switch);
-        browserSwitchButton.setOnClickListener(this);
+        Button startBrowserSwitchButton = view.findViewById(R.id.browser_switch);
+        startBrowserSwitchButton.setOnClickListener(this);
 
-        mResult = view.findViewById(R.id.result);
-        mReturnUrl = view.findViewById(R.id.return_url);
-        mMetadata = view.findViewById(R.id.metadata);
+        Button startBrowserSwitchWithMetadataButton =
+            view.findViewById(R.id.browser_switch_with_metadata);
+        startBrowserSwitchWithMetadataButton.setOnClickListener(this);
+
+        mBrowserSwitchStatusTextView = view.findViewById(R.id.result);
+        mSelectedColorTextView = view.findViewById(R.id.return_url);
+        mMetadataTextView = view.findViewById(R.id.metadata);
 
         return view;
     }
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.browser_switch:
+                startBrowserSwitch();
+                break;
+            case R.id.browser_switch_with_metadata:
+                JSONObject metadata = buildMetadataObject(TEST_KEY, TEST_VALUE);
+                startBrowserSwitchWithMetadata(metadata);
+                break;
+        }
+    }
+
+    private void startBrowserSwitch() {
+        Uri url = buildBrowserSwitchUrl();
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(1)
+                .url(url);
+        browserSwitch(browserSwitchOptions);
+    }
+
+    private void startBrowserSwitchWithMetadata(JSONObject metadata) {
+        Uri url = buildBrowserSwitchUrl();
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .metadata(metadata)
+                .requestCode(1)
+                .url(url);
+        browserSwitch(browserSwitchOptions);
+    }
+
+    private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
                 getReturnUrlScheme() +
                 "://";
-
-        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-                .metadata(buildMetadataObject())
-                .requestCode(1)
-                .url(Uri.parse(url));
-
-        browserSwitch(browserSwitchOptions);
+        return Uri.parse(url);
     }
 
-    private JSONObject buildMetadataObject() {
+    private JSONObject buildMetadataObject(String key, String value) {
         try {
-            return new JSONObject()
-                    .put("testKey", "testValue");
+            return new JSONObject().put(key, value);
         } catch (JSONException ignore) {
             // do nothing
         }
@@ -67,14 +96,16 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     @Override
     public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
         String resultText = null;
-        String returnUrl = "";
+        String selectedColorText = "";
 
         int statusCode = result.getStatus();
         switch (statusCode) {
             case BrowserSwitchResult.STATUS_OK:
                 resultText = "Browser Switch Successful";
+
                 if (returnUri != null) {
-                    returnUrl = "Uri: " + returnUri.toString();
+                    String color = returnUri.getQueryParameter("color");
+                    selectedColorText = String.format("Selected color: %s", color);
                 }
                 break;
             case BrowserSwitchResult.STATUS_ERROR:
@@ -84,12 +115,17 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
                 resultText = "Browser Switch Cancelled by User";
                 break;
         }
-        mResult.setText(resultText);
-        mReturnUrl.setText(returnUrl);
-        try {
-            mMetadata.setText(result.getRequestMetadata().getString("testKey"));
-        } catch (JSONException ignore) {
-            // do nothing
+        mBrowserSwitchStatusTextView.setText(resultText);
+        mSelectedColorTextView.setText(selectedColorText);
+
+        JSONObject requestMetadata = result.getRequestMetadata();
+        if (requestMetadata != null) {
+            try {
+                String actualValue = result.getRequestMetadata().getString(TEST_KEY);
+                mMetadataTextView.setText(String.format("Metadata: %s=%s", TEST_KEY, actualValue));
+            } catch (JSONException ignore) {
+                // do nothing
+            }
         }
     }
 }

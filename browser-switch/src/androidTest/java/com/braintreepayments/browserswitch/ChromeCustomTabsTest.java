@@ -8,7 +8,6 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 
-import com.braintreepayments.browserswitch.test.BuildConfig;
 import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;
 
 import org.junit.Before;
