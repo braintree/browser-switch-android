@@ -118,14 +118,16 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         mBrowserSwitchStatusTextView.setText(resultText);
         mSelectedColorTextView.setText(selectedColorText);
 
+        String metadataOutput = null;
         JSONObject requestMetadata = result.getRequestMetadata();
         if (requestMetadata != null) {
             try {
-                String actualValue = result.getRequestMetadata().getString(TEST_KEY);
-                mMetadataTextView.setText(String.format("Metadata: %s=%s", TEST_KEY, actualValue));
+                String metadataValue = result.getRequestMetadata().getString(TEST_KEY);
+                metadataOutput = String.format("%s=%s", TEST_KEY, metadataValue);
             } catch (JSONException ignore) {
                 // do nothing
             }
         }
+        mMetadataTextView.setText(String.format("Metadata: %s", metadataOutput));
     }
 }

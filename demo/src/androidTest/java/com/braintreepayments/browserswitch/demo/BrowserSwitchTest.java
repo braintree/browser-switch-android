@@ -19,10 +19,17 @@ public class BrowserSwitchTest {
         onDevice().onHomeScreen().launchApp("com.braintreepayments.browserswitch.demo");
     }
 
-//    @Test(timeout = 60000)
-//    public void start() {
-//        onDevice(withText("Start Browser Switch")).perform(click());
-//    }
+    @Test(timeout = 60000)
+    public void start() {
+        onDevice(withText("Start Browser Switch")).perform(click());
+        onDevice(withText("Red")).waitForExists().perform(click());
+
+        onDevice(withText("Browser Switch Successful")).waitForExists();
+
+        assertTrue(onDevice(withText("Browser Switch Successful")).exists());
+        assertTrue(onDevice(withText("Selected Color: red")).exists());
+        assertTrue(onDevice(withText("Metadata: null")).exists());
+    }
 
     @Test(timeout = 60000)
     public void startWithMetadata() {
