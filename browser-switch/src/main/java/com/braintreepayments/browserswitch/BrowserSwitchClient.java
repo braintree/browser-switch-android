@@ -82,7 +82,6 @@ public class BrowserSwitchClient {
      * @param uri the url to open.
      * @param activity the activity used to start browser switch
      */
-    @SuppressWarnings("SameParameterValue")
     public void start(int requestCode, Uri uri, FragmentActivity activity) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(requestCode)
@@ -149,7 +148,6 @@ public class BrowserSwitchClient {
      * @param intent the intent to use to initiate a browser switch
      * @param activity the activity used to start browser switch
      */
-    @SuppressWarnings("SameParameterValue")
     public void start(int requestCode, Intent intent, FragmentActivity activity) {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .intent(intent)
