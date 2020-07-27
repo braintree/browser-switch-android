@@ -21,10 +21,6 @@ public class BrowserSwitchResult {
     public static final int STATUS_CANCELED = 2;
     public static final int STATUS_ERROR = 3;
 
-    BrowserSwitchResult(@BrowserSwitchStatus int status) {
-        this(status, null);
-    }
-
     BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage) {
         this(status, errorMessage, null);
     }

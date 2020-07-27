@@ -51,10 +51,6 @@ class BrowserSwitchRequest {
         return metadata;
     }
 
-    public void setMetadata(JSONObject metadata) {
-        this.metadata = metadata;
-    }
-
     void setState(String state) {
         this.state = state;
     }
