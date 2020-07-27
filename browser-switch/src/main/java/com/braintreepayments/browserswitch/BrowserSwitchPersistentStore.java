@@ -1,12 +1,17 @@
 package com.braintreepayments.browserswitch;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONException;
 
+import java.util.Arrays;
+
 class BrowserSwitchPersistentStore {
+
+    private static final String TAG = "BrowserSwitch";
 
     @VisibleForTesting
     static final String REQUEST_KEY = "browserSwitch.request";
@@ -26,7 +31,10 @@ class BrowserSwitchPersistentStore {
         if (activeRequestJson != null) {
             try {
                 request = BrowserSwitchRequest.fromJson(activeRequestJson);
-            } catch (JSONException ignored) { /* do nothing */ }
+            } catch (JSONException e) {
+                Log.d(TAG, e.getMessage());
+                Log.d(TAG, Arrays.toString(e.getStackTrace()));
+            }
         }
         return request;
     }
@@ -34,7 +42,10 @@ class BrowserSwitchPersistentStore {
     void putActiveRequest(BrowserSwitchRequest request, Context context) {
         try {
             PersistentStore.put(REQUEST_KEY, request.toJson(), context);
-        } catch (JSONException ignored) { /* do nothing */ }
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+            Log.d(TAG, Arrays.toString(e.getStackTrace()));
+        }
     }
 
     void clearActiveRequest(Context context) {

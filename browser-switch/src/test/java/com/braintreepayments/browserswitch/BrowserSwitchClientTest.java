@@ -90,7 +90,13 @@ public class BrowserSwitchClientTest {
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(123, uri, fragmentListener, browserSwitchListener);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(uri)
+                .metadata(metadata);
+        sut.start(options, fragmentListener, browserSwitchListener);
 
         verify(applicationContext).startActivity(browserSwitchIntent);
 
@@ -102,6 +108,7 @@ public class BrowserSwitchClientTest {
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUri(), uri);
         assertEquals(browserSwitchRequest.getState(), BrowserSwitchRequest.PENDING);
+        assertSame(browserSwitchRequest.getMetadata(), metadata);
     }
 
     @Test
