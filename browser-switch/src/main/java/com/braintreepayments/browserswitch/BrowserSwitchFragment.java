@@ -74,7 +74,12 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
         browserSwitchClient.start(browserSwitchOptions, this);
     }
 
-    //TODO: write docs
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent.
+     *
+     * @param browserSwitchOptions a {@link BrowserSwitchOptions} object.
+     */
     public void browserSwitch(BrowserSwitchOptions browserSwitchOptions) {
         browserSwitchClient.start(browserSwitchOptions, this);
     }
