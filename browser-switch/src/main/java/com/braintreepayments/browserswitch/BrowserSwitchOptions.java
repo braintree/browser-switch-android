@@ -3,8 +3,15 @@ package com.braintreepayments.browserswitch;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.fragment.app.FragmentActivity;
+
 import org.json.JSONObject;
 
+/**
+ * Parameter object that contains a set of BrowserSwitch parameters for use with
+ * {@link BrowserSwitchClient#start(BrowserSwitchOptions, FragmentActivity, BrowserSwitchListener)}
+ * and related convenience methods.
+ */
 public class BrowserSwitchOptions {
 
     private Intent intent;
