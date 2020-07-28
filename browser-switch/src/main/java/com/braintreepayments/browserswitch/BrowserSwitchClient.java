@@ -251,7 +251,7 @@ public class BrowserSwitchClient {
             appContext.startActivity(intent);
         } else {
             BrowserSwitchResult result =
-                    new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
+                new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
             listener.onBrowserSwitchResult(requestCode, result, null);
         }
     }
