@@ -180,7 +180,7 @@ public class BrowserSwitchClientTest {
         sut.start(options, plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
-                ArgumentCaptor.forClass(BrowserSwitchResult.class);
+            ArgumentCaptor.forClass(BrowserSwitchResult.class);
         verify(browserSwitchListener).onBrowserSwitchResult(anyInt(), captor.capture(), isNull());
 
         BrowserSwitchResult result = captor.getValue();
