@@ -47,7 +47,6 @@ public class BrowserSwitchRequestTest {
 
     @Test
     public void fromJson_withMetadata() throws JSONException {
-
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
@@ -83,4 +82,3 @@ public class BrowserSwitchRequestTest {
         JSONAssert.assertEquals(restored.getMetadata(), original.getMetadata(), true);
     }
 }
-
