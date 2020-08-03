@@ -91,20 +91,20 @@ end
 
 def increment_version_code
   new_build_file = ""
-  File.foreach("browser-switch/build.gradle") do |line|
+  File.foreach("build.gradle") do |line|
     if line.match(/versionCode (\d+)/)
       new_build_file += line.gsub(/versionCode \d+/, "versionCode #{$1.to_i + 1}")
     else
       new_build_file += line
     end
   end
-  IO.write('browser-switch/build.gradle', new_build_file)
+  IO.write('build.gradle', new_build_file)
 end
 
 def update_version(version)
-  IO.write("browser-switch/build.gradle",
-    File.open("browser-switch/build.gradle") do |file|
-      file.read.gsub(/version '\d+\.\d+\.\d+(-SNAPSHOT)?'/, "version '#{version}'")
+  IO.write("build.gradle",
+    File.open("build.gradle") do |file|
+      file.read.gsub(/^version '\d+\.\d+\.\d+(-SNAPSHOT)?'/, "version '#{version}'")
     end
   )
 end
