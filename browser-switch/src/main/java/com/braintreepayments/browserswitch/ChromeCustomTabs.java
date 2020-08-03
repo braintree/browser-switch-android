@@ -1,11 +1,13 @@
 package com.braintreepayments.browserswitch;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
+
+import java.util.List;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
@@ -14,6 +16,12 @@ import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
  * Helper class for working with Chrome Custom Tabs
  */
 public class ChromeCustomTabs {
+
+    // Action to add to the service intent. This action can be used as a way
+    // generically pick apps that handle custom tabs for both activity and service
+    // side implementations.
+    private static final String ACTION_CUSTOM_TABS_CONNECTION =
+            "android.support.customtabs.action.CustomTabsService";
 
     /**
      * Checks to see if this device supports Chrome Custom Tabs and if Chrome Custom Tabs are available.
@@ -26,21 +34,22 @@ public class ChromeCustomTabs {
             return false;
         }
 
-        Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService")
-                .setPackage("com.android.chrome");
-        ServiceConnection connection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {}
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {}
-        };
-
-        boolean available = context.bindService(serviceIntent, connection,
-                Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY);
-        context.unbindService(connection);
-
-        return available;
+        // https://developer.chrome.com/multidevice/android/customtabs
+        PackageManager pm = context.getPackageManager();
+        // Get default VIEW intent handler.
+        Intent activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"));
+        // Get all apps that can handle VIEW intents.
+        List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(activityIntent, 0);
+        for (ResolveInfo info : resolvedActivityList) {
+            Intent serviceIntent = new Intent()
+                    .setAction(ACTION_CUSTOM_TABS_CONNECTION)
+                    .setPackage(info.activityInfo.packageName);
+            // Check if this package also resolves the Custom Tabs service.
+            if (pm.resolveService(serviceIntent, 0) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## Version TBD
+
+* Support custom tabs when Chrome isn't installed
+
 ## 1.1.3
 
 * Update androidx dependencies to latest versions
