@@ -31,28 +31,23 @@ android {
 }
 
 dependencies {
-
-    implementation "androidx.appcompat:appcompat:${rootProject.appCompatVersion}"
     implementation "androidx.annotation:annotation:${rootProject.annotationVersion}"
+    implementation "androidx.appcompat:appcompat:${rootProject.appCompatVersion}"
     implementation "androidx.fragment:fragment:${rootProject.fragmentVersion}"
 
+    debugImplementation "androidx.fragment:fragment-testing:${rootProject.fragmentVersion}"
+
     testImplementation 'junit:junit:4.12'
-
     testImplementation 'org.mockito:mockito-core:2.28.2'
-
     testImplementation 'org.powermock:powermock-module-junit4:2.0.7'
     testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.7'
     testImplementation 'org.powermock:powermock-classloading-xstream:2.0.7'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.7'
-
     testImplementation 'org.robolectric:robolectric:4.3'
 
-    def fragment_version = "1.2.4"
-    debugImplementation "androidx.fragment:fragment-testing:${fragment_version}"
-
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'org.mockito:mockito-android:2.28.2'
 }
 
