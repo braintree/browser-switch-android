@@ -9,6 +9,10 @@ android:
     - tools
     - tools
     - platform-tools
+<<<<<<< Updated upstream
     - build-tools-29.0.2
+=======
+    - build-tools-29.0.3
+>>>>>>> Stashed changes
     - android-28
 script: ./gradlew --info clean lint test
