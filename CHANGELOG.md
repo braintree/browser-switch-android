@@ -1,5 +1,8 @@
 # browser-switch-android Release Notes
 
+## TBD
+* Added an instrumentation test for the demo application
+
 ## 1.1.0
 
 * Create `BrowserSwitchOptions` value object for configuring browser switch behavior
