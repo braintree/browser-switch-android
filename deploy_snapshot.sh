@@ -2,7 +2,7 @@
 
 set -e
 
-SLUG="braintree/android-card-form"
+SLUG="braintree/browser-switch-android"
 JDK="oraclejdk8"
 BRANCH="master"
 
