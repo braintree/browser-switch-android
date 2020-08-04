@@ -54,7 +54,7 @@ public class BrowserSwitchConfigTest {
 
         assertEquals(result.getData().toString(), "https://www.example.com");
         assertEquals(result.getAction(), Intent.ACTION_VIEW);
-        assertEquals(result.getFlags(), Intent.FLAG_ACTIVITY_NEW_TASK);
+        assertEquals(result.getFlags(), 0);
 
         verifyStatic(ChromeCustomTabs.class, never());
         ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, result);
@@ -70,7 +70,7 @@ public class BrowserSwitchConfigTest {
 
         assertEquals(result.getData().toString(), "https://www.example.com");
         assertEquals(result.getAction(), Intent.ACTION_VIEW);
-        assertEquals(result.getFlags(), Intent.FLAG_ACTIVITY_NEW_TASK);
+        assertEquals(result.getFlags(), 0);
 
         verifyStatic(ChromeCustomTabs.class);
         ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, result);

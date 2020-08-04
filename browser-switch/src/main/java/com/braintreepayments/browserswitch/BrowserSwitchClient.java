@@ -248,7 +248,8 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request = new BrowserSwitchRequest(
                     requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
             persistentStore.putActiveRequest(request, appContext);
-            appContext.startActivity(intent);
+            BrowserSwitchActivity.setReturnIntent(activity.getIntent());
+            activity.startActivity(intent);
         } else {
             BrowserSwitchResult result =
                 new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
@@ -377,6 +378,7 @@ public class BrowserSwitchClient {
                 result = new BrowserSwitchResult(
                         BrowserSwitchResult.STATUS_CANCELED, null, metadata);
             }
+            BrowserSwitchActivity.clearReturnIntent();
             listener.onBrowserSwitchResult(requestCode, result, uri);
         }
     }

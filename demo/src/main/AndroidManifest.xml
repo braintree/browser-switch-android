@@ -5,12 +5,14 @@
     >
 
     <application
+        android:name=".DemoApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo"
         android:theme="@style/AppTheme"
         android:allowBackup="false"
         >
-        <activity android:name=".DemoActivity">
+        <activity android:name=".DemoActivity"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

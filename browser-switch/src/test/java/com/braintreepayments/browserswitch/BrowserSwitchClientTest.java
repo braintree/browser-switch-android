@@ -105,7 +105,7 @@ public class BrowserSwitchClientTest {
                 .metadata(metadata);
         sut.start(options, plainActivity, browserSwitchListener);
 
-        verify(applicationContext).startActivity(browserSwitchIntent);
+        verify(plainActivity).startActivity(browserSwitchIntent);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
                 ArgumentCaptor.forClass(BrowserSwitchRequest.class);
@@ -140,7 +140,7 @@ public class BrowserSwitchClientTest {
                 .metadata(metadata);
         sut.start(options, plainActivity, browserSwitchListener);
 
-        verify(applicationContext).startActivity(browserSwitchIntent);
+        verify(plainActivity).startActivity(browserSwitchIntent);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
             ArgumentCaptor.forClass(BrowserSwitchRequest.class);
