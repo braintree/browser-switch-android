@@ -9,6 +9,8 @@ android:
     - tools
     - tools
     - platform-tools
-    - build-tools-29.0.2
+    - build-tools-29.0.3
     - android-28
 script: ./gradlew --info clean lint test
+after_success: ./deploy_snapshot.sh
+

@@ -1,15 +1,17 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "com.braintreepayments.browserswitch.demo"
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
     }
 
     compileOptions {
@@ -20,7 +22,7 @@ android {
 
 dependencies {
     implementation project(':browser-switch')
+    implementation "androidx.appcompat:appcompat:${rootProject.appCompatVersion}"
     implementation "androidx.annotation:annotation:${rootProject.annotationVersion}"
     implementation "androidx.fragment:fragment:${rootProject.fragmentVersion}"
-    implementation "androidx.appcompat:appcompat:${rootProject.appCompatVersion}"
 }
