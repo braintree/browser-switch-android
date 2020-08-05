@@ -53,7 +53,10 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     @SuppressWarnings("WeakerAccess")
     public void browserSwitch(int requestCode, String url) {
-        browserSwitchClient.start(requestCode, Uri.parse(url), this);
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(Uri.parse(url));
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     /**
@@ -65,7 +68,20 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     @SuppressWarnings("WeakerAccess")
     public void browserSwitch(int requestCode, Intent intent) {
-        browserSwitchClient.start(requestCode, intent, this);
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+        browserSwitchClient.start(browserSwitchOptions, this);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent.
+     *
+     * @param browserSwitchOptions a {@link BrowserSwitchOptions} object.
+     */
+    public void browserSwitch(BrowserSwitchOptions browserSwitchOptions) {
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     /**

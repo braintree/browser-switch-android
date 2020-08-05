@@ -12,6 +12,8 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionCode
         versionName rootProject.versionName
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     compileOptions {
@@ -25,4 +27,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.appCompatVersion}"
     implementation "androidx.annotation:annotation:${rootProject.annotationVersion}"
     implementation "androidx.fragment:fragment:${rootProject.fragmentVersion}"
+
+    androidTestImplementation 'com.lukekorth:device-automator:1.0.0'
 }

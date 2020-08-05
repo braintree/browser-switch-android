@@ -8,14 +8,16 @@ import androidx.fragment.app.FragmentManager;
 
 import com.braintreepayments.browserswitch.test.TestBrowserSwitchFragment;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -55,7 +57,7 @@ public class BrowserSwitchFragmentTest {
     @Test
     public void getReturnUrlScheme_returnsUrlSchemeUsingPackageNameFromContext() {
         String result = sut.getReturnUrlScheme();
-        Assert.assertEquals(result, "com.braintreepayments.browserswitch.test.browserswitch");
+        assertEquals(result, "com.braintreepayments.browserswitch.test.browserswitch");
     }
 
     @Test
@@ -64,7 +66,15 @@ public class BrowserSwitchFragmentTest {
         sut.browserSwitch(123, "https://example.com");
 
         Uri uri = Uri.parse("https://example.com");
-        verify(browserSwitchClient).start(123, uri, sut);
+
+        ArgumentCaptor<BrowserSwitchOptions> captor =
+            ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+
+        verify(browserSwitchClient).start(captor.capture(), same(sut));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertEquals(browserSwitchOptions.getUrl(), uri);
     }
 
     @Test
@@ -74,6 +84,23 @@ public class BrowserSwitchFragmentTest {
         sut.browserSwitchClient = browserSwitchClient;
         sut.browserSwitch(123, intent);
 
-        verify(browserSwitchClient).start(123, intent, sut);
+        ArgumentCaptor<BrowserSwitchOptions> captor =
+                ArgumentCaptor.forClass(BrowserSwitchOptions.class);
+
+        verify(browserSwitchClient).start(captor.capture(), same(sut));
+
+        BrowserSwitchOptions browserSwitchOptions = captor.getValue();
+        assertEquals(browserSwitchOptions.getRequestCode(), 123);
+        assertEquals(browserSwitchOptions.getIntent(), intent);
+    }
+
+    @Test
+    public void browserSwitchWithOptions_startsBrowserSwitch() {
+        sut.browserSwitchClient = browserSwitchClient;
+
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions();
+        sut.browserSwitch(browserSwitchOptions);
+
+        verify(browserSwitchClient).start(browserSwitchOptions, sut);
     }
 }

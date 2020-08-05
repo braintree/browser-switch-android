@@ -1,6 +1,7 @@
 package com.braintreepayments.browserswitch;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
@@ -21,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ PersistentStore.class, BrowserSwitchRequest.class })
+@PrepareForTest({ PersistentStore.class, BrowserSwitchRequest.class, Log.class })
 public class BrowserSwitchPersistentStoreTest {
 
     private Context context;
@@ -29,6 +31,7 @@ public class BrowserSwitchPersistentStoreTest {
 
     @Before
     public void beforeEach() {
+        mockStatic(Log.class);
         mockStatic(PersistentStore.class);
         mockStatic(BrowserSwitchRequest.class);
 

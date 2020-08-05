@@ -2,6 +2,8 @@ package com.braintreepayments.browserswitch;
 
 import androidx.annotation.IntDef;
 
+import org.json.JSONObject;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -9,6 +11,7 @@ public class BrowserSwitchResult {
 
     final private int status;
     final private String errorMessage;
+    final JSONObject requestMetadata;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ STATUS_OK, STATUS_CANCELED, STATUS_ERROR })
@@ -18,13 +21,14 @@ public class BrowserSwitchResult {
     public static final int STATUS_CANCELED = 2;
     public static final int STATUS_ERROR = 3;
 
-    BrowserSwitchResult(@BrowserSwitchStatus int status) {
-        this(status, null);
+    BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage) {
+        this(status, errorMessage, null);
     }
 
-    BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage) {
+    BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage, JSONObject requestMetadata) {
         this.status = status;
         this.errorMessage = errorMessage;
+        this.requestMetadata = requestMetadata;
     }
 
     @BrowserSwitchStatus
@@ -34,5 +38,9 @@ public class BrowserSwitchResult {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public JSONObject getRequestMetadata() {
+        return requestMetadata;
     }
 }

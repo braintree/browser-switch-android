@@ -9,6 +9,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import org.json.JSONObject;
+
 @SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
@@ -45,14 +47,14 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param uri the url to open.
-     * @param fragment the fragment used to start browser switch
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
     public void start(int requestCode, Uri uri, Fragment fragment) {
-        if (fragment instanceof BrowserSwitchListener) {
-            start(requestCode, uri, fragment, (BrowserSwitchListener) fragment);
-        } else {
-            throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
-        }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
+
+        start(browserSwitchOptions, fragment);
     }
 
     /**
@@ -65,12 +67,11 @@ public class BrowserSwitchClient {
      * @param listener the listener that will receive browser switch callbacks
      */
     public void start(int requestCode, Uri uri, Fragment fragment, BrowserSwitchListener listener) {
-        FragmentActivity activity = fragment.getActivity();
-        if (activity != null) {
-            start(requestCode, uri, activity, listener);
-        } else {
-            throw new IllegalStateException("Fragment must be attached to an activity.");
-        }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
+
+        start(browserSwitchOptions, fragment, listener);
     }
 
     /**
@@ -79,15 +80,14 @@ public class BrowserSwitchClient {
      *
      * @param requestCode the request code used to differentiate requests from one another.
      * @param uri the url to open.
-     * @param activity the activity used to start browser switch
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
-    @SuppressWarnings("SameParameterValue")
     public void start(int requestCode, Uri uri, FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            start(requestCode, uri, activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
-        }
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
+
+        start(browserSwitchOptions, activity);
     }
 
     /**
@@ -99,11 +99,28 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-        int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener) {
-        Context appContext = activity.getApplicationContext();
-        Intent intent = config.createIntentToLaunchUriInBrowser(appContext, uri);
-        start(requestCode, intent, activity, listener);
+    public void start(int requestCode, Uri uri, FragmentActivity activity, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(requestCode)
+                .url(uri);
+
+        start(browserSwitchOptions, activity, listener);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent from an Android fragment. The fragment must be attached to activity when invoking this method.
+     *
+     * @param requestCode the request code used to differentiate requests from one another.
+     * @param intent the intent to use to initiate a browser switch
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
+     */
+    public void start(int requestCode, Intent intent, Fragment fragment) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+
+        start(browserSwitchOptions, fragment);
     }
 
     /**
@@ -113,10 +130,60 @@ public class BrowserSwitchClient {
      * @param requestCode the request code used to differentiate requests from one another.
      * @param intent the intent to use to initiate a browser switch
      * @param fragment the fragment used to start browser switch
+     * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(int requestCode, Intent intent, Fragment fragment) {
+    public void start(int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+
+        start(browserSwitchOptions, fragment, listener);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent from an Android activity.
+     *
+     * @param requestCode the request code used to differentiate requests from one another.
+     * @param intent the intent to use to initiate a browser switch
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
+     */
+    public void start(int requestCode, Intent intent, FragmentActivity activity) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+
+        start(browserSwitchOptions, activity);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with the given intent from an Android activity.
+     *
+     * @param requestCode the request code used to differentiate requests from one another.
+     * @param intent the intent to use to initiate a browser switch
+     * @param activity the activity used to start browser switch
+     * @param listener the listener that will receive browser switch callbacks
+     */
+    public void start(int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .intent(intent)
+                .requestCode(requestCode);
+
+        start(browserSwitchOptions, activity, listener);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android fragment. The fragment
+     * must be attached to activity when invoking this method.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param fragment the fragment used to start browser switch. Must implement {@link BrowserSwitchListener}
+     */
+    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment) {
         if (fragment instanceof BrowserSwitchListener) {
-            start(requestCode, intent, fragment, (BrowserSwitchListener) fragment);
+            start(browserSwitchOptions, fragment, (BrowserSwitchListener) fragment);
         } else {
             throw new IllegalArgumentException("Fragment must implement BrowserSwitchListener.");
         }
@@ -124,18 +191,17 @@ public class BrowserSwitchClient {
 
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with the given intent from an Android fragment. The fragment must be attached to activity when invoking this method.
+     * with a given set of {@link BrowserSwitchOptions} from an Android fragment. The fragment
+     * must be attached to activity when invoking this method.
      *
-     * @param requestCode the request code used to differentiate requests from one another.
-     * @param intent the intent to use to initiate a browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
      * @param fragment the fragment used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-        int requestCode, Intent intent, Fragment fragment, BrowserSwitchListener listener) {
+    public void start(BrowserSwitchOptions browserSwitchOptions, Fragment fragment, BrowserSwitchListener listener) {
         FragmentActivity activity = fragment.getActivity();
         if (activity != null) {
-            start(requestCode, intent, activity, listener);
+            start(browserSwitchOptions, activity, listener);
         } else {
             throw new IllegalStateException("Fragment must be attached to an activity.");
         }
@@ -143,16 +209,14 @@ public class BrowserSwitchClient {
 
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with the given intent from an Android activity.
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
-     * @param requestCode the request code used to differentiate requests from one another.
-     * @param intent the intent to use to initiate a browser switch
-     * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
      */
-    @SuppressWarnings("SameParameterValue")
-    public void start(int requestCode, Intent intent, FragmentActivity activity) {
+    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
-            start(requestCode, intent, activity, (BrowserSwitchListener) activity);
+            start(browserSwitchOptions, activity, (BrowserSwitchListener) activity);
         } else {
             throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
         }
@@ -160,20 +224,29 @@ public class BrowserSwitchClient {
 
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with the given intent from an Android activity.
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
-     * @param requestCode the request code used to differentiate requests from one another.
-     * @param intent the intent to use to initiate a browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
      * @param activity the activity used to start browser switch
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(
-        int requestCode, Intent intent, FragmentActivity activity, BrowserSwitchListener listener) {
+    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
+
+        Intent intent;
+        if(browserSwitchOptions.getIntent() != null) {
+            intent = browserSwitchOptions.getIntent();
+        } else {
+            intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+        }
+
+        int requestCode = browserSwitchOptions.getRequestCode();
+
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
         if (errorMessage == null) {
+            JSONObject metadata = browserSwitchOptions.getMetadata();
             BrowserSwitchRequest request = new BrowserSwitchRequest(
-                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING);
+                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
             persistentStore.putActiveRequest(request, appContext);
             appContext.startActivity(intent);
         } else {
@@ -294,11 +367,15 @@ public class BrowserSwitchClient {
 
             Uri uri = null;
             BrowserSwitchResult result;
+
+            JSONObject metadata = request.getMetadata();
             if (request.getState().equalsIgnoreCase(BrowserSwitchRequest.SUCCESS)) {
                 uri = request.getUri();
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_OK);
+                result = new BrowserSwitchResult(
+                        BrowserSwitchResult.STATUS_OK, null, metadata);
             } else {
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED);
+                result = new BrowserSwitchResult(
+                        BrowserSwitchResult.STATUS_CANCELED, null, metadata);
             }
             listener.onBrowserSwitchResult(requestCode, result, uri);
         }
