@@ -31,7 +31,7 @@ public class BrowserSwitchOptions {
 
     /**
      * Set browser switch metadata
-     * @param metadata JSONObject containing metadata to associate with the browser switch request
+     * @param metadata JSONObject containing metadata necessary for handling the return from browser to app. This data will be persisted and returned in {@link BrowserSwitchResult} even if the app is terminated during the browser switch.
      * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions metadata(JSONObject metadata) {
