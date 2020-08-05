@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 1.1.0
 
 * Create `BrowserSwitchOptions` value object for configuring browser switch behavior
 * Add BrowserSwitchClient#start overloads with `BrowserSwitchOptions` param
