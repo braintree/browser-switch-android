@@ -39,6 +39,10 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
             view.findViewById(R.id.browser_switch_with_metadata);
         startBrowserSwitchWithMetadataButton.setOnClickListener(this);
 
+        Button startBrowserSwitchWithChromeCustomTabsButton =
+            view.findViewById(R.id.browser_switch_with_chrome_tabs);
+        startBrowserSwitchWithChromeCustomTabsButton.setOnClickListener(this);
+
         mBrowserSwitchStatusTextView = view.findViewById(R.id.result);
         mSelectedColorTextView = view.findViewById(R.id.return_url);
         mMetadataTextView = view.findViewById(R.id.metadata);
@@ -50,20 +54,24 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.browser_switch:
-                startBrowserSwitch();
+                startBrowserSwitch(false);
                 break;
             case R.id.browser_switch_with_metadata:
                 JSONObject metadata = buildMetadataObject(TEST_KEY, TEST_VALUE);
                 startBrowserSwitchWithMetadata(metadata);
                 break;
+            case R.id.browser_switch_with_chrome_tabs:
+                startBrowserSwitch(true);
+                break;
         }
     }
 
-    private void startBrowserSwitch() {
+    private void startBrowserSwitch(boolean useChromeCustomTabs) {
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
-                .url(url);
+                .url(url)
+                .useChromeCustomTabs(useChromeCustomTabs);
         browserSwitch(browserSwitchOptions);
     }
 

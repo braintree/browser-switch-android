@@ -3,6 +3,7 @@ package com.braintreepayments.browserswitch;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -18,6 +19,8 @@ public class BrowserSwitchClient {
     final private ActivityFinder activityFinder;
     final private BrowserSwitchPersistentStore persistentStore;
     final private String returnUrlScheme;
+
+    private BrowserCustomTabsClient customTabsClient;
 
     public static BrowserSwitchClient newInstance(String returnUrlScheme) {
         return new BrowserSwitchClient(
@@ -39,6 +42,7 @@ public class BrowserSwitchClient {
         this.activityFinder = activityFinder;
         this.persistentStore = persistentStore;
         this.returnUrlScheme = returnUrlScheme;
+        this.customTabsClient = new BrowserCustomTabsClient();
     }
 
     /**
@@ -248,7 +252,15 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request = new BrowserSwitchRequest(
                     requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
             persistentStore.putActiveRequest(request, appContext);
-            appContext.startActivity(intent);
+
+            if (browserSwitchOptions.isChromeCustomTabsEnabled()) {
+                // TODO: make note that chrome custom tabs only works with url
+                boolean didStart = customTabsClient.startSession(activity, browserSwitchOptions.getUrl());
+                Log.d("DemoFragment", String.valueOf(didStart));
+            } else {
+                // TODO: remove chrome custom tabs low level integration that uses intents
+                appContext.startActivity(intent);
+            }
         } else {
             BrowserSwitchResult result =
                 new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);

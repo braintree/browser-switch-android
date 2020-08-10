@@ -18,6 +18,13 @@ public class BrowserSwitchOptions {
     private JSONObject metadata;
     private int requestCode;
     private Uri url;
+    private boolean useChromeCustomTabs;
+
+    public BrowserSwitchOptions() {
+        // TODO: write docs declaring useChromeCustomTabs to be true by default and remove comment below
+        // default chrome custom tabs to true
+        this.useChromeCustomTabs = true;
+    }
 
     /**
      * Set browser switch intent
@@ -59,6 +66,12 @@ public class BrowserSwitchOptions {
         return this;
     }
 
+    // TODO: write docs
+    public BrowserSwitchOptions useChromeCustomTabs(boolean useChromeCustomTabs) {
+        this.useChromeCustomTabs = useChromeCustomTabs;
+        return this;
+    }
+
     /**
      * @return The target intent used for browser switch
      */
@@ -85,5 +98,10 @@ public class BrowserSwitchOptions {
      */
     public Uri getUrl() {
         return url;
+    }
+
+    // TODO: write docs
+    public boolean isChromeCustomTabsEnabled() {
+        return useChromeCustomTabs;
     }
 }
