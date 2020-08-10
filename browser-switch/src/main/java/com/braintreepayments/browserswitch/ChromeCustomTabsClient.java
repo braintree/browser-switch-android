@@ -13,7 +13,7 @@ import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
 
 // Ref: https://developer.chrome.com/multidevice/android/customtabs
-public class BrowserCustomTabsClient extends CustomTabsServiceConnection {
+public class ChromeCustomTabsClient extends CustomTabsServiceConnection {
 
     private static final String TAG = "BrowserCustomTabs";
     private static final String CHROME_PACKAGE_NAME = "com.android.chrome";
@@ -36,7 +36,7 @@ public class BrowserCustomTabsClient extends CustomTabsServiceConnection {
         customTabsClient.warmup(0L);
 
         Log.d(TAG, "Custom Tabs Service Connected");
-        customTabsSession = customTabsClient.newSession(new BrowserCustomTabsCallback());
+        customTabsSession = customTabsClient.newSession(new ChromeCustomTabsCallback());
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder(customTabsSession)
                 .build();

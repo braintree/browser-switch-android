@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsCallback;
 
-public class BrowserCustomTabsCallback extends CustomTabsCallback {
+public class ChromeCustomTabsCallback extends CustomTabsCallback {
 
     private static final String TAG = "BrowserCustomTabs";
 

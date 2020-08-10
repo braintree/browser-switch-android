@@ -20,7 +20,7 @@ public class BrowserSwitchClient {
     final private BrowserSwitchPersistentStore persistentStore;
     final private String returnUrlScheme;
 
-    private BrowserCustomTabsClient customTabsClient;
+    private ChromeCustomTabsClient customTabsClient;
 
     public static BrowserSwitchClient newInstance(String returnUrlScheme) {
         return new BrowserSwitchClient(
@@ -42,7 +42,7 @@ public class BrowserSwitchClient {
         this.activityFinder = activityFinder;
         this.persistentStore = persistentStore;
         this.returnUrlScheme = returnUrlScheme;
-        this.customTabsClient = new BrowserCustomTabsClient();
+        this.customTabsClient = new ChromeCustomTabsClient();
     }
 
     /**
