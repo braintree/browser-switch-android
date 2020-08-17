@@ -3,6 +3,8 @@
 ## 1.1.1
 
 * Fix bug where `getReturnUrlScheme` is called on BrowserSwitchFragment and an Activity is no longer attached to the fragment
+* Update to SDK version 30
+* Add `query` section to AndroidManifest to allow querying for web browsers on a device
 
 ## 1.1.0
 
