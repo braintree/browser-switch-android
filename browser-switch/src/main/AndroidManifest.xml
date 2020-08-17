@@ -1,1 +1,10 @@
-<manifest package="com.braintreepayments.browserswitch" />
+<manifest package="com.braintreepayments.browserswitch"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+</manifest>
