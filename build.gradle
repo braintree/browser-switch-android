@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.1.0-rc01'
         classpath 'de.marcphilipp.gradle:nexus-publish-plugin:0.4.0'
         classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2'
     }
@@ -34,6 +34,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 
