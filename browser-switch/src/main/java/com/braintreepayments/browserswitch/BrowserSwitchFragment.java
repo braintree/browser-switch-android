@@ -1,9 +1,11 @@
 package com.braintreepayments.browserswitch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
@@ -20,16 +22,17 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     private String returnUrlScheme;
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        String packageName = context.getApplicationContext().getPackageName();
+        returnUrlScheme =
+                packageName.toLowerCase().replace("_", "") + ".browserswitch";
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         browserSwitchClient = BrowserSwitchClient.newInstance(getReturnUrlScheme());
-
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            String packageName = activity.getApplicationContext().getPackageName();
-            returnUrlScheme =
-                packageName.toLowerCase().replace("_", "") + ".browserswitch";
-        }
     }
 
     @Override
