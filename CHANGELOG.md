@@ -1,5 +1,8 @@
 # browser-switch-android Release Notes
 
+## unreleased
+* Fix bug where `getReturnUrlScheme` is called on BrowserSwitchFragment and an Activity is no longer attached to the fragment
+
 ## 1.1.0
 
 * Create `BrowserSwitchOptions` value object for configuring browser switch behavior
