@@ -17,10 +17,19 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
     @VisibleForTesting
     BrowserSwitchClient browserSwitchClient = null;
 
+    private String returnUrlScheme;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         browserSwitchClient = BrowserSwitchClient.newInstance(getReturnUrlScheme());
+
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            String packageName = activity.getApplicationContext().getPackageName();
+            returnUrlScheme =
+                packageName.toLowerCase().replace("_", "") + ".browserswitch";
+        }
     }
 
     @Override
@@ -36,12 +45,7 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      */
     @SuppressWarnings("WeakerAccess")
     public String getReturnUrlScheme() {
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            String packageName = activity.getApplicationContext().getPackageName();
-            return packageName.toLowerCase().replace("_", "") + ".browserswitch";
-        }
-        return null;
+        return returnUrlScheme;
     }
 
     /**
