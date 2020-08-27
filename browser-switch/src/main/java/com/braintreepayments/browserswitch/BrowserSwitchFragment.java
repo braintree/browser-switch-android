@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 /**
  * Abstract Fragment that manages the logic for browser switching.
@@ -46,7 +45,6 @@ public abstract class BrowserSwitchFragment extends Fragment implements BrowserS
      * scheme should be used to build a return url and passed to the target web page via a query
      * param when browser switching.
      */
-    @SuppressWarnings("WeakerAccess")
     public String getReturnUrlScheme() {
         return returnUrlScheme;
     }
