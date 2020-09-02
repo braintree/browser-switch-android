@@ -1,1 +1,11 @@
+
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
 include ':browser-switch', ':demo'

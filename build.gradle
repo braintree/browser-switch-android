@@ -2,19 +2,18 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url = "https://plugins.gradle.org/m2/"
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'de.marcphilipp.gradle:nexus-publish-plugin:0.4.0'
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2'
+//        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2'
+//        classpath 'com.braintreepayments:android-nexus-publish:0.0.0'
     }
 }
 
 plugins {
     id 'io.codearte.nexus-staging' version '0.21.2'
+    id 'com.braintreepayments.android-nexus-publish' version '0.0.0'
 }
 
 version '1.1.1-SNAPSHOT'
@@ -43,4 +42,8 @@ nexusStaging {
     delayBetweenRetriesInMillis = 20000
     username = System.env['SONATYPE_USERNAME']
     password = System.env['SONATYPE_PASSWORD']
+}
+
+androidNexusPublish {
+
 }
