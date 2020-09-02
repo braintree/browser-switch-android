@@ -7,10 +7,9 @@ sudo: true
 android:
   components:
     - tools
-    - tools
     - platform-tools
     - build-tools-29.0.3
-    - android-28
+    - android-30
 script: ./gradlew --info clean lint test
 after_success: ./deploy_snapshot.sh
 
