@@ -20,7 +20,7 @@ To use the latest build from the `master` branch use:
 
  ```groovy
 dependencies {
-  implementation 'com.braintreepayments:browser-switch:1.1.1-SNAPSHOT'
+  implementation 'com.braintreepayments:browser-switch:1.1.2-SNAPSHOT'
 }
 ```
 
