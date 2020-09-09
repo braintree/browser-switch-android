@@ -16,14 +16,6 @@ dependencies {
 }
 ```
 
-To use the latest build from the `master` branch use:
-
- ```groovy
-dependencies {
-  implementation 'com.braintreepayments:browser-switch:1.1.2-SNAPSHOT'
-}
-```
-
 Then, declare `BrowserSwitchActivity` in your `AndroidManifest.xml`:
 
 ```xml
