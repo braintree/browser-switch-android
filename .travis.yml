@@ -1,15 +1,11 @@
 language: android
 jdk: oraclejdk8
-notifications:
-  email:
-    - external-ci-notifications+browser-switch-android@getbraintree.com
 sudo: true
 android:
   components:
     - tools
     - platform-tools
-    - build-tools-30.0.0
+    - build-tools-30.0.2
     - android-30
 script: ./gradlew --info clean lint test
-after_success: ./deploy_snapshot.sh
 
