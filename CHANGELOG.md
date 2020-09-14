@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 1.1.2
 
 * Update to SDK version 30
 * Add `query` section to AndroidManifest to allow querying for web browsers on a device
