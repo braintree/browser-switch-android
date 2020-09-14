@@ -4,7 +4,7 @@ plugins {
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion '29.0.3'
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.braintreepayments.browserswitch.demo"
@@ -28,5 +28,7 @@ dependencies {
     implementation "androidx.annotation:annotation:${rootProject.annotationVersion}"
     implementation "androidx.fragment:fragment:${rootProject.fragmentVersion}"
 
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     androidTestImplementation 'com.lukekorth:device-automator:1.0.0'
 }
