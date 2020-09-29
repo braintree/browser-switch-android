@@ -8,7 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsServiceConnection;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
@@ -26,18 +29,15 @@ public class ChromeCustomTabs {
      */
     public static boolean isAvailable(Context context) {
 
-        Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService")
-                .setPackage("com.android.chrome");
-        ServiceConnection connection = new ServiceConnection() {
+        CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {}
+            public void onCustomTabsServiceConnected(@NonNull ComponentName name, @NonNull CustomTabsClient client) {}
 
             @Override
             public void onServiceDisconnected(ComponentName name) {}
         };
 
-        boolean available = context.bindService(serviceIntent, connection,
-                Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY);
+        boolean available = CustomTabsClient.bindCustomTabsService(context, "com.android.chrome", connection);
         context.unbindService(connection);
 
         return available;
