@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -38,6 +39,10 @@ public class ChromeCustomTabs {
         context.unbindService(connection);
 
         return available;
+    }
+
+    static void launchUrl(Context context, Uri url) {
+
     }
 
     /**

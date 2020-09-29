@@ -233,22 +233,47 @@ public class BrowserSwitchClient {
     public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
 
-        Intent intent;
+        boolean useChromeCustomTabs = false;
+
+        Intent intent = null;
         if(browserSwitchOptions.getIntent() != null) {
             intent = browserSwitchOptions.getIntent();
         } else {
-            intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+            if (ChromeCustomTabs.isAvailable(appContext)) {
+                useChromeCustomTabs = true;
+            } else {
+                intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+            }
+        }
+
+        Uri targetUrl = null;
+        if (useChromeCustomTabs) {
+            targetUrl = browserSwitchOptions.getUrl();
+        } else {
+            targetUrl = intent.getData();
         }
 
         int requestCode = browserSwitchOptions.getRequestCode();
 
-        String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
+        String errorMessage;
+        if (useChromeCustomTabs) {
+            errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext);
+        } else {
+            errorMessage = assertCanPerformBrowserSwitchWithIntent(requestCode, appContext, intent);
+        }
+
         if (errorMessage == null) {
             JSONObject metadata = browserSwitchOptions.getMetadata();
             BrowserSwitchRequest request = new BrowserSwitchRequest(
-                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
+                    requestCode, targetUrl, BrowserSwitchRequest.PENDING, metadata);
             persistentStore.putActiveRequest(request, appContext);
-            appContext.startActivity(intent);
+
+            if (useChromeCustomTabs) {
+                ChromeCustomTabs.launchUrl(activity, browserSwitchOptions.getUrl());
+            } else {
+                appContext.startActivity(intent);
+            }
+
         } else {
             BrowserSwitchResult result =
                 new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
@@ -256,7 +281,7 @@ public class BrowserSwitchClient {
         }
     }
 
-    private String assertCanPerformBrowserSwitch(int requestCode, Context context, Intent intent) {
+    private String assertCanPerformBrowserSwitch(int requestCode, Context context) {
         String errorMessage = null;
 
         if (!isValidRequestCode(requestCode)) {
@@ -268,7 +293,14 @@ public class BrowserSwitchClient {
                 "scheme in it's Android Manifest. See " +
                 "https://github.com/braintree/browser-switch-android for more " +
                 "information on setting up a return url scheme.";
-        } else if (!canOpenUrl(context, intent)) {
+        }
+        return errorMessage;
+    }
+
+    private String assertCanPerformBrowserSwitchWithIntent(int requestCode, Context context, Intent intent) {
+        String errorMessage = assertCanPerformBrowserSwitch(requestCode, context);
+
+        if (errorMessage == null && !canOpenUrl(context, intent)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             Uri uri = intent.getData();
             if (uri != null) {
@@ -276,7 +308,6 @@ public class BrowserSwitchClient {
             }
             errorMessage = messageBuilder.toString();
         }
-
         return errorMessage;
     }
 

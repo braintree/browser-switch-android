@@ -12,9 +12,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,7 +34,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ ChromeCustomTabs.class })
 public class BrowserSwitchClientTest {
 
     static abstract class FragmentListener extends Fragment implements BrowserSwitchListener {}
@@ -61,6 +68,8 @@ public class BrowserSwitchClientTest {
 
     @Before
     public void beforeEach() {
+        mockStatic(ChromeCustomTabs.class);
+
         activityFinder = mock(ActivityFinder.class);
         browserSwitchConfig = mock(BrowserSwitchConfig.class);
         persistentStore = mock(BrowserSwitchPersistentStore.class);
@@ -82,7 +91,41 @@ public class BrowserSwitchClientTest {
     //region test startWithOptions
 
     @Test
-    public void startWithOptionsAndExplicitListener_withUri_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() {
+    public void startWithOptionsAndExplicitListener_withUriAndChromeCustomTabsAvailable_initiatesBrowserSwitchViaChromeCustomTabs() {
+        when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(true);
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+
+        Intent queryIntent = mock(Intent.class);
+        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme)).thenReturn(queryIntent);
+
+        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
+
+        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(uri)
+                .metadata(metadata);
+        sut.start(options, plainActivity, browserSwitchListener);
+
+        verifyStatic(ChromeCustomTabs.class);
+        ChromeCustomTabs.launchUrl(plainActivity, uri);
+
+        ArgumentCaptor<BrowserSwitchRequest> captor =
+                ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(captor.capture(), same(applicationContext));
+
+        BrowserSwitchRequest browserSwitchRequest = captor.getValue();
+        assertEquals(browserSwitchRequest.getRequestCode(), 123);
+        assertEquals(browserSwitchRequest.getUri(), uri);
+        assertEquals(browserSwitchRequest.getState(), BrowserSwitchRequest.PENDING);
+        assertSame(browserSwitchRequest.getMetadata(), metadata);
+    }
+
+    @Test
+    public void startWithOptionsAndExplicitListener_withUriAndChromeCustomTabsUnavailable_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() {
+        when(ChromeCustomTabs.isAvailable(applicationContext)).thenReturn(false);
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
