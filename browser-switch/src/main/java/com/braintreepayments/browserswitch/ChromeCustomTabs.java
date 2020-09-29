@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.browser.customtabs.CustomTabsIntent;
+
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 
@@ -42,7 +44,10 @@ public class ChromeCustomTabs {
     }
 
     static void launchUrl(Context context, Uri url) {
-
+        // TODO: unit test
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(context, url);
     }
 
     /**
