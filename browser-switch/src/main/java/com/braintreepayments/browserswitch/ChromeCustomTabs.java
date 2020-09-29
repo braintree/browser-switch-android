@@ -22,9 +22,6 @@ public class ChromeCustomTabs {
      * @return {@code true} if Chrome Custom Tabs are supported and available.
      */
     public static boolean isAvailable(Context context) {
-        if (SDK_INT < JELLY_BEAN_MR2) {
-            return false;
-        }
 
         Intent serviceIntent = new Intent("android.support.customtabs.action.CustomTabsService")
                 .setPackage("com.android.chrome");
@@ -53,7 +50,7 @@ public class ChromeCustomTabs {
      *         are supported and available.
      */
     public static Intent addChromeCustomTabsExtras(Context context, Intent intent) {
-        if (SDK_INT >= JELLY_BEAN_MR2 && ChromeCustomTabs.isAvailable(context)) {
+        if (ChromeCustomTabs.isAvailable(context)) {
             Bundle extras = new Bundle();
             extras.putBinder("android.support.customtabs.extra.SESSION", null);
             intent.putExtras(extras);
