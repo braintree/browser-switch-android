@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0-rc02'
+        classpath 'com.android.tools.build:gradle:4.1.0-rc03'
         classpath 'de.marcphilipp.gradle:nexus-publish-plugin:0.4.0'
         classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2'
     }
@@ -25,9 +25,9 @@ ext {
     versionCode = 50
     versionName = version
 
-    appCompatVersion = "1.1.0"
+    appCompatVersion = '1.2.0'
     annotationVersion = '1.1.0'
-    fragmentVersion = '1.2.4'
+    fragmentVersion = '1.2.5'
 }
 
 allprojects {
