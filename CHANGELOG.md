@@ -1,6 +1,7 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 1.1.3
+
 * Update androidx dependencies to latest versions
 
 ## 1.1.2
