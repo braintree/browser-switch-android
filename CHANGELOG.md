@@ -1,5 +1,8 @@
 # browser-switch-android Release Notes
 
+## unreleased
+* Update dependencies
+
 ## 1.1.2
 
 * Update to SDK version 30
