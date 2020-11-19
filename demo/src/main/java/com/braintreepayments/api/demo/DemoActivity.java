@@ -1,5 +1,6 @@
 package com.braintreepayments.api.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -20,5 +21,10 @@ public class DemoActivity extends AppCompatActivity {
                     .add(android.R.id.content, new DemoFragment(), FRAGMENT_TAG)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
     }
 }
