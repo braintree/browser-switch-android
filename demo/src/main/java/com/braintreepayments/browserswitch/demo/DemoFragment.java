@@ -68,7 +68,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     @Override
     public void onResume() {
         super.onResume();
-        browserSwitchClient.deliverResult(this);
+        browserSwitchClient.deliverResult(getActivity(), this);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url);
-        browserSwitchClient.start(browserSwitchOptions, this);
+        browserSwitchClient.start(browserSwitchOptions, getActivity(), this);
     }
 
     private void startBrowserSwitchWithMetadata(JSONObject metadata) {
@@ -98,7 +98,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url);
-        browserSwitchClient.start(browserSwitchOptions, this);
+        browserSwitchClient.start(browserSwitchOptions, getActivity(), this);
     }
 
     private Uri buildBrowserSwitchUrl() {

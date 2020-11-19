@@ -14,20 +14,9 @@ import org.json.JSONObject;
  */
 public class BrowserSwitchOptions {
 
-    private Intent intent;
     private JSONObject metadata;
     private int requestCode;
     private Uri url;
-
-    /**
-     * Set browser switch intent
-     * @param intent The target intent to use for browser switch. Required unless url specified
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
-     */
-    public BrowserSwitchOptions intent(Intent intent) {
-        this.intent = intent;
-        return this;
-    }
 
     /**
      * Set browser switch metadata
@@ -51,19 +40,12 @@ public class BrowserSwitchOptions {
 
     /**
      * Set browser switch url
-     * @param url The target url to use for browser switch. Required unless intent specified
+     * @param url The target url to use for browser switch
      * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions url(Uri url) {
         this.url = url;
         return this;
-    }
-
-    /**
-     * @return The target intent used for browser switch
-     */
-    public Intent getIntent() {
-        return intent;
     }
 
     /**
