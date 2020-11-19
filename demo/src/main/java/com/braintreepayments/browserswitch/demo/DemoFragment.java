@@ -91,7 +91,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .requestCode(1)
                 .url(url);
         try {
-            browserSwitchClient.start(browserSwitchOptions, getActivity());
+            browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
             e.printStackTrace();
         }
@@ -104,7 +104,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .requestCode(1)
                 .url(url);
         try {
-            browserSwitchClient.start(browserSwitchOptions, getActivity());
+            browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
             e.printStackTrace();
         }

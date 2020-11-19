@@ -48,7 +48,7 @@ public class BrowserSwitchClient {
      * @param browserSwitchOptions {@link BrowserSwitchOptions}
      * @param activity the activity used to start browser switch
      */
-    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) throws BrowserSwitchException {
+    public void start(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());

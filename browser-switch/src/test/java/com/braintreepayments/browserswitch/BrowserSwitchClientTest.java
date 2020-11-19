@@ -97,7 +97,7 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, plainActivity);
+        sut.start(plainActivity, options);
 
         verify(applicationContext).startActivity(browserSwitchIntent);
 
@@ -137,7 +137,7 @@ public class BrowserSwitchClientTest {
                 .url(uri)
                 .metadata(metadata);
         try {
-            sut.start(options, plainActivity);
+            sut.start(plainActivity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals(e.getMessage(), "Request code cannot be Integer.MIN_VALUE");
@@ -170,7 +170,7 @@ public class BrowserSwitchClientTest {
                 .metadata(metadata);
 
         try {
-            sut.start(options, plainActivity);
+            sut.start(plainActivity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
@@ -208,7 +208,7 @@ public class BrowserSwitchClientTest {
                 .url(uri)
                 .metadata(metadata);
         try {
-            sut.start(options, plainActivity);
+            sut.start(plainActivity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("No installed activities can open this URL: https://example.com/", e.getMessage());
