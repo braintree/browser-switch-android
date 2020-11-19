@@ -14,6 +14,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.browserswitch.BrowserSwitchClient;
+import com.braintreepayments.browserswitch.BrowserSwitchException;
 import com.braintreepayments.browserswitch.BrowserSwitchListener;
 import com.braintreepayments.browserswitch.BrowserSwitchOptions;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
@@ -89,7 +90,11 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url);
-        browserSwitchClient.start(browserSwitchOptions, getActivity(), this);
+        try {
+            browserSwitchClient.start(browserSwitchOptions, getActivity());
+        } catch (BrowserSwitchException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startBrowserSwitchWithMetadata(JSONObject metadata) {
@@ -98,7 +103,11 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url);
-        browserSwitchClient.start(browserSwitchOptions, getActivity(), this);
+        try {
+            browserSwitchClient.start(browserSwitchOptions, getActivity());
+        } catch (BrowserSwitchException e) {
+            e.printStackTrace();
+        }
     }
 
     private Uri buildBrowserSwitchUrl() {
