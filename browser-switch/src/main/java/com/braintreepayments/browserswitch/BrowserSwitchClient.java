@@ -46,41 +46,23 @@ public class BrowserSwitchClient {
      * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
      * @param browserSwitchOptions {@link BrowserSwitchOptions}
-     * @param activity the activity used to start browser switch. Must implement {@link BrowserSwitchListener}
-     */
-    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            start(browserSwitchOptions, activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
-        }
-    }
-
-    /**
-     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
-     *
-     * @param browserSwitchOptions {@link BrowserSwitchOptions}
      * @param activity the activity used to start browser switch
-     * @param listener the listener that will receive browser switch callbacks
      */
-    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity, BrowserSwitchListener listener) {
+    public void start(BrowserSwitchOptions browserSwitchOptions, FragmentActivity activity) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
 
         String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
-        if (errorMessage == null) {
+        if (errorMessage != null) {
+            throw new BrowserSwitchException(errorMessage);
+        } else {
             JSONObject metadata = browserSwitchOptions.getMetadata();
             BrowserSwitchRequest request = new BrowserSwitchRequest(
                     requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
             persistentStore.putActiveRequest(request, appContext);
             appContext.startActivity(intent);
-        } else {
-            BrowserSwitchResult result =
-                new BrowserSwitchResult(BrowserSwitchResult.STATUS_ERROR, errorMessage);
-            listener.onBrowserSwitchResult(requestCode, result, null);
         }
     }
 

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,7 +76,7 @@ public class BrowserSwitchClientTest {
     //region test startWithOptions
 
     @Test
-    public void startWithOptionsAndExplicitListener_withUri_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() {
+    public void startWithOptions_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -96,7 +97,7 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, plainActivity, browserSwitchListener);
+        sut.start(options, plainActivity);
 
         verify(applicationContext).startActivity(browserSwitchIntent);
 
@@ -112,7 +113,7 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void startWithOptionsAndExplicitListener_whenRequestCodeIsIntegerMinValue_notifiesListenerOfError() {
+    public void startWithOptionsAndExplicitListener_whenRequestCodeIsIntegerMinValue_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -135,19 +136,16 @@ public class BrowserSwitchClientTest {
                 .requestCode(Integer.MIN_VALUE)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, plainActivity, browserSwitchListener);
-
-        ArgumentCaptor<BrowserSwitchResult> captor =
-            ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(anyInt(), captor.capture(), isNull());
-
-        BrowserSwitchResult result = captor.getValue();
-        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_ERROR);
-        assertEquals(result.getErrorMessage(), "Request code cannot be Integer.MIN_VALUE");
+        try {
+            sut.start(options, plainActivity);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals(e.getMessage(), "Request code cannot be Integer.MIN_VALUE");
+        }
     }
 
     @Test
-    public void startWithOptions_whenIsNotConfiguredForBrowserSwitch_notifiesListenerOfError() {
+    public void startWithOptions_whenIsNotConfiguredForBrowserSwitch_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -170,22 +168,20 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, plainActivity, browserSwitchListener);
 
-        ArgumentCaptor<BrowserSwitchResult> captor =
-                ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), isNull());
-
-        BrowserSwitchResult result = captor.getValue();
-        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_ERROR);
-        assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
-                "Activity on this device defines the same url scheme in it's Android Manifest. " +
-                "See https://github.com/braintree/browser-switch-android for more information on " +
-                "setting up a return url scheme.", result.getErrorMessage());
+        try {
+            sut.start(options, plainActivity);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
+                    "Activity on this device defines the same url scheme in it's Android Manifest. " +
+                    "See https://github.com/braintree/browser-switch-android for more information on " +
+                    "setting up a return url scheme.", e.getMessage());
+        }
     }
 
     @Test
-    public void startWithOptions_whenNoActivityFoundCanOpenURL_notifiesListenerOfError() {
+    public void startWithOptions_whenNoActivityFoundCanOpenURL_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -211,40 +207,12 @@ public class BrowserSwitchClientTest {
                 .requestCode(123)
                 .url(uri)
                 .metadata(metadata);
-        sut.start(options, plainActivity, browserSwitchListener);
-
-        ArgumentCaptor<BrowserSwitchResult> captor = ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), isNull());
-
-        BrowserSwitchResult result = captor.getValue();
-        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_ERROR);
-        assertEquals("No installed activities can open this URL: https://example.com/", result.getErrorMessage());
-    }
-
-    @Test
-    public void startWithOptions_whenActivityIsNotBrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
-
-        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-                .requestCode(123);
-
-        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.start(browserSwitchOptions, plainActivity);
-    }
-
-    //endregion
-
-    //region test convenience start methods
-
-    @Test
-    public void convenience_startWithOptionsAndActivityListener_forwardsInvocationToPrimaryStartWithOptionsMethod() {
-        sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
-        doNothing().when(sut).start(any(BrowserSwitchOptions.class), any(FragmentActivity.class), any(BrowserSwitchListener.class));
-
-        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions();
-        sut.start(browserSwitchOptions, activityAndListener);
-        verify(sut).start(browserSwitchOptions, activityAndListener, activityAndListener);
+        try {
+            sut.start(options, plainActivity);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals("No installed activities can open this URL: https://example.com/", e.getMessage());
+        }
     }
 
     //endregion
