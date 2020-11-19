@@ -4,7 +4,6 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
-import com.braintreepayments.browserswitch.BrowserSwitchFragment;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
 public class TestBrowserSwitchFragment extends BrowserSwitchFragment {

@@ -10,22 +10,30 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.Fragment;
 
-import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.BrowserSwitchClient;
+import com.braintreepayments.browserswitch.BrowserSwitchListener;
 import com.braintreepayments.browserswitch.BrowserSwitchOptions;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
+public class DemoFragment extends Fragment implements View.OnClickListener, BrowserSwitchListener {
 
     private static final String TEST_KEY = "testKey";
     private static final String TEST_VALUE = "testValue";
 
+    @VisibleForTesting
+    BrowserSwitchClient browserSwitchClient = null;
+
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
     private TextView mMetadataTextView;
+
+    String returnUrlScheme;
 
     @Nullable
     @Override
@@ -47,6 +55,23 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        String packageName = getActivity().getApplicationContext().getPackageName();
+        returnUrlScheme =
+            packageName.toLowerCase().replace("_", "") + ".browserswitch";
+
+        browserSwitchClient = BrowserSwitchClient.newInstance(returnUrlScheme);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        browserSwitchClient.deliverResult(this);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.browser_switch:
@@ -64,7 +89,7 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url);
-        browserSwitch(browserSwitchOptions);
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     private void startBrowserSwitchWithMetadata(JSONObject metadata) {
@@ -73,13 +98,13 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url);
-        browserSwitch(browserSwitchOptions);
+        browserSwitchClient.start(browserSwitchOptions, this);
     }
 
     private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                getReturnUrlScheme() +
+                returnUrlScheme +
                 "://";
         return Uri.parse(url);
     }
