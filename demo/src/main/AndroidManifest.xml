@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.braintreepayments.browserswitch.demo"
+    package="com.braintreepayments.api.demo"
     >
 
     <application
@@ -18,7 +18,7 @@
         </activity>
 
         <activity
-            android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
+            android:name="com.braintreepayments.api.BrowserSwitchActivity"
             android:launchMode="singleTask"
             >
             <intent-filter>
