@@ -49,19 +49,20 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      */
     public void start(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+        Context appContext = activity.getApplicationContext();
 
-        Intent intent = config.createIntentToLaunchUriInBrowser(activity, browserSwitchOptions.getUrl());
+        Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
 
-        String errorMessage = assertCanPerformBrowserSwitch(requestCode, activity, intent);
+        String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
         if (errorMessage != null) {
             throw new BrowserSwitchException(errorMessage);
         } else {
             JSONObject metadata = browserSwitchOptions.getMetadata();
             BrowserSwitchRequest request = new BrowserSwitchRequest(
                     requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
-            persistentStore.putActiveRequest(request, activity);
-            activity.startActivity(intent);
+            persistentStore.putActiveRequest(request, appContext);
+            appContext.startActivity(intent);
         }
     }
 
@@ -161,7 +162,7 @@ public class BrowserSwitchClient {
      * @param intent intent for app link that called back into your application from browser
      * @param context Android context at time of capture
      */
-    public void captureResult(Context context, @Nullable Intent intent) {
+    void captureResult(@Nullable Intent intent, Context context) {
         if (intent == null) {
             return;
         }

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
@@ -65,9 +64,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
             packageName.toLowerCase().replace("_", "") + ".browserswitch";
 
         browserSwitchClient = BrowserSwitchClient.newInstance(returnUrlScheme);
-
-        FragmentActivity activity = getActivity();
-        browserSwitchClient.captureResult(activity, activity.getIntent());
     }
 
     @Override
