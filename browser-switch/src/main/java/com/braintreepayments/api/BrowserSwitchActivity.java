@@ -20,7 +20,7 @@ public class BrowserSwitchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient.captureResult(getIntent(), this);
+        browserSwitchClient.captureResult(this, getIntent());
         finish();
     }
 }

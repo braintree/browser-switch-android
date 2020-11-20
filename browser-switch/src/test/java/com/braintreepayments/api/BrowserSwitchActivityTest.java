@@ -29,7 +29,7 @@ public class BrowserSwitchActivityTest {
         sut.browserSwitchClient = browserSwitchClient;
 
         controller.setup();
-        verify(browserSwitchClient).captureResult(sut.getIntent(), sut);
+        verify(browserSwitchClient).captureResult(sut, sut.getIntent());
     }
 
     @Test

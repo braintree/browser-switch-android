@@ -318,7 +318,7 @@ public class BrowserSwitchClientTest {
         when(intent.getData()).thenReturn(uri);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.captureResult(intent, context);
+        sut.captureResult(context, intent);
 
         InOrder inOrder = Mockito.inOrder(request, persistentStore);
 
@@ -336,7 +336,7 @@ public class BrowserSwitchClientTest {
         when(intent.getData()).thenReturn(uri);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.captureResult(intent, context);
+        sut.captureResult(context, intent);
 
         verify(persistentStore, never()).putActiveRequest(any(), any());
     }
@@ -351,7 +351,7 @@ public class BrowserSwitchClientTest {
         when(intent.getData()).thenReturn(null);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.captureResult(intent, context);
+        sut.captureResult(context, intent);
 
         verify(request, never()).setUri(any());
         verify(request, never()).setState(any());
@@ -365,7 +365,7 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(context)).thenReturn(request);
 
         sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-        sut.captureResult(null, context);
+        sut.captureResult(context, null);
 
         verify(request, never()).setUri(any());
         verify(request, never()).setState(any());
