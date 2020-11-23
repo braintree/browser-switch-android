@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -17,6 +16,7 @@ public class BrowserSwitchClient {
     final private BrowserSwitchConfig config;
     final private ActivityFinder activityFinder;
     final private BrowserSwitchPersistentStore persistentStore;
+
     final private String returnUrlScheme;
 
     public static BrowserSwitchClient newInstance(String returnUrlScheme) {
@@ -49,36 +49,62 @@ public class BrowserSwitchClient {
      * @param activity the activity used to start browser switch
      */
     public void start(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+        assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
+        startSafe(activity, browserSwitchOptions);
+    }
+
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * It is the responsibility of the caller to check if browser switch is possible
+     * using {@link #assertCanPerformBrowserSwitch(FragmentActivity, BrowserSwitchOptions)}.
+     *
+     * @param browserSwitchOptions {@link BrowserSwitchOptions}
+     * @param activity the activity used to start browser switch
+     */
+    public void startSafe(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) {
         Context appContext = activity.getApplicationContext();
 
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
 
-        String errorMessage = assertCanPerformBrowserSwitch(requestCode, appContext, intent);
-        if (errorMessage != null) {
-            throw new BrowserSwitchException(errorMessage);
-        } else {
-            JSONObject metadata = browserSwitchOptions.getMetadata();
-            BrowserSwitchRequest request = new BrowserSwitchRequest(
-                    requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
-            persistentStore.putActiveRequest(request, appContext);
-            appContext.startActivity(intent);
-        }
+        JSONObject metadata = browserSwitchOptions.getMetadata();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+                requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
+        persistentStore.putActiveRequest(request, appContext);
+        appContext.startActivity(intent);
     }
 
-    private String assertCanPerformBrowserSwitch(int requestCode, Context context, Intent intent) {
+    /**
+     * Check if the current context is properly configured for browser switch. Used internally by
+     * {@link #start(FragmentActivity, BrowserSwitchOptions)}. Should be called before
+     * {@link #startSafe(FragmentActivity, BrowserSwitchOptions)}.
+     *
+     * If this assertion fails, browser switch is not recommended. The app AndroidManifest.xml may
+     * not be properly configured.
+     *
+     * @param activity activity initiating the browser switch
+     * @param browserSwitchOptions options used to make assertion
+     * @throws BrowserSwitchException
+     */
+    public void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+        Context appContext = activity.getApplicationContext();
+        Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+        int requestCode = browserSwitchOptions.getRequestCode();
+
         String errorMessage = null;
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = "Request code cannot be Integer.MIN_VALUE";
-        } else if (!isConfiguredForBrowserSwitch(context)) {
+        } else if (!isConfiguredForBrowserSwitch(activity)) {
             errorMessage =
                 "The return url scheme was not set up, incorrectly set up, " +
                 "or more than one Activity on this device defines the same url " +
                 "scheme in it's Android Manifest. See " +
                 "https://github.com/braintree/browser-switch-android for more " +
                 "information on setting up a return url scheme.";
-        } else if (!canOpenUrl(context, intent)) {
+        } else if (!canOpenUrl(activity, intent)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             Uri uri = intent.getData();
             if (uri != null) {
@@ -87,7 +113,9 @@ public class BrowserSwitchClient {
             errorMessage = messageBuilder.toString();
         }
 
-        return errorMessage;
+        if (errorMessage != null) {
+            throw new BrowserSwitchException(errorMessage);
+        }
     }
 
     private boolean isValidRequestCode(int requestCode) {
@@ -146,19 +174,19 @@ public class BrowserSwitchClient {
             JSONObject metadata = request.getMetadata();
             if (request.getState().equalsIgnoreCase(BrowserSwitchRequest.SUCCESS)) {
                 uri = request.getUri();
-                result = new BrowserSwitchResult(
-                        BrowserSwitchResult.STATUS_OK, null, metadata);
+                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_OK, metadata);
             } else {
-                result = new BrowserSwitchResult(
-                        BrowserSwitchResult.STATUS_CANCELED, null, metadata);
+                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, metadata);
             }
+
             listener.onBrowserSwitchResult(requestCode, result, uri);
         }
     }
 
     /**
      * Capture a browser switch result that will later be delivered to the caller
-     * (see {@link #deliverResult(FragmentActivity)} and {@link #deliverResult(Fragment)}).
+     * (see {@link #deliverResult(FragmentActivity)}.
+     *
      * @param intent intent for app link that called back into your application from browser
      * @param context Android context at time of capture
      */
@@ -174,5 +202,9 @@ public class BrowserSwitchClient {
             request.setState(BrowserSwitchRequest.SUCCESS);
             persistentStore.putActiveRequest(request, context);
         }
+    }
+
+    public String getReturnUrlScheme() {
+        return returnUrlScheme;
     }
 }

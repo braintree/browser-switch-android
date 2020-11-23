@@ -93,6 +93,8 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         try {
             browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
+            String statusText = "Browser Switch Error: " + e.getMessage();
+            mBrowserSwitchStatusTextView.setText(statusText);
             e.printStackTrace();
         }
     }
@@ -141,9 +143,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                     String color = returnUri.getQueryParameter("color");
                     selectedColorText = String.format("Selected color: %s", color);
                 }
-                break;
-            case BrowserSwitchResult.STATUS_ERROR:
-                resultText = "Browser Switch Error: " + result.getErrorMessage();
                 break;
             case BrowserSwitchResult.STATUS_CANCELED:
                 resultText = "Browser Switch Cancelled by User";

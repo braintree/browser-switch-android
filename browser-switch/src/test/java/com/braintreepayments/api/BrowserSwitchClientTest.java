@@ -238,7 +238,6 @@ public class BrowserSwitchClientTest {
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
         assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_OK);
-        assertNull(result.getErrorMessage());
         assertSame(result.getRequestMetadata(), requestMetadata);
 
         verify(persistentStore).clearActiveRequest(applicationContext);
@@ -263,7 +262,6 @@ public class BrowserSwitchClientTest {
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
         assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_CANCELED);
-        assertNull(result.getErrorMessage());
         assertSame(result.getRequestMetadata(), requestMetadata);
 
         verify(persistentStore).clearActiveRequest(applicationContext);
