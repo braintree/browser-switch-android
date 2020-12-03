@@ -3,12 +3,11 @@ package com.braintreepayments.api;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
-
-import com.braintreepayments.api.test.TestBrowserSwitchFragment;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,11 +24,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(AndroidJUnit4.class)
 public class ChromeCustomTabsTest {
 
-    private FragmentScenario<TestBrowserSwitchFragment> scenario;
+    private FragmentScenario<Fragment> scenario;
 
     @Before
     public void beforeEach() {
-        scenario = FragmentScenario.launch(TestBrowserSwitchFragment.class);
+        scenario = FragmentScenario.launch(Fragment.class);
     }
 
     @Test
