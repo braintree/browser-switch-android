@@ -11,6 +11,7 @@
   * Remove `STATUS_ERROR` and throw error in `start` method
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Reorder parameters in `BrowserSwitchClient#captureResult`
+  * Remove support for `Intent` on `BrowserSwitchOptions`
 
 ## 1.1.3
 
