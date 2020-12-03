@@ -8,7 +8,7 @@
   * Rename `BrowserSwitchListener` to `BrowserSwitchCallback`
   * Rename `BrowserSwitchListener#onBrowserSwitchResult` to `BrowserSwitchCallback#onResult`
   * Remove convenience `start` methods
-  * Remove `STATUS_ERROR` and throw error in start method
+  * Remove `STATUS_ERROR` and throw error in `start` method
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Reorder parameters in `BrowserSwitchClient#captureResult`
 
