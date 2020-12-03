@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 
-@SuppressWarnings("WeakerAccess")
 public class BrowserSwitchClient {
 
     final private BrowserSwitchConfig config;
@@ -86,7 +85,7 @@ public class BrowserSwitchClient {
      *
      * @param activity activity initiating the browser switch
      * @param browserSwitchOptions options used to make assertion
-     * @throws BrowserSwitchException
+     * @throws BrowserSwitchException if browser switch cannot be executed
      */
     public void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();

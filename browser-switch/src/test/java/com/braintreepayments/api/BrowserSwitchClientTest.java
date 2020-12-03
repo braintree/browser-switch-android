@@ -354,4 +354,11 @@ public class BrowserSwitchClientTest {
         verify(request, never()).setState(any());
         verify(persistentStore, never()).putActiveRequest(any(), any());
     }
+
+    @Test
+    public void getReturnUrlScheme_returnsUrlScheme() {
+        sut = BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+
+        assertEquals("sample-url-scheme", sut.getReturnUrlScheme());
+    }
 }
