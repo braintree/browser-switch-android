@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleeased
+## unreleased
 
 * Breaking Changes
   * Change base package name from `com.braintreepayments.browserswitch` to `com.braintreepayments.api`
