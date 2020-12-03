@@ -72,8 +72,6 @@ public class BrowserSwitchClientTest {
         returnUrlScheme = "sample-url-scheme";
     }
 
-    //region test startWithOptions
-
     @Test
     public void startWithOptions_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
@@ -214,10 +212,6 @@ public class BrowserSwitchClientTest {
         }
     }
 
-    //endregion
-
-    //region test deliverResult
-
     @Test
     public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
@@ -287,10 +281,6 @@ public class BrowserSwitchClientTest {
         sut.deliverResult(plainActivity);
     }
 
-    //endregion
-
-    //region test convenience deliverResult methods
-
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
         sut = spy(BrowserSwitchClient.newInstance(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
@@ -299,10 +289,6 @@ public class BrowserSwitchClientTest {
         sut.deliverResult(activityAndListener);
         verify(sut).deliverResult(activityAndListener, activityAndListener);
     }
-
-    //endregion
-
-    //region test captureResult
 
     @Test
     public void captureResult_whenActiveRequestExistsAndIntentHasData_updatesActiveRequestToSuccessState() {
@@ -368,6 +354,4 @@ public class BrowserSwitchClientTest {
         verify(request, never()).setState(any());
         verify(persistentStore, never()).putActiveRequest(any(), any());
     }
-
-    //endregion
 }
