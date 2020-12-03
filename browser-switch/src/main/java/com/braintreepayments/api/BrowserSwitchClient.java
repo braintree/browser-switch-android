@@ -65,19 +65,7 @@ public class BrowserSwitchClient {
         appContext.startActivity(intent);
     }
 
-    /**
-     * Check if the current context is properly configured for browser switch. Used internally by
-     * {@link #start(FragmentActivity, BrowserSwitchOptions)}. Should be called before
-     * {@link #startSafe(FragmentActivity, BrowserSwitchOptions)}.
-     *
-     * If this assertion fails, browser switch is not recommended. The app AndroidManifest.xml may
-     * not be properly configured.
-     *
-     * @param activity activity initiating the browser switch
-     * @param browserSwitchOptions options used to make assertion
-     * @throws BrowserSwitchException if browser switch cannot be executed
-     */
-    public void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    private void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
