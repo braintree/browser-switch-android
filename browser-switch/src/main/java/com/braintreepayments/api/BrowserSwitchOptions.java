@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 /**
  * Parameter object that contains a set of BrowserSwitch parameters for use with
- * {@link BrowserSwitchClient#start(BrowserSwitchOptions, FragmentActivity, BrowserSwitchListener)}
+ * {@link BrowserSwitchClient#start(BrowserSwitchOptions, FragmentActivity, BrowserSwitchCallback)}
  * and related convenience methods.
  */
 public class BrowserSwitchOptions {

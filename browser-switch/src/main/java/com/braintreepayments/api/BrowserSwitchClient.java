@@ -97,14 +97,14 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = "Request code cannot be Integer.MIN_VALUE";
-        } else if (!isConfiguredForBrowserSwitch(activity)) {
+        } else if (!isConfiguredForBrowserSwitch(appContext)) {
             errorMessage =
                 "The return url scheme was not set up, incorrectly set up, " +
                 "or more than one Activity on this device defines the same url " +
                 "scheme in it's Android Manifest. See " +
                 "https://github.com/braintree/browser-switch-android for more " +
                 "information on setting up a return url scheme.";
-        } else if (!canOpenUrl(activity, intent)) {
+        } else if (!canOpenUrl(appContext, intent)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             Uri uri = intent.getData();
             if (uri != null) {
@@ -143,8 +143,8 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
     public void deliverResult(FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            deliverResult(activity, (BrowserSwitchListener) activity);
+        if (activity instanceof BrowserSwitchCallback) {
+            deliverResult(activity, (BrowserSwitchCallback) activity);
         } else {
             throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
         }
@@ -161,7 +161,7 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void deliverResult(FragmentActivity activity, BrowserSwitchListener listener) {
+    public void deliverResult(FragmentActivity activity, BrowserSwitchCallback listener) {
         Context appContext = activity.getApplicationContext();
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
         if (request != null) {
@@ -179,7 +179,7 @@ public class BrowserSwitchClient {
                 result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, metadata);
             }
 
-            listener.onBrowserSwitchResult(requestCode, result, uri);
+            listener.onResult(requestCode, result, uri);
         }
     }
 
