@@ -52,17 +52,7 @@ public class BrowserSwitchClient {
         startSafe(activity, browserSwitchOptions);
     }
 
-    /**
-     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
-     *
-     * It is the responsibility of the caller to check if browser switch is possible
-     * using {@link #assertCanPerformBrowserSwitch(FragmentActivity, BrowserSwitchOptions)}.
-     *
-     * @param browserSwitchOptions {@link BrowserSwitchOptions}
-     * @param activity the activity used to start browser switch
-     */
-    public void startSafe(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) {
+    private void startSafe(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) {
         Context appContext = activity.getApplicationContext();
 
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
