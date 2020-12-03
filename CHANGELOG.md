@@ -1,5 +1,17 @@
 # browser-switch-android Release Notes
 
+## unreleeased
+
+* Breaking Changes
+  * Change base package name from `com.braintreepayments.browserswitch` to `com.braintreepayments.api`
+  * Remove `BrowserSwitchFragment`
+  * Rename `BrowserSwitchListener` to `BrowserSwitchCallback`
+  * Rename `BrowserSwitchListener#onBrowserSwitchResult` to `BrowserSwitchCallback#onResult`
+  * Remove convenience `start` methods
+  * Remove `STATUS_ERROR` and throw error in start method
+  * Remove `BrowserSwitchResult#getErrorMessages`
+  * Reorder parameters in `BrowserSwitchClient#captureResult`
+
 ## 1.1.3
 
 * Update androidx dependencies to latest versions
