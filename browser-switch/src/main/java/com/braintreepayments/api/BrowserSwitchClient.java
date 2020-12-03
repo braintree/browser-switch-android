@@ -65,7 +65,7 @@ public class BrowserSwitchClient {
         appContext.startActivity(intent);
     }
 
-    private void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
