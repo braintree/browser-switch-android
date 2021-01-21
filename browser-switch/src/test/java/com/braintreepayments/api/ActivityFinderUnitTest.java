@@ -35,7 +35,7 @@ public class ActivityFinderUnitTest {
         when(context.getPackageManager()).thenReturn(packageManager);
         when(packageManager.queryIntentActivities(intent, 0)).thenReturn(Collections.emptyList());
 
-        ActivityFinder sut = ActivityFinder.newInstance();
+        ActivityFinder sut = new ActivityFinder();
         assertFalse(sut.canResolveActivityForIntent(context, intent));
     }
 
@@ -46,7 +46,7 @@ public class ActivityFinderUnitTest {
         ResolveInfo resolveInfo = mock(ResolveInfo.class);
         when(packageManager.queryIntentActivities(intent, 0)).thenReturn(Collections.singletonList(resolveInfo));
 
-        ActivityFinder sut = ActivityFinder.newInstance();
+        ActivityFinder sut = new ActivityFinder();
         assertTrue(sut.canResolveActivityForIntent(context, intent));
     }
 }
