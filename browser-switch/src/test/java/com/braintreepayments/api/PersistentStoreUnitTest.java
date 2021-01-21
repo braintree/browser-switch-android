@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 public class PersistentStoreUnitTest {
 
     private Context context;
-    private Context applicationContext;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -30,11 +29,11 @@ public class PersistentStoreUnitTest {
     @Before
     public void beforeEach() {
         context = mock(Context.class);
-        applicationContext = mock(Context.class);
 
         sharedPreferences = mock(SharedPreferences.class);
         sharedPreferencesEditor = mock(SharedPreferences.Editor.class);
 
+        Context applicationContext = mock(Context.class);
         when(context.getApplicationContext()).thenReturn(applicationContext);
 
         when(
