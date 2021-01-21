@@ -16,6 +16,7 @@ public class BrowserSwitchOptions {
     private JSONObject metadata;
     private int requestCode;
     private Uri url;
+    private String returnUrlScheme;
 
     /**
      * Set browser switch metadata
@@ -48,6 +49,16 @@ public class BrowserSwitchOptions {
     }
 
     /**
+     * Set browser switch return url scheme
+     * @param returnUrlScheme The return url scheme to use for browser switch
+     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
+     */
+    public BrowserSwitchOptions returnUrlScheme(String returnUrlScheme) {
+        this.returnUrlScheme = returnUrlScheme;
+        return this;
+    }
+
+    /**
      * @return The metadata associated with the browser switch request
      */
     public JSONObject getMetadata() {
@@ -66,5 +77,12 @@ public class BrowserSwitchOptions {
      */
     public Uri getUrl() {
         return url;
+    }
+
+    /**
+     * @return The return url scheme used for browser switch
+     */
+    public String getReturnUrlScheme() {
+        return returnUrlScheme;
     }
 }

@@ -16,21 +16,18 @@ public class BrowserSwitchClient {
     final private ActivityFinder activityFinder;
     final private BrowserSwitchPersistentStore persistentStore;
 
-    final private String returnUrlScheme;
-
-    public BrowserSwitchClient(String returnUrlScheme) {
+    public BrowserSwitchClient() {
         this(new BrowserSwitchConfig(), new ActivityFinder(),
-            BrowserSwitchPersistentStore.getInstance(), returnUrlScheme);
+            BrowserSwitchPersistentStore.getInstance());
     }
 
     @VisibleForTesting
     BrowserSwitchClient(
             BrowserSwitchConfig config, ActivityFinder activityFinder,
-            BrowserSwitchPersistentStore persistentStore, String returnUrlScheme) {
+            BrowserSwitchPersistentStore persistentStore) {
         this.config = config;
         this.activityFinder = activityFinder;
         this.persistentStore = persistentStore;
-        this.returnUrlScheme = returnUrlScheme;
     }
 
     /**
@@ -67,7 +64,7 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = "Request code cannot be Integer.MIN_VALUE";
-        } else if (!isConfiguredForBrowserSwitch(appContext)) {
+        } else if (!isConfiguredForBrowserSwitch(appContext, browserSwitchOptions.getReturnUrlScheme())) {
             errorMessage =
                 "The return url scheme was not set up, incorrectly set up, " +
                 "or more than one Activity on this device defines the same url " +
@@ -92,7 +89,7 @@ public class BrowserSwitchClient {
         return requestCode != Integer.MIN_VALUE;
     }
 
-    private boolean isConfiguredForBrowserSwitch(Context context) {
+    private boolean isConfiguredForBrowserSwitch(Context context, String returnUrlScheme) {
         Intent browserSwitchActivityIntent =
             config.createIntentForBrowserSwitchActivityQuery(returnUrlScheme);
         return activityFinder.canResolveActivityForIntent(context, browserSwitchActivityIntent);
@@ -172,9 +169,5 @@ public class BrowserSwitchClient {
             request.setState(BrowserSwitchRequest.SUCCESS);
             persistentStore.putActiveRequest(request, context);
         }
-    }
-
-    public String getReturnUrlScheme() {
-        return returnUrlScheme;
     }
 }

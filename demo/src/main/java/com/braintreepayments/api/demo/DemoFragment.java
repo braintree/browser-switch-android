@@ -63,7 +63,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         returnUrlScheme =
             packageName.toLowerCase().replace("_", "") + ".browserswitch";
 
-        browserSwitchClient = new BrowserSwitchClient(returnUrlScheme);
+        browserSwitchClient = new BrowserSwitchClient();
     }
 
     @Override
@@ -90,7 +90,8 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
-                .url(url);
+                .url(url)
+                .returnUrlScheme(returnUrlScheme);
         try {
             browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -105,7 +106,8 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .metadata(metadata)
                 .requestCode(1)
-                .url(url);
+                .url(url)
+                .returnUrlScheme(returnUrlScheme);
         try {
             browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {

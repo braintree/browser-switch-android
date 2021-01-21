@@ -87,12 +87,13 @@ public class BrowserSwitchClientUnitTest {
 
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .url(uri)
+                .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
         sut.start(plainActivity, options);
 
@@ -126,12 +127,13 @@ public class BrowserSwitchClientUnitTest {
         when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
                 .thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(Integer.MIN_VALUE)
                 .url(uri)
+                .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
         try {
             sut.start(plainActivity, options);
@@ -158,12 +160,13 @@ public class BrowserSwitchClientUnitTest {
         when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
                 .thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .url(uri)
+                .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
 
         try {
@@ -197,12 +200,13 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchIntent.getData()).thenReturn(uri);
         when(uri.toString()).thenReturn("https://example.com/");
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .url(uri)
+                .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
         try {
             sut.start(plainActivity, options);
@@ -221,7 +225,7 @@ public class BrowserSwitchClientUnitTest {
             new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.deliverResult(plainActivity, browserSwitchCallback);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -245,7 +249,7 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.deliverResult(plainActivity, browserSwitchCallback);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -265,7 +269,7 @@ public class BrowserSwitchClientUnitTest {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.deliverResult(plainActivity, browserSwitchCallback);
 
         verify(browserSwitchCallback, never()).onResult(anyInt(), any(), any());
@@ -277,13 +281,13 @@ public class BrowserSwitchClientUnitTest {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.deliverResult(plainActivity);
     }
 
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
-        sut = spy(new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme));
+        sut = spy(new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore));
         doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchCallback.class));
 
         sut.deliverResult(activityAndListener);
@@ -300,7 +304,7 @@ public class BrowserSwitchClientUnitTest {
         Intent intent = mock(Intent.class);
         when(intent.getData()).thenReturn(uri);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.captureResult(context, intent);
 
         InOrder inOrder = Mockito.inOrder(request, persistentStore);
@@ -318,7 +322,7 @@ public class BrowserSwitchClientUnitTest {
         Intent intent = mock(Intent.class);
         when(intent.getData()).thenReturn(uri);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.captureResult(context, intent);
 
         verify(persistentStore, never()).putActiveRequest(any(), any());
@@ -333,7 +337,7 @@ public class BrowserSwitchClientUnitTest {
         Intent intent = mock(Intent.class);
         when(intent.getData()).thenReturn(null);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.captureResult(context, intent);
 
         verify(request, never()).setUri(any());
@@ -347,18 +351,11 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request = mock(BrowserSwitchRequest.class);
         when(persistentStore.getActiveRequest(context)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.captureResult(context, null);
 
         verify(request, never()).setUri(any());
         verify(request, never()).setState(any());
         verify(persistentStore, never()).putActiveRequest(any(), any());
-    }
-
-    @Test
-    public void getReturnUrlScheme_returnsUrlScheme() {
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore, returnUrlScheme);
-
-        assertEquals("sample-url-scheme", sut.getReturnUrlScheme());
     }
 }
