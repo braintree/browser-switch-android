@@ -59,12 +59,15 @@ public class BrowserSwitchClient {
         Context appContext = activity.getApplicationContext();
         Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
         int requestCode = browserSwitchOptions.getRequestCode();
+        String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
         String errorMessage = null;
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = "Request code cannot be Integer.MIN_VALUE";
-        } else if (!isConfiguredForBrowserSwitch(appContext, browserSwitchOptions.getReturnUrlScheme())) {
+        } else if (returnUrlScheme == null) {
+             errorMessage = "A returnUrlScheme is required.";
+        } else if (!isConfiguredForBrowserSwitch(appContext, returnUrlScheme)) {
             errorMessage =
                 "The return url scheme was not set up, incorrectly set up, " +
                 "or more than one Activity on this device defines the same url " +

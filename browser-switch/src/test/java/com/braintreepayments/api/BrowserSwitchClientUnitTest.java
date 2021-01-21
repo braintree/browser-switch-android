@@ -73,7 +73,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void startWithOptions_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
+    public void start_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -111,7 +111,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void startWithOptionsAndExplicitListener_whenRequestCodeIsIntegerMinValue_throwsError() {
+    public void start_whenRequestCodeIsIntegerMinValue_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -144,7 +144,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void startWithOptions_whenIsNotConfiguredForBrowserSwitch_throwsError() {
+    public void start_whenIsNotConfiguredForBrowserSwitch_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -181,7 +181,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void startWithOptions_whenNoActivityFoundCanOpenURL_throwsError() {
+    public void start_whenNoActivityFoundCanOpenURL_throwsError() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         Intent queryIntent = mock(Intent.class);
@@ -213,6 +213,41 @@ public class BrowserSwitchClientUnitTest {
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("No installed activities can open this URL: https://example.com/", e.getMessage());
+        }
+    }
+
+    @Test
+    public void start_whenNoReturnUrlSchemeSet_throwsError() {
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+
+        Intent queryIntent = mock(Intent.class);
+        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
+                .thenReturn(queryIntent);
+
+        Intent browserSwitchIntent = mock(Intent.class);
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
+                .thenReturn(browserSwitchIntent);
+
+        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
+                .thenReturn(true);
+        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
+                .thenReturn(false);
+
+        when(browserSwitchIntent.getData()).thenReturn(uri);
+        when(uri.toString()).thenReturn("https://example.com/");
+
+        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(uri)
+                .metadata(metadata);
+        try {
+            sut.start(plainActivity, options);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals("A returnUrlScheme is required.", e.getMessage());
         }
     }
 
