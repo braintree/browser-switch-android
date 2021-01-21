@@ -63,7 +63,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         returnUrlScheme =
             packageName.toLowerCase().replace("_", "") + ".browserswitch";
 
-        browserSwitchClient = BrowserSwitchClient.newInstance(returnUrlScheme);
+        browserSwitchClient = new BrowserSwitchClient(returnUrlScheme);
     }
 
     @Override

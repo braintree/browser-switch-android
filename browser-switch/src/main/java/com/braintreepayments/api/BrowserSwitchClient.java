@@ -18,20 +18,13 @@ public class BrowserSwitchClient {
 
     final private String returnUrlScheme;
 
-    public static BrowserSwitchClient newInstance(String returnUrlScheme) {
-        return new BrowserSwitchClient(
-            BrowserSwitchConfig.newInstance(), ActivityFinder.newInstance(),
+    public BrowserSwitchClient(String returnUrlScheme) {
+        this(BrowserSwitchConfig.newInstance(), ActivityFinder.newInstance(),
             BrowserSwitchPersistentStore.getInstance(), returnUrlScheme);
     }
 
     @VisibleForTesting
-    static BrowserSwitchClient newInstance(
-        BrowserSwitchConfig config, ActivityFinder activityFinder,
-        BrowserSwitchPersistentStore persistentStore, String returnUrlScheme) {
-        return new BrowserSwitchClient(config, activityFinder, persistentStore, returnUrlScheme);
-    }
-
-    private BrowserSwitchClient(
+    BrowserSwitchClient(
             BrowserSwitchConfig config, ActivityFinder activityFinder,
             BrowserSwitchPersistentStore persistentStore, String returnUrlScheme) {
         this.config = config;
