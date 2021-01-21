@@ -10,7 +10,7 @@ class BrowserSwitchRequest {
     private Uri uri;
     private String state;
     final private int requestCode;
-    private JSONObject metadata;
+    private final JSONObject metadata;
 
     static final String PENDING = "PENDING";
     static final String SUCCESS = "SUCCESS";
