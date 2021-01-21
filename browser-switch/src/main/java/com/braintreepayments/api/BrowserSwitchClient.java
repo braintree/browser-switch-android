@@ -19,7 +19,7 @@ public class BrowserSwitchClient {
     final private String returnUrlScheme;
 
     public BrowserSwitchClient(String returnUrlScheme) {
-        this(BrowserSwitchConfig.newInstance(), ActivityFinder.newInstance(),
+        this(new BrowserSwitchConfig(), ActivityFinder.newInstance(),
             BrowserSwitchPersistentStore.getInstance(), returnUrlScheme);
     }
 
