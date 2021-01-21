@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 @RunWith(RobolectricTestRunner.class)
-public class BrowserSwitchRequestTest {
+public class BrowserSwitchRequestUnitTest {
 
     @Test
     public void fromJson_withoutMetadata() throws JSONException {

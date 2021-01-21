@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SharedPreferences.class })
-public class PersistentStoreTest {
+public class PersistentStoreUnitTest {
 
     private Context context;
     private Context applicationContext;

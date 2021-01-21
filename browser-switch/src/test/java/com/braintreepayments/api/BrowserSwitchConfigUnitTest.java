@@ -24,7 +24,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @RunWith(RobolectricTestRunner.class)
 @PowerMockIgnore({ "org.powermock.*", "org.mockito.*", "org.robolectric.*", "android.*" })
 @PrepareForTest({ ChromeCustomTabs.class })
-public class BrowserSwitchConfigTest {
+public class BrowserSwitchConfigUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();

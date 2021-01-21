@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ActivityFinderTest {
+public class ActivityFinderUnitTest {
 
     private Intent intent;
     private Context context;

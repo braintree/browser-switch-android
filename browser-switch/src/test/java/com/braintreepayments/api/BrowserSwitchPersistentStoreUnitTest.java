@@ -23,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersistentStore.class, BrowserSwitchRequest.class, Log.class })
-public class BrowserSwitchPersistentStoreTest {
+public class BrowserSwitchPersistentStoreUnitTest {
 
     private Context context;
     private BrowserSwitchRequest browserSwitchRequest;
