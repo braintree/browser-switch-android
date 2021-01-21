@@ -1,11 +1,12 @@
 package com.braintreepayments.api;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 
@@ -25,28 +26,24 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class ChromeCustomTabsTest {
 
     private FragmentScenario<Fragment> scenario;
+    private Context applicationContext;
 
     @Before
     public void beforeEach() {
         scenario = FragmentScenario.launch(Fragment.class);
+        applicationContext = ApplicationProvider.getApplicationContext();
     }
 
     @Test
     @SdkSuppress(maxSdkVersion = 23)
     public void isAvailable_whenCustomTabsAreNotSupported_returnsFalse() {
-        scenario.onFragment(fragment -> {
-            FragmentActivity activity = fragment.getActivity();
-            assertFalse(ChromeCustomTabs.isAvailable(activity.getApplication()));
-        });
+        scenario.onFragment(fragment -> assertFalse(ChromeCustomTabs.isAvailable(applicationContext)));
     }
 
     @Test
     @SdkSuppress(minSdkVersion = 24)
     public void isAvailable_whenCustomTabsAreSupported_returnsTrue() {
-        scenario.onFragment(fragment -> {
-            FragmentActivity activity = fragment.getActivity();
-            assertTrue(ChromeCustomTabs.isAvailable(activity.getApplication()));
-        });
+        scenario.onFragment(fragment -> assertTrue(ChromeCustomTabs.isAvailable(applicationContext)));
     }
 
     @Test
@@ -54,8 +51,7 @@ public class ChromeCustomTabsTest {
     public void addChromeCustomTabsExtras_whenCustomTabsAreNotSupported_doesNotModifyTheIntent() {
         Intent intent = mock(Intent.class);
         scenario.onFragment(fragment -> {
-            FragmentActivity activity = fragment.getActivity();
-            ChromeCustomTabs.addChromeCustomTabsExtras(activity.getApplication(), intent);
+            ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
             verifyZeroInteractions(intent);
         });
     }
@@ -65,8 +61,7 @@ public class ChromeCustomTabsTest {
     public void addChromeCustomTabsExtras_whenCustomTabsAreSupported_modifiesTheIntent() {
         Intent intent = mock(Intent.class);
         scenario.onFragment(fragment -> {
-            FragmentActivity activity = fragment.getActivity();
-            ChromeCustomTabs.addChromeCustomTabsExtras(activity.getApplication(), intent);
+            ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
 
             verify(intent).putExtras(any(Bundle.class));
             verify(intent).addFlags(anyInt());
