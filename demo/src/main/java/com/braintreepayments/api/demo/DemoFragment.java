@@ -15,14 +15,14 @@ import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
-import com.braintreepayments.api.BrowserSwitchCallback;
+import com.braintreepayments.api.BrowserSwitchListener;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DemoFragment extends Fragment implements View.OnClickListener, BrowserSwitchCallback {
+public class DemoFragment extends Fragment implements View.OnClickListener, BrowserSwitchListener {
 
     private static final String TEST_KEY = "testKey";
     private static final String TEST_VALUE = "testValue";
@@ -133,7 +133,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     }
 
     @Override
-    public void onResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
+    public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
         String resultText = null;
         String selectedColorText = "";
 

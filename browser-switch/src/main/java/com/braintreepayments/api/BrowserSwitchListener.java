@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
-public interface BrowserSwitchCallback {
+public interface BrowserSwitchListener {
     /**
      * The result of a browser switch will be returned in this method.
      *
@@ -13,5 +13,5 @@ public interface BrowserSwitchCallback {
      *     {@link BrowserSwitchResult#STATUS_CANCELED}.
      * @param returnUri The return uri. {@code null} unless the result is {@link BrowserSwitchResult#STATUS_OK}.
      */
-    void onResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri);
+    void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri);
 }

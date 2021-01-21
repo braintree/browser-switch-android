@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 public class BrowserSwitchClientUnitTest {
 
-    static abstract class ActivityListener extends FragmentActivity implements BrowserSwitchCallback {}
+    static abstract class ActivityListener extends FragmentActivity implements BrowserSwitchListener {}
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -49,7 +49,7 @@ public class BrowserSwitchClientUnitTest {
     private ActivityListener activityAndListener;
 
     private Context applicationContext;
-    private BrowserSwitchCallback browserSwitchCallback;
+    private BrowserSwitchListener browserSwitchListener;
 
     private BrowserSwitchClient sut;
 
@@ -67,7 +67,7 @@ public class BrowserSwitchClientUnitTest {
         activityAndListener = mock(ActivityListener.class);
 
         applicationContext = mock(Context.class);
-        browserSwitchCallback = mock(BrowserSwitchCallback.class);
+        browserSwitchListener = mock(BrowserSwitchListener.class);
 
         returnUrlScheme = "sample-url-scheme";
     }
@@ -261,11 +261,11 @@ public class BrowserSwitchClientUnitTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.deliverResult(plainActivity, browserSwitchCallback);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchCallback).onResult(eq(123), captor.capture(), same(uri));
+        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), same(uri));
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
@@ -285,11 +285,11 @@ public class BrowserSwitchClientUnitTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.deliverResult(plainActivity, browserSwitchCallback);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchCallback).onResult(eq(123), captor.capture(), isNull());
+        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), isNull());
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
@@ -305,9 +305,9 @@ public class BrowserSwitchClientUnitTest {
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.deliverResult(plainActivity, browserSwitchCallback);
+        sut.deliverResult(plainActivity, browserSwitchListener);
 
-        verify(browserSwitchCallback, never()).onResult(anyInt(), any(), any());
+        verify(browserSwitchListener, never()).onBrowserSwitchResult(anyInt(), any(), any());
         verify(persistentStore, never()).clearActiveRequest(plainActivity);
     }
 
@@ -323,7 +323,7 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
         sut = spy(new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore));
-        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchCallback.class));
+        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
 
         sut.deliverResult(activityAndListener);
         verify(sut).deliverResult(activityAndListener, activityAndListener);

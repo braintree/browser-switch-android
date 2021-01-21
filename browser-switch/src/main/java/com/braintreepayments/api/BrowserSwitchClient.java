@@ -113,8 +113,8 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
     public void deliverResult(FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchCallback) {
-            deliverResult(activity, (BrowserSwitchCallback) activity);
+        if (activity instanceof BrowserSwitchListener) {
+            deliverResult(activity, (BrowserSwitchListener) activity);
         } else {
             throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
         }
@@ -131,7 +131,7 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void deliverResult(FragmentActivity activity, BrowserSwitchCallback listener) {
+    public void deliverResult(FragmentActivity activity, BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
         if (request != null) {
@@ -149,7 +149,7 @@ public class BrowserSwitchClient {
                 result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, metadata);
             }
 
-            listener.onResult(requestCode, result, uri);
+            listener.onBrowserSwitchResult(requestCode, result, uri);
         }
     }
 
