@@ -167,7 +167,7 @@ public class BrowserSwitchClient {
      * @param intent intent for app link that called back into your application from browser
      * @param context Android context at time of capture
      */
-    void captureResult(Context context, @Nullable Intent intent) {
+    public void captureResult(Context context, @Nullable Intent intent) {
         if (intent == null) {
             return;
         }
