@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* Add `BrowserSwitchClient`
+* Add `returnUrlScheme` to `BrowserSwitchOptions`
 * Breaking Changes
   * Change base package name from `com.braintreepayments.browserswitch` to `com.braintreepayments.api`
   * Remove `BrowserSwitchFragment`
@@ -10,6 +12,7 @@
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Reorder parameters in `BrowserSwitchClient#captureResult`
   * Remove support for `Intent` on `BrowserSwitchOptions`
+  * Remove `ChromeCustomTabs`
 
 ## 1.1.3
 
