@@ -144,7 +144,7 @@ public class BrowserSwitchClient {
             JSONObject metadata = request.getMetadata();
             if (request.getState().equalsIgnoreCase(BrowserSwitchRequest.SUCCESS)) {
                 uri = request.getUri();
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_OK, metadata);
+                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, metadata);
             } else {
                 result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, metadata);
             }

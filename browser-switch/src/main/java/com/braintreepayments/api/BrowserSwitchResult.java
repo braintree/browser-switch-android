@@ -13,15 +13,12 @@ public class BrowserSwitchResult {
     final JSONObject requestMetadata;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ STATUS_OK, STATUS_CANCELED })
-    public @interface BrowserSwitchStatus {}
-
-    public static final int STATUS_OK = 1;
-    public static final int STATUS_CANCELED = 2;
-
-    BrowserSwitchResult(@BrowserSwitchStatus int status) {
-        this(status, null);
+    @IntDef({STATUS_SUCCESS, STATUS_CANCELED})
+    public @interface BrowserSwitchStatus {
     }
+
+    public static final int STATUS_SUCCESS = 1;
+    public static final int STATUS_CANCELED = 2;
 
     BrowserSwitchResult(@BrowserSwitchStatus int status, JSONObject requestMetadata) {
         this.status = status;

@@ -13,6 +13,7 @@
   * Reorder parameters in `BrowserSwitchClient#captureResult`
   * Remove support for `Intent` on `BrowserSwitchOptions`
   * Remove `ChromeCustomTabs`
+  * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchResult.STATUS_SUCCESS` 
 
 ## 1.1.3
 

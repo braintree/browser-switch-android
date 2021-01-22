@@ -139,7 +139,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
 
         int statusCode = result.getStatus();
         switch (statusCode) {
-            case BrowserSwitchResult.STATUS_OK:
+            case BrowserSwitchResult.STATUS_SUCCESS:
                 resultText = "Browser Switch Successful";
 
                 if (returnUri != null) {
