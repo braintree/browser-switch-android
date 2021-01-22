@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
@@ -265,7 +264,7 @@ public class BrowserSwitchClientUnitTest {
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), same(uri));
+        verify(browserSwitchListener).onBrowserSwitchResult(captor.capture());
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
@@ -289,7 +288,7 @@ public class BrowserSwitchClientUnitTest {
 
         ArgumentCaptor<BrowserSwitchResult> captor =
                 ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(eq(123), captor.capture(), isNull());
+        verify(browserSwitchListener).onBrowserSwitchResult(captor.capture());
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
@@ -307,7 +306,7 @@ public class BrowserSwitchClientUnitTest {
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
-        verify(browserSwitchListener, never()).onBrowserSwitchResult(anyInt(), any(), any());
+        verify(browserSwitchListener, never()).onBrowserSwitchResult(any());
         verify(persistentStore, never()).clearActiveRequest(plainActivity);
     }
 

@@ -69,7 +69,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     @Override
     public void onResume() {
         super.onResume();
-        browserSwitchClient.captureResult(getActivity(), getActivity().getIntent());
         browserSwitchClient.deliverResult(getActivity(), this);
     }
 
@@ -133,7 +132,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     }
 
     @Override
-    public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
+    public void onBrowserSwitchResult(BrowserSwitchResult result) {
         String resultText = null;
         String selectedColorText = "";
 
@@ -142,6 +141,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
             case BrowserSwitchResult.STATUS_SUCCESS:
                 resultText = "Browser Switch Successful";
 
+                Uri returnUri = result.getDeepLinkUri();
                 if (returnUri != null) {
                     String color = returnUri.getQueryParameter("color");
                     selectedColorText = String.format("Selected color: %s", color);

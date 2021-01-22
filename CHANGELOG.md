@@ -4,16 +4,18 @@
 
 * Add `BrowserSwitchClient`
 * Add `returnUrlScheme` to `BrowserSwitchOptions`
+* Add `requestCode`, `requestUri` and `deepLinkUri` properties to `BrowserSwitchResult`
 * Breaking Changes
   * Change base package name from `com.braintreepayments.browserswitch` to `com.braintreepayments.api`
   * Remove `BrowserSwitchFragment`
   * Remove convenience `start` methods
   * Remove `STATUS_ERROR` and throw error in `start` method
   * Remove `BrowserSwitchResult#getErrorMessages`
-  * Reorder parameters in `BrowserSwitchClient#captureResult`
   * Remove support for `Intent` on `BrowserSwitchOptions`
   * Remove `ChromeCustomTabs`
   * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchResult.STATUS_SUCCESS` 
+  * Remove `BrowserSwitchClient#captureResult`
+  * Change `BrowserSwitchListener#onBrowserSwitchResult` method to take a single `BrowserSwitchResult` parameter
 
 ## 1.1.3
 

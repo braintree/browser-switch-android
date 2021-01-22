@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
@@ -131,46 +132,29 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void deliverResult(FragmentActivity activity, BrowserSwitchListener listener) {
+    public void deliverResult(@NonNull FragmentActivity activity, @NonNull BrowserSwitchListener listener) {
         Context appContext = activity.getApplicationContext();
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request != null) {
-            persistentStore.clearActiveRequest(appContext);
-            int requestCode = request.getRequestCode();
-
-            Uri uri = null;
-            BrowserSwitchResult result;
-
-            JSONObject metadata = request.getMetadata();
-            if (request.getState().equalsIgnoreCase(BrowserSwitchRequest.SUCCESS)) {
-                uri = request.getUri();
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, metadata);
-            } else {
-                result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, metadata);
-            }
-
-            listener.onBrowserSwitchResult(requestCode, result, uri);
-        }
-    }
-
-    /**
-     * Capture a browser switch result that will later be delivered to the caller
-     * (see {@link #deliverResult(FragmentActivity)}.
-     *
-     * @param intent intent for app link that called back into your application from browser
-     * @param context Android context at time of capture
-     */
-    public void captureResult(Context context, @Nullable Intent intent) {
-        if (intent == null) {
+        if (request == null) {
+            // no pending browser switch request found
             return;
         }
 
-        Uri uri = intent.getData();
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(context);
-        if (request != null && uri != null) {
-            request.setUri(uri);
-            request.setState(BrowserSwitchRequest.SUCCESS);
-            persistentStore.putActiveRequest(request, context);
+        Uri deepLinkUri = null;
+        Intent intent = activity.getIntent();
+        if (intent != null) {
+            deepLinkUri = intent.getData();
         }
+
+        BrowserSwitchResult result;
+        if (deepLinkUri == null) {
+            result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, request);
+        } else {
+            result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, request, deepLinkUri);
+        }
+        listener.onBrowserSwitchResult(result);
+
+        // ensure that browser switch result is delivered exactly one time
+        persistentStore.clearActiveRequest(appContext);
     }
 }
