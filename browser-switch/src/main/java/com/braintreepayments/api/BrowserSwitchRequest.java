@@ -8,7 +8,6 @@ import org.json.JSONObject;
 class BrowserSwitchRequest {
 
     private Uri uri;
-    private String state;
     final private int requestCode;
     private final JSONObject metadata;
 
@@ -19,14 +18,12 @@ class BrowserSwitchRequest {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
-        String state = jsonObject.getString("state");
         JSONObject metadata = jsonObject.optJSONObject("metadata");
-        return new BrowserSwitchRequest(requestCode, Uri.parse(url), state, metadata);
+        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri uri, String state, JSONObject metadata) {
+    BrowserSwitchRequest(int requestCode, Uri uri, JSONObject metadata) {
         this.uri = uri;
-        this.state = state;
         this.requestCode = requestCode;
         this.metadata = metadata;
     }
@@ -43,23 +40,14 @@ class BrowserSwitchRequest {
         return requestCode;
     }
 
-    String getState() {
-        return state;
-    }
-
     public JSONObject getMetadata() {
         return metadata;
-    }
-
-    void setState(String state) {
-        this.state = state;
     }
 
     String toJson() throws JSONException {
         JSONObject result = new JSONObject();
         result.put("requestCode", requestCode);
         result.put("url", uri.toString());
-        result.put("state", state);
         if (metadata != null) {
             result.put("metadata", metadata);
         }

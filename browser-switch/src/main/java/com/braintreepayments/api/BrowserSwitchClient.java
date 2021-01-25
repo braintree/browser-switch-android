@@ -51,7 +51,7 @@ public class BrowserSwitchClient {
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request = new BrowserSwitchRequest(
-                requestCode, browserSwitchUrl, BrowserSwitchRequest.PENDING, metadata);
+                requestCode, browserSwitchUrl, metadata);
         persistentStore.putActiveRequest(request, appContext);
 
         CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();

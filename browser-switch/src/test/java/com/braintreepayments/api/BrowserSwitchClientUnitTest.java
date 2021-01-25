@@ -256,7 +256,7 @@ public class BrowserSwitchClientUnitTest {
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.SUCCESS, requestMetadata);
+            new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
@@ -280,7 +280,7 @@ public class BrowserSwitchClientUnitTest {
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, uri, BrowserSwitchRequest.PENDING, requestMetadata);
+                new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
