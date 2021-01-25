@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -15,19 +16,19 @@ public class BrowserSwitchClient {
     final private BrowserSwitchConfig config;
     final private ActivityFinder activityFinder;
     final private BrowserSwitchPersistentStore persistentStore;
+    final private CustomTabsIntent.Builder customTabsIntentBuilder;
 
     public BrowserSwitchClient() {
         this(new BrowserSwitchConfig(), new ActivityFinder(),
-            BrowserSwitchPersistentStore.getInstance());
+            BrowserSwitchPersistentStore.getInstance(), new CustomTabsIntent.Builder());
     }
 
     @VisibleForTesting
-    BrowserSwitchClient(
-            BrowserSwitchConfig config, ActivityFinder activityFinder,
-            BrowserSwitchPersistentStore persistentStore) {
+    BrowserSwitchClient(BrowserSwitchConfig config, ActivityFinder activityFinder, BrowserSwitchPersistentStore persistentStore, CustomTabsIntent.Builder customTabsIntentBuilder) {
         this.config = config;
         this.activityFinder = activityFinder;
         this.persistentStore = persistentStore;
+        this.customTabsIntentBuilder = customTabsIntentBuilder;
     }
 
     /**
@@ -45,14 +46,16 @@ public class BrowserSwitchClient {
     private void startSafe(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) {
         Context appContext = activity.getApplicationContext();
 
-        Intent intent = config.createIntentToLaunchUriInBrowser(appContext, browserSwitchOptions.getUrl());
+        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request = new BrowserSwitchRequest(
-                requestCode, intent.getData(), BrowserSwitchRequest.PENDING, metadata);
+                requestCode, browserSwitchUrl, BrowserSwitchRequest.PENDING, metadata);
         persistentStore.putActiveRequest(request, appContext);
-        appContext.startActivity(intent);
+
+        CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
+        customTabsIntent.launchUrl(activity, browserSwitchUrl);
     }
 
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
