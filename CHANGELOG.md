@@ -6,7 +6,6 @@
 * Add `returnUrlScheme` to `BrowserSwitchOptions`
 * Add `requestCode`, `requestUri` and `deepLinkUri` properties to `BrowserSwitchResult`
 * Breaking Changes
-  * Change base package name from `com.braintreepayments.browserswitch` to `com.braintreepayments.api`
   * Remove `BrowserSwitchFragment`
   * Remove `BrowserSwitchActivity`
   * Remove convenience `start` methods
