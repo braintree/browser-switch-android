@@ -34,8 +34,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     private TextView mSelectedColorTextView;
     private TextView mMetadataTextView;
 
-    String returnUrlScheme;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,11 +56,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        String packageName = getActivity().getApplicationContext().getPackageName();
-        returnUrlScheme =
-            packageName.toLowerCase().replace("_", "") + ".browserswitch";
-
         browserSwitchClient = new BrowserSwitchClient();
     }
 
@@ -90,7 +83,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme(returnUrlScheme);
+                .returnUrlScheme("my-custom-url-scheme");
         try {
             browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -106,7 +99,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme(returnUrlScheme);
+                .returnUrlScheme("my-custom-url-scheme");
         try {
             browserSwitchClient.start(getActivity(), browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -117,8 +110,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                returnUrlScheme +
-                "://";
+                "my-custom-url-scheme://";
         return Uri.parse(url);
     }
 
