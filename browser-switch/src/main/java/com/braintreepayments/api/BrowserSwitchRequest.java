@@ -11,9 +11,6 @@ class BrowserSwitchRequest {
     final private int requestCode;
     private final JSONObject metadata;
 
-    static final String PENDING = "PENDING";
-    static final String SUCCESS = "SUCCESS";
-
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
