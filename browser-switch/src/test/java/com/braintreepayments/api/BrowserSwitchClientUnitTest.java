@@ -35,20 +35,15 @@ public class BrowserSwitchClientUnitTest {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     private BrowserSwitchPersistentStore persistentStore;
-
     private BrowserSwitchInspector browserSwitchInspector;
     private CustomTabsIntent.Builder customTabsIntentBuilder;
 
     private Uri uri;
-
     private FragmentActivity plainActivity;
-
     private ActivityListener activityAndListener;
 
     private Context applicationContext;
     private BrowserSwitchListener browserSwitchListener;
-
-    private BrowserSwitchClient sut;
 
     private String returnUrlScheme;
     private CustomTabsIntent customTabsIntent;
@@ -80,7 +75,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -107,7 +102,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -128,7 +123,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(false);
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -155,7 +150,7 @@ public class BrowserSwitchClientUnitTest {
 
         when(uri.toString()).thenReturn("https://example.com/");
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -178,7 +173,7 @@ public class BrowserSwitchClientUnitTest {
 
         when(uri.toString()).thenReturn("https://example.com/");
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -203,7 +198,7 @@ public class BrowserSwitchClientUnitTest {
             new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -227,7 +222,7 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -247,7 +242,7 @@ public class BrowserSwitchClientUnitTest {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         verify(browserSwitchListener, never()).onBrowserSwitchResult(any());
@@ -259,13 +254,13 @@ public class BrowserSwitchClientUnitTest {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
 
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity);
     }
 
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
-        sut = spy(new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder));
+        BrowserSwitchClient sut = spy(new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder));
         doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
 
         sut.deliverResult(activityAndListener);
