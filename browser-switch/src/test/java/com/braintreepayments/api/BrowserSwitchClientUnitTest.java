@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -12,21 +13,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +36,9 @@ public class BrowserSwitchClientUnitTest {
     private ActivityFinder activityFinder;
     private BrowserSwitchConfig browserSwitchConfig;
     private BrowserSwitchPersistentStore persistentStore;
+
+    private BrowserSwitchInspector browserSwitchInspector;
+    private CustomTabsIntent.Builder customTabsIntentBuilder;
 
     private Uri uri;
 
@@ -59,6 +58,9 @@ public class BrowserSwitchClientUnitTest {
         activityFinder = mock(ActivityFinder.class);
         browserSwitchConfig = mock(BrowserSwitchConfig.class);
         persistentStore = mock(BrowserSwitchPersistentStore.class);
+
+        browserSwitchInspector = mock(BrowserSwitchInspector.class);
+        customTabsIntentBuilder = mock(CustomTabsIntent.Builder.class);
 
         uri = mock(Uri.class);
 
@@ -86,7 +88,7 @@ public class BrowserSwitchClientUnitTest {
 
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -105,7 +107,6 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest browserSwitchRequest = captor.getValue();
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUri(), uri);
-        assertEquals(browserSwitchRequest.getState(), BrowserSwitchRequest.PENDING);
         assertSame(browserSwitchRequest.getMetadata(), metadata);
     }
 
@@ -126,7 +127,7 @@ public class BrowserSwitchClientUnitTest {
         when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
                 .thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -159,7 +160,7 @@ public class BrowserSwitchClientUnitTest {
         when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
                 .thenReturn(true);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -199,7 +200,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchIntent.getData()).thenReturn(uri);
         when(uri.toString()).thenReturn("https://example.com/");
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -235,7 +236,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchIntent.getData()).thenReturn(uri);
         when(uri.toString()).thenReturn("https://example.com/");
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -259,7 +260,7 @@ public class BrowserSwitchClientUnitTest {
             new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -283,7 +284,7 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, uri, requestMetadata);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -303,7 +304,7 @@ public class BrowserSwitchClientUnitTest {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity, browserSwitchListener);
 
         verify(browserSwitchListener, never()).onBrowserSwitchResult(any());
@@ -315,81 +316,16 @@ public class BrowserSwitchClientUnitTest {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
 
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         sut.deliverResult(plainActivity);
     }
 
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
-        sut = spy(new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore));
+        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
         doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
 
         sut.deliverResult(activityAndListener);
         verify(sut).deliverResult(activityAndListener, activityAndListener);
-    }
-
-    @Test
-    public void captureResult_whenActiveRequestExistsAndIntentHasData_updatesActiveRequestToSuccessState() {
-        Context context = mock(Context.class);
-        BrowserSwitchRequest request = mock(BrowserSwitchRequest.class);
-
-        when(persistentStore.getActiveRequest(context)).thenReturn(request);
-
-        Intent intent = mock(Intent.class);
-        when(intent.getData()).thenReturn(uri);
-
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.captureResult(context, intent);
-
-        InOrder inOrder = Mockito.inOrder(request, persistentStore);
-
-        inOrder.verify(request).setUri(uri);
-        inOrder.verify(request).setState(BrowserSwitchRequest.SUCCESS);
-        inOrder.verify(persistentStore).putActiveRequest(request, context);
-    }
-
-    @Test
-    public void captureResult_whenNoActiveRequestExists_doesNothing() {
-        Context context = mock(Context.class);
-        when(persistentStore.getActiveRequest(context)).thenReturn(null);
-
-        Intent intent = mock(Intent.class);
-        when(intent.getData()).thenReturn(uri);
-
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.captureResult(context, intent);
-
-        verify(persistentStore, never()).putActiveRequest(any(), any());
-    }
-
-    @Test
-    public void captureResult_whenIntentHasNoData_doesNothing() {
-        Context context = mock(Context.class);
-        BrowserSwitchRequest request = mock(BrowserSwitchRequest.class);
-        when(persistentStore.getActiveRequest(context)).thenReturn(request);
-
-        Intent intent = mock(Intent.class);
-        when(intent.getData()).thenReturn(null);
-
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.captureResult(context, intent);
-
-        verify(request, never()).setUri(any());
-        verify(request, never()).setState(any());
-        verify(persistentStore, never()).putActiveRequest(any(), any());
-    }
-
-    @Test
-    public void captureResult_whenIntentIsNull_doesNothing() {
-        Context context = mock(Context.class);
-        BrowserSwitchRequest request = mock(BrowserSwitchRequest.class);
-        when(persistentStore.getActiveRequest(context)).thenReturn(request);
-
-        sut = new BrowserSwitchClient(browserSwitchConfig, activityFinder, persistentStore);
-        sut.captureResult(context, null);
-
-        verify(request, never()).setUri(any());
-        verify(request, never()).setState(any());
-        verify(persistentStore, never()).putActiveRequest(any(), any());
     }
 }
