@@ -1,19 +1,12 @@
 package com.braintreepayments.api;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
 class BrowserSwitchConfig {
 
-    Intent createIntentToLaunchUriInBrowser(Context context, Uri uri) {
+    Intent createIntentToLaunchUriInBrowser(Uri uri) {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Context applicationContext = context.getApplicationContext();
-        if (ChromeCustomTabs.isAvailable(applicationContext)) {
-            ChromeCustomTabs.addChromeCustomTabsExtras(applicationContext, intent);
-        }
         return intent;
     }
 

@@ -79,7 +79,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme)).thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri)).thenReturn(browserSwitchIntent);
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri)).thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
         when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
@@ -118,7 +118,7 @@ public class BrowserSwitchClientUnitTest {
                 .thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
                 .thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
@@ -151,7 +151,7 @@ public class BrowserSwitchClientUnitTest {
                 .thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
                 .thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
@@ -188,7 +188,7 @@ public class BrowserSwitchClientUnitTest {
                 .thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
                 .thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
@@ -224,7 +224,7 @@ public class BrowserSwitchClientUnitTest {
                 .thenReturn(queryIntent);
 
         Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri))
+        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
                 .thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
