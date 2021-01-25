@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 class BrowserSwitchRequest {
 
-    private Uri uri;
+    final private Uri uri;
     final private int requestCode;
     private final JSONObject metadata;
 
@@ -23,10 +23,6 @@ class BrowserSwitchRequest {
         this.uri = uri;
         this.requestCode = requestCode;
         this.metadata = metadata;
-    }
-
-    void setUri(Uri value) {
-        uri = value;
     }
 
     Uri getUri() {
