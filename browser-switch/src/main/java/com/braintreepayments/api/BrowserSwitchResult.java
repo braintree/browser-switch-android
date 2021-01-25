@@ -28,7 +28,6 @@ public class BrowserSwitchResult {
     }
 
     BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request, Uri deepLinkUri) {
-        // TODO: unit test
         this.status = status;
         this.request = request;
         this.deepLinkUri = deepLinkUri;
@@ -47,12 +46,11 @@ public class BrowserSwitchResult {
         return request.getRequestCode();
     }
 
-    // TODO: determine if this has value for browser switch users
-    public Uri getRequestUri() {
+    public Uri getRequestUrl() {
         return request.getUri();
     }
 
-    public Uri getDeepLinkUri() {
+    public Uri getDeepLinkUrl() {
         return deepLinkUri;
     }
 }

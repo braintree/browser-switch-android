@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -193,6 +194,12 @@ public class BrowserSwitchClientUnitTest {
     public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
         when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
 
+        Uri deepLinkUri = mock(Uri.class);
+        Intent deepLinkIntent = mock(Intent.class);
+        when(deepLinkIntent.getData()).thenReturn(deepLinkUri);
+
+        when(plainActivity.getIntent()).thenReturn(deepLinkIntent);
+
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
             new BrowserSwitchRequest(123, uri, requestMetadata);
@@ -207,8 +214,11 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
-        assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_SUCCESS);
-        assertSame(result.getRequestMetadata(), requestMetadata);
+        assertEquals(123, result.getRequestCode());
+        assertSame(uri, result.getRequestUrl());
+        assertEquals(BrowserSwitchResult.STATUS_SUCCESS, result.getStatus());
+        assertSame(requestMetadata, result.getRequestMetadata());
+        assertSame(deepLinkUri, result.getDeepLinkUrl());
 
         verify(persistentStore).clearActiveRequest(applicationContext);
     }
@@ -231,8 +241,11 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
+        assertEquals(123, result.getRequestCode());
+        assertSame(uri, result.getRequestUrl());
         assertEquals(result.getStatus(), BrowserSwitchResult.STATUS_CANCELED);
         assertSame(result.getRequestMetadata(), requestMetadata);
+        assertNull(result.getDeepLinkUrl());
 
         verify(persistentStore).clearActiveRequest(applicationContext);
     }

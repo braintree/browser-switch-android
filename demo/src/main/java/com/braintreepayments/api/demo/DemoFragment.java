@@ -141,7 +141,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
             case BrowserSwitchResult.STATUS_SUCCESS:
                 resultText = "Browser Switch Successful";
 
-                Uri returnUri = result.getDeepLinkUri();
+                Uri returnUri = result.getDeepLinkUrl();
                 if (returnUri != null) {
                     String color = returnUri.getQueryParameter("color");
                     selectedColorText = String.format("Selected color: %s", color);
