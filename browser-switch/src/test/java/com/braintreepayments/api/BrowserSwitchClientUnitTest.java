@@ -173,7 +173,7 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(false);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
         when(uri.toString()).thenReturn("https://example.com/");
