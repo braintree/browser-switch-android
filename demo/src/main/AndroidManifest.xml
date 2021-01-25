@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.braintreepayments.api.demo"
+    package="com.braintreepayments.browserswitch.demo"
     >
 
     <application
@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme"
         android:allowBackup="false"
         >
-        <activity android:name=".DemoActivity">
+        <activity android:name="com.braintreepayments.browserswitch.demo.DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

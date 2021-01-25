@@ -1,4 +1,4 @@
-package com.braintreepayments.api;
+package com.braintreepayments.browserswitch;
 
 public class BrowserSwitchException extends Exception {
 
