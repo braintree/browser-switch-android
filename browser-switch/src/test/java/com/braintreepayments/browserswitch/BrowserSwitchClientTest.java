@@ -28,7 +28,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BrowserSwitchClientUnitTest {
+public class BrowserSwitchClientTest {
 
     static abstract class ActivityListener extends FragmentActivity implements BrowserSwitchListener {}
 
