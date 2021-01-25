@@ -13,20 +13,18 @@ import org.json.JSONObject;
 
 public class BrowserSwitchClient {
 
-    final private BrowserSwitchConfig config;
-    final private ActivityFinder activityFinder;
+    final private BrowserSwitchInspector browserSwitchInspector;
     final private BrowserSwitchPersistentStore persistentStore;
+
     final private CustomTabsIntent.Builder customTabsIntentBuilder;
 
     public BrowserSwitchClient() {
-        this(new BrowserSwitchConfig(), new ActivityFinder(),
-            BrowserSwitchPersistentStore.getInstance(), new CustomTabsIntent.Builder());
+        this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new CustomTabsIntent.Builder());
     }
 
     @VisibleForTesting
-    BrowserSwitchClient(BrowserSwitchConfig config, ActivityFinder activityFinder, BrowserSwitchPersistentStore persistentStore, CustomTabsIntent.Builder customTabsIntentBuilder) {
-        this.config = config;
-        this.activityFinder = activityFinder;
+    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector, BrowserSwitchPersistentStore persistentStore, CustomTabsIntent.Builder customTabsIntentBuilder) {
+        this.browserSwitchInspector = browserSwitchInspector;
         this.persistentStore = persistentStore;
         this.customTabsIntentBuilder = customTabsIntentBuilder;
     }
@@ -60,7 +58,8 @@ public class BrowserSwitchClient {
 
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
-        Intent intent = config.createIntentToLaunchUriInBrowser(browserSwitchOptions.getUrl());
+
+        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
@@ -69,19 +68,18 @@ public class BrowserSwitchClient {
         if (!isValidRequestCode(requestCode)) {
             errorMessage = "Request code cannot be Integer.MIN_VALUE";
         } else if (returnUrlScheme == null) {
-             errorMessage = "A returnUrlScheme is required.";
-        } else if (!isConfiguredForBrowserSwitch(appContext, returnUrlScheme)) {
+            errorMessage = "A returnUrlScheme is required.";
+        } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage =
-                "The return url scheme was not set up, incorrectly set up, " +
-                "or more than one Activity on this device defines the same url " +
-                "scheme in it's Android Manifest. See " +
-                "https://github.com/braintree/browser-switch-android for more " +
-                "information on setting up a return url scheme.";
-        } else if (!canOpenUrl(appContext, intent)) {
+                    "The return url scheme was not set up, incorrectly set up, " +
+                            "or more than one Activity on this device defines the same url " +
+                            "scheme in it's Android Manifest. See " +
+                            "https://github.com/braintree/browser-switch-android for more " +
+                            "information on setting up a return url scheme.";
+        } else if (!browserSwitchInspector.canDeviceOpenUrl(appContext, browserSwitchUrl)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
-            Uri uri = intent.getData();
-            if (uri != null) {
-                messageBuilder.append(String.format(": %s", uri.toString()));
+            if (browserSwitchUrl != null) {
+                messageBuilder.append(String.format(": %s", browserSwitchUrl.toString()));
             }
             errorMessage = messageBuilder.toString();
         }
@@ -93,16 +91,6 @@ public class BrowserSwitchClient {
 
     private boolean isValidRequestCode(int requestCode) {
         return requestCode != Integer.MIN_VALUE;
-    }
-
-    private boolean isConfiguredForBrowserSwitch(Context context, String returnUrlScheme) {
-        Intent browserSwitchActivityIntent =
-            config.createIntentForBrowserSwitchActivityQuery(returnUrlScheme);
-        return activityFinder.canResolveActivityForIntent(context, browserSwitchActivityIntent);
-    }
-
-    private boolean canOpenUrl(Context context, Intent intent) {
-        return activityFinder.canResolveActivityForIntent(context, intent);
     }
 
     /**
