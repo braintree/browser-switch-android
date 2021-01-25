@@ -68,11 +68,11 @@ public class BrowserSwitchClient {
             errorMessage = "A returnUrlScheme is required.";
         } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage =
-                    "The return url scheme was not set up, incorrectly set up, " +
-                            "or more than one Activity on this device defines the same url " +
-                            "scheme in it's Android Manifest. See " +
-                            "https://github.com/braintree/browser-switch-android for more " +
-                            "information on setting up a return url scheme.";
+                "The return url scheme was not set up, incorrectly set up, " +
+                "or more than one Activity on this device defines the same url " +
+                "scheme in it's Android Manifest. See " +
+                "https://github.com/braintree/browser-switch-android for more " +
+                "information on setting up a return url scheme.";
         } else if (!browserSwitchInspector.canDeviceOpenUrl(appContext, browserSwitchUrl)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             if (browserSwitchUrl != null) {
