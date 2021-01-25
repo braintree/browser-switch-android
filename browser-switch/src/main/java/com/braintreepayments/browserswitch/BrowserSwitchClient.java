@@ -38,10 +38,7 @@ public class BrowserSwitchClient {
      */
     public void start(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
-        startSafe(activity, browserSwitchOptions);
-    }
 
-    private void startSafe(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) {
         Context appContext = activity.getApplicationContext();
 
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
