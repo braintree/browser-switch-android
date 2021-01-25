@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,8 +34,6 @@ public class BrowserSwitchClientUnitTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
-    private ActivityFinder activityFinder;
-    private BrowserSwitchConfig browserSwitchConfig;
     private BrowserSwitchPersistentStore persistentStore;
 
     private BrowserSwitchInspector browserSwitchInspector;
@@ -52,11 +51,10 @@ public class BrowserSwitchClientUnitTest {
     private BrowserSwitchClient sut;
 
     private String returnUrlScheme;
+    private CustomTabsIntent customTabsIntent;
 
     @Before
     public void beforeEach() {
-        activityFinder = mock(ActivityFinder.class);
-        browserSwitchConfig = mock(BrowserSwitchConfig.class);
         persistentStore = mock(BrowserSwitchPersistentStore.class);
 
         browserSwitchInspector = mock(BrowserSwitchInspector.class);
@@ -71,22 +69,16 @@ public class BrowserSwitchClientUnitTest {
         browserSwitchListener = mock(BrowserSwitchListener.class);
 
         returnUrlScheme = "sample-url-scheme";
+        customTabsIntent = mock(CustomTabsIntent.class);
+
+        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(customTabsIntentBuilder.build()).thenReturn(customTabsIntent);
     }
 
     @Test
     public void start_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
-
-        Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme)).thenReturn(queryIntent);
-
-        Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri)).thenReturn(browserSwitchIntent);
-
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
-
-        when(browserSwitchIntent.getData()).thenReturn(uri);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
         sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
@@ -98,7 +90,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         sut.start(plainActivity, options);
 
-        verify(applicationContext).startActivity(browserSwitchIntent);
+        verify(customTabsIntent).launchUrl(plainActivity, uri);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
                 ArgumentCaptor.forClass(BrowserSwitchRequest.class);
@@ -112,20 +104,8 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenRequestCodeIsIntegerMinValue_throwsError() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
-
-        Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
-                .thenReturn(queryIntent);
-
-        Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
-                .thenReturn(browserSwitchIntent);
-
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
-                .thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
-                .thenReturn(true);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
         sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
@@ -144,21 +124,9 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenIsNotConfiguredForBrowserSwitch_throwsError() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
-
-        Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
-                .thenReturn(queryIntent);
-
-        Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
-                .thenReturn(browserSwitchIntent);
-
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
-                .thenReturn(false);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
-                .thenReturn(true);
+    public void start_whenDeviceIsNotConfiguredForDeepLinking_throwsError() {
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(false);
 
         sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
 
@@ -182,22 +150,9 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenNoActivityFoundCanOpenURL_throwsError() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(false);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
-        Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
-                .thenReturn(queryIntent);
-
-        Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
-                .thenReturn(browserSwitchIntent);
-
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
-                .thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
-                .thenReturn(false);
-
-        when(browserSwitchIntent.getData()).thenReturn(uri);
         when(uri.toString()).thenReturn("https://example.com/");
 
         sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
@@ -218,22 +173,9 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, uri)).thenReturn(false);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
 
-        Intent queryIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentForBrowserSwitchActivityQuery(returnUrlScheme))
-                .thenReturn(queryIntent);
-
-        Intent browserSwitchIntent = mock(Intent.class);
-        when(browserSwitchConfig.createIntentToLaunchUriInBrowser(uri))
-                .thenReturn(browserSwitchIntent);
-
-        when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent))
-                .thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent))
-                .thenReturn(false);
-
-        when(browserSwitchIntent.getData()).thenReturn(uri);
         when(uri.toString()).thenReturn("https://example.com/");
 
         sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
@@ -241,6 +183,7 @@ public class BrowserSwitchClientUnitTest {
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
+                .returnUrlScheme(null)
                 .url(uri)
                 .metadata(metadata);
         try {
@@ -322,7 +265,7 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
-        sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        sut = spy(new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder));
         doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
 
         sut.deliverResult(activityAndListener);
