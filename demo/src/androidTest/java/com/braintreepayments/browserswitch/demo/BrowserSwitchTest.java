@@ -7,7 +7,6 @@ import android.content.Intent;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 

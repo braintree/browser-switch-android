@@ -70,6 +70,11 @@ def post_release(version)
   $stdin.gets
 end
 
+desc "Interactive release to publish new version to maven local"
+task :release_local do
+  sh "./gradlew clean publishToMavenLocal"
+end
+
 task :assumptions do
     puts "Release Assumptions"
     puts "* [ ] You are on the branch and commit you want to release."

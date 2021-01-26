@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
@@ -24,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersistentStore.class, BrowserSwitchRequest.class, Log.class })
-public class BrowserSwitchPersistentStoreTest {
+public class BrowserSwitchPersistentStoreUnitTest {
 
     private Context context;
     private BrowserSwitchRequest browserSwitchRequest;

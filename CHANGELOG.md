@@ -1,5 +1,22 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add `BrowserSwitchClient`
+* Add `returnUrlScheme` to `BrowserSwitchOptions`
+* Add `requestCode`, `requestUri` and `deepLinkUri` properties to `BrowserSwitchResult`
+* Breaking Changes
+  * Remove `BrowserSwitchFragment`
+  * Remove `BrowserSwitchActivity`
+  * Remove convenience `start` methods
+  * Remove `STATUS_ERROR` and throw error in `start` method
+  * Remove `BrowserSwitchResult#getErrorMessages`
+  * Remove support for `Intent` on `BrowserSwitchOptions`
+  * Remove `ChromeCustomTabs`
+  * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchResult.STATUS_SUCCESS` 
+  * Remove `BrowserSwitchClient#captureResult`
+  * Change `BrowserSwitchListener#onBrowserSwitchResult` method to take a single `BrowserSwitchResult` parameter
+
 ## 1.1.3
 
 * Update androidx dependencies to latest versions

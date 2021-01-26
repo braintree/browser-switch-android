@@ -19,10 +19,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SharedPreferences.class })
-public class PersistentStoreTest {
+public class PersistentStoreUnitTest {
 
     private Context context;
-    private Context applicationContext;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -30,11 +29,11 @@ public class PersistentStoreTest {
     @Before
     public void beforeEach() {
         context = mock(Context.class);
-        applicationContext = mock(Context.class);
 
         sharedPreferences = mock(SharedPreferences.class);
         sharedPreferencesEditor = mock(SharedPreferences.Editor.class);
 
+        Context applicationContext = mock(Context.class);
         when(context.getApplicationContext()).thenReturn(applicationContext);
 
         when(

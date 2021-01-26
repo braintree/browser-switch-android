@@ -1,6 +1,5 @@
 package com.braintreepayments.browserswitch;
 
-import android.content.Intent;
 import android.net.Uri;
 
 import androidx.fragment.app.FragmentActivity;
@@ -9,25 +8,15 @@ import org.json.JSONObject;
 
 /**
  * Parameter object that contains a set of BrowserSwitch parameters for use with
- * {@link BrowserSwitchClient#start(BrowserSwitchOptions, FragmentActivity, BrowserSwitchListener)}
+ * {@link BrowserSwitchClient#start(FragmentActivity, BrowserSwitchOptions)} )}
  * and related convenience methods.
  */
 public class BrowserSwitchOptions {
 
-    private Intent intent;
     private JSONObject metadata;
     private int requestCode;
     private Uri url;
-
-    /**
-     * Set browser switch intent
-     * @param intent The target intent to use for browser switch. Required unless url specified
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
-     */
-    public BrowserSwitchOptions intent(Intent intent) {
-        this.intent = intent;
-        return this;
-    }
+    private String returnUrlScheme;
 
     /**
      * Set browser switch metadata
@@ -51,7 +40,7 @@ public class BrowserSwitchOptions {
 
     /**
      * Set browser switch url
-     * @param url The target url to use for browser switch. Required unless intent specified
+     * @param url The target url to use for browser switch
      * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions url(Uri url) {
@@ -60,10 +49,13 @@ public class BrowserSwitchOptions {
     }
 
     /**
-     * @return The target intent used for browser switch
+     * Set browser switch return url scheme
+     * @param returnUrlScheme The return url scheme to use for browser switch
+     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
      */
-    public Intent getIntent() {
-        return intent;
+    public BrowserSwitchOptions returnUrlScheme(String returnUrlScheme) {
+        this.returnUrlScheme = returnUrlScheme;
+        return this;
     }
 
     /**
@@ -85,5 +77,12 @@ public class BrowserSwitchOptions {
      */
     public Uri getUrl() {
         return url;
+    }
+
+    /**
+     * @return The return url scheme used for browser switch
+     */
+    public String getReturnUrlScheme() {
+        return returnUrlScheme;
     }
 }

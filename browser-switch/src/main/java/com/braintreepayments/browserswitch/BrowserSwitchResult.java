@@ -1,5 +1,7 @@
 package com.braintreepayments.browserswitch;
 
+import android.net.Uri;
+
 import androidx.annotation.IntDef;
 
 import org.json.JSONObject;
@@ -9,26 +11,26 @@ import java.lang.annotation.RetentionPolicy;
 
 public class BrowserSwitchResult {
 
-    final private int status;
-    final private String errorMessage;
-    final JSONObject requestMetadata;
+    private final int status;
+    private final Uri deepLinkUri;
+    private final BrowserSwitchRequest request;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ STATUS_OK, STATUS_CANCELED, STATUS_ERROR })
-    public @interface BrowserSwitchStatus {}
-
-    public static final int STATUS_OK = 1;
-    public static final int STATUS_CANCELED = 2;
-    public static final int STATUS_ERROR = 3;
-
-    BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage) {
-        this(status, errorMessage, null);
+    @IntDef({STATUS_SUCCESS, STATUS_CANCELED})
+    public @interface BrowserSwitchStatus {
     }
 
-    BrowserSwitchResult(@BrowserSwitchStatus int status, String errorMessage, JSONObject requestMetadata) {
+    public static final int STATUS_SUCCESS = 1;
+    public static final int STATUS_CANCELED = 2;
+
+    BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request) {
+        this(status, request, null);
+    }
+
+    BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request, Uri deepLinkUri) {
         this.status = status;
-        this.errorMessage = errorMessage;
-        this.requestMetadata = requestMetadata;
+        this.request = request;
+        this.deepLinkUri = deepLinkUri;
     }
 
     @BrowserSwitchStatus
@@ -36,11 +38,19 @@ public class BrowserSwitchResult {
         return status;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public JSONObject getRequestMetadata() {
+        return request.getMetadata();
     }
 
-    public JSONObject getRequestMetadata() {
-        return requestMetadata;
+    public int getRequestCode() {
+        return request.getRequestCode();
+    }
+
+    public Uri getRequestUrl() {
+        return request.getUri();
+    }
+
+    public Uri getDeepLinkUrl() {
+        return deepLinkUri;
     }
 }

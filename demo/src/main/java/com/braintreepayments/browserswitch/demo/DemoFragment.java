@@ -10,18 +10,25 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.Fragment;
 
-import com.braintreepayments.browserswitch.BrowserSwitchFragment;
+import com.braintreepayments.browserswitch.BrowserSwitchClient;
+import com.braintreepayments.browserswitch.BrowserSwitchException;
+import com.braintreepayments.browserswitch.BrowserSwitchListener;
 import com.braintreepayments.browserswitch.BrowserSwitchOptions;
 import com.braintreepayments.browserswitch.BrowserSwitchResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DemoFragment extends BrowserSwitchFragment implements View.OnClickListener {
+public class DemoFragment extends Fragment implements View.OnClickListener, BrowserSwitchListener {
 
     private static final String TEST_KEY = "testKey";
     private static final String TEST_VALUE = "testValue";
+
+    @VisibleForTesting
+    BrowserSwitchClient browserSwitchClient = null;
 
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
@@ -47,6 +54,18 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        browserSwitchClient = new BrowserSwitchClient();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        browserSwitchClient.deliverResult(getActivity(), this);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.browser_switch:
@@ -63,8 +82,15 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
-                .url(url);
-        browserSwitch(browserSwitchOptions);
+                .url(url)
+                .returnUrlScheme("my-custom-url-scheme");
+        try {
+            browserSwitchClient.start(getActivity(), browserSwitchOptions);
+        } catch (BrowserSwitchException e) {
+            String statusText = "Browser Switch Error: " + e.getMessage();
+            mBrowserSwitchStatusTextView.setText(statusText);
+            e.printStackTrace();
+        }
     }
 
     private void startBrowserSwitchWithMetadata(JSONObject metadata) {
@@ -72,15 +98,19 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .metadata(metadata)
                 .requestCode(1)
-                .url(url);
-        browserSwitch(browserSwitchOptions);
+                .url(url)
+                .returnUrlScheme("my-custom-url-scheme");
+        try {
+            browserSwitchClient.start(getActivity(), browserSwitchOptions);
+        } catch (BrowserSwitchException e) {
+            e.printStackTrace();
+        }
     }
 
     private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                getReturnUrlScheme() +
-                "://";
+                "my-custom-url-scheme://";
         return Uri.parse(url);
     }
 
@@ -94,22 +124,20 @@ public class DemoFragment extends BrowserSwitchFragment implements View.OnClickL
     }
 
     @Override
-    public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
+    public void onBrowserSwitchResult(BrowserSwitchResult result) {
         String resultText = null;
         String selectedColorText = "";
 
         int statusCode = result.getStatus();
         switch (statusCode) {
-            case BrowserSwitchResult.STATUS_OK:
+            case BrowserSwitchResult.STATUS_SUCCESS:
                 resultText = "Browser Switch Successful";
 
+                Uri returnUri = result.getDeepLinkUrl();
                 if (returnUri != null) {
                     String color = returnUri.getQueryParameter("color");
                     selectedColorText = String.format("Selected color: %s", color);
                 }
-                break;
-            case BrowserSwitchResult.STATUS_ERROR:
-                resultText = "Browser Switch Error: " + result.getErrorMessage();
                 break;
             case BrowserSwitchResult.STATUS_CANCELED:
                 resultText = "Browser Switch Cancelled by User";
