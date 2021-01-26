@@ -9,7 +9,7 @@ class BrowserSwitchRequest {
 
     final private Uri uri;
     final private int requestCode;
-    private final JSONObject metadata;
+    final private JSONObject metadata;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
@@ -47,4 +47,3 @@ class BrowserSwitchRequest {
         return result.toString();
     }
 }
-
