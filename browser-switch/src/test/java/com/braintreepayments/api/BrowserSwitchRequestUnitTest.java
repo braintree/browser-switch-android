@@ -1,4 +1,4 @@
-package com.braintreepayments.browserswitch;
+package com.braintreepayments.api;
 
 import org.json.JSONException;
 import org.json.JSONObject;
