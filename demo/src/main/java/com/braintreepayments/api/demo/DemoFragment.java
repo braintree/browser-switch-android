@@ -1,4 +1,4 @@
-package com.braintreepayments.browserswitch.demo;
+package com.braintreepayments.api.demo;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,11 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
-import com.braintreepayments.browserswitch.BrowserSwitchClient;
-import com.braintreepayments.browserswitch.BrowserSwitchException;
-import com.braintreepayments.browserswitch.BrowserSwitchListener;
-import com.braintreepayments.browserswitch.BrowserSwitchOptions;
-import com.braintreepayments.browserswitch.BrowserSwitchResult;
+import com.braintreepayments.api.BrowserSwitchClient;
+import com.braintreepayments.api.BrowserSwitchException;
+import com.braintreepayments.api.BrowserSwitchListener;
+import com.braintreepayments.api.BrowserSwitchOptions;
+import com.braintreepayments.api.BrowserSwitchResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;

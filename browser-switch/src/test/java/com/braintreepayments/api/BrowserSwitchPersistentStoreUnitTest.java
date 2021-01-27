@@ -1,4 +1,4 @@
-package com.braintreepayments.browserswitch;
+package com.braintreepayments.api;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.braintreepayments.browserswitch.BrowserSwitchPersistentStore.REQUEST_KEY;
+import static com.braintreepayments.api.BrowserSwitchPersistentStore.REQUEST_KEY;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
