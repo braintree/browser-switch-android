@@ -104,11 +104,11 @@ public class BrowserSwitchClient {
      *
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
-    public void deliverResult(FragmentActivity activity) {
+    public void deliverResult(FragmentActivity activity) throws BrowserSwitchException {
         deliverResult(activity, activity.getIntent());
     }
 
-    public void deliverResult(FragmentActivity activity, Intent intent) {
+    public void deliverResult(FragmentActivity activity, Intent intent) throws BrowserSwitchException {
         if (activity instanceof BrowserSwitchListener) {
             deliverResult(activity, (BrowserSwitchListener) activity, intent);
         } else if (activity instanceof AppCompatActivity) {
@@ -117,7 +117,7 @@ public class BrowserSwitchClient {
             if (browserSwitchListenerFragment != null) {
                 deliverResult(activity, browserSwitchListenerFragment, intent);
             } else {
-                throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
+                throw new BrowserSwitchException("Activity must implement BrowserSwitchListener.");
             }
         }
     }
