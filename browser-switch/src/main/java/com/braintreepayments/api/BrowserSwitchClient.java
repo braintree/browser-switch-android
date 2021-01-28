@@ -6,10 +6,14 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class BrowserSwitchClient {
 
@@ -103,9 +107,34 @@ public class BrowserSwitchClient {
     public void deliverResult(FragmentActivity activity) {
         if (activity instanceof BrowserSwitchListener) {
             deliverResult(activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
+        } else if (activity instanceof AppCompatActivity) {
+            BrowserSwitchListener browserSwitchListenerFragment =
+                    findBrowserSwitchListenerFragment((AppCompatActivity) activity);
+            if (browserSwitchListenerFragment != null) {
+                deliverResult(activity, browserSwitchListenerFragment);
+            } else {
+                throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
+            }
         }
+    }
+
+    private static BrowserSwitchListener findBrowserSwitchListenerFragment(AppCompatActivity activity) {
+        return findBrowserSwitchListenerFragment(activity.getSupportFragmentManager().getFragments());
+    }
+
+    private static BrowserSwitchListener findBrowserSwitchListenerFragment(List<Fragment> fragments) {
+        BrowserSwitchListener result = null;
+        for (Fragment fragment: fragments) {
+            if (fragment instanceof BrowserSwitchListener) {
+                result = (BrowserSwitchListener) fragment;
+            } else {
+                result = findBrowserSwitchListenerFragment(fragment.getChildFragmentManager().getFragments());
+            }
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
     }
 
     /**
