@@ -105,13 +105,17 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
     public void deliverResult(FragmentActivity activity) {
+        deliverResult(activity, activity.getIntent());
+    }
+
+    public void deliverResult(FragmentActivity activity, Intent intent) {
         if (activity instanceof BrowserSwitchListener) {
-            deliverResult(activity, (BrowserSwitchListener) activity);
+            deliverResult(activity, (BrowserSwitchListener) activity, intent);
         } else if (activity instanceof AppCompatActivity) {
             BrowserSwitchListener browserSwitchListenerFragment =
                     findBrowserSwitchListenerFragment((AppCompatActivity) activity);
             if (browserSwitchListenerFragment != null) {
-                deliverResult(activity, browserSwitchListenerFragment);
+                deliverResult(activity, browserSwitchListenerFragment, intent);
             } else {
                 throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
             }
@@ -148,21 +152,16 @@ public class BrowserSwitchClient {
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      * @param listener the listener that will receive browser switch callbacks
      */
-    public void deliverResult(@NonNull FragmentActivity activity, @NonNull BrowserSwitchListener listener) {
+    public void deliverResult(@NonNull FragmentActivity activity, @NonNull BrowserSwitchListener listener, @NonNull Intent intent) {
         Context appContext = activity.getApplicationContext();
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
         if (request == null) {
             // no pending browser switch request found
             return;
         }
-
-        Uri deepLinkUri = null;
-        Intent intent = activity.getIntent();
-        if (intent != null) {
-            deepLinkUri = intent.getData();
-        }
-
         BrowserSwitchResult result;
+
+        Uri deepLinkUri = intent.getData();
         if (deepLinkUri == null) {
             result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, request);
         } else {
