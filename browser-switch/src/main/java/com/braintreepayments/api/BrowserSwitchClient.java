@@ -104,61 +104,16 @@ public class BrowserSwitchClient {
      *
      * @param activity the BrowserSwitchListener that will receive a pending browser switch result
      */
-    public void deliverResult(FragmentActivity activity) throws BrowserSwitchException {
-        deliverResult(activity, activity.getIntent());
-    }
-
-    public void deliverResult(FragmentActivity activity, Intent intent) throws BrowserSwitchException {
-        if (activity instanceof BrowserSwitchListener) {
-            deliverResult(activity, (BrowserSwitchListener) activity, intent);
-        } else if (activity instanceof AppCompatActivity) {
-            BrowserSwitchListener browserSwitchListenerFragment =
-                    findBrowserSwitchListenerFragment((AppCompatActivity) activity);
-            if (browserSwitchListenerFragment != null) {
-                deliverResult(activity, browserSwitchListenerFragment, intent);
-            } else {
-                throw new BrowserSwitchException("Activity must implement BrowserSwitchListener.");
-            }
-        }
-    }
-
-    private static BrowserSwitchListener findBrowserSwitchListenerFragment(AppCompatActivity activity) {
-        return findBrowserSwitchListenerFragment(activity.getSupportFragmentManager().getFragments());
-    }
-
-    private static BrowserSwitchListener findBrowserSwitchListenerFragment(List<Fragment> fragments) {
-        BrowserSwitchListener result = null;
-        for (Fragment fragment: fragments) {
-            if (fragment instanceof BrowserSwitchListener) {
-                result = (BrowserSwitchListener) fragment;
-            } else {
-                result = findBrowserSwitchListenerFragment(fragment.getChildFragmentManager().getFragments());
-            }
-            if (result != null) {
-                break;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Deliver a pending browser switch result to an Android activity that is also a BrowserSwitchListener.
-     * We recommend you call this method in onResume to receive a browser switch result once your
-     * app has re-entered the foreground.
-     *
-     * Cancel and Success results will be delivered only once. If there are no pending
-     * browser switch results, this method does nothing.
-     *
-     * @param activity the BrowserSwitchListener that will receive a pending browser switch result
-     * @param listener the listener that will receive browser switch callbacks
-     */
-    public void deliverResult(@NonNull FragmentActivity activity, @NonNull BrowserSwitchListener listener, @NonNull Intent intent) {
+    public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
+        Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
+
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request == null) {
+        if (request == null || intent == null) {
             // no pending browser switch request found
-            return;
+            return null;
         }
+
         BrowserSwitchResult result;
 
         Uri deepLinkUri = intent.getData();
@@ -167,9 +122,9 @@ public class BrowserSwitchClient {
         } else {
             result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, request, deepLinkUri);
         }
-        listener.onBrowserSwitchResult(result);
 
         // ensure that browser switch result is delivered exactly one time
         persistentStore.clearActiveRequest(appContext);
+        return result;
     }
 }

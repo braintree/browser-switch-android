@@ -10,25 +10,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
-import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
-import com.braintreepayments.api.BrowserSwitchListener;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DemoFragment extends Fragment implements View.OnClickListener, BrowserSwitchListener {
+public class DemoFragment extends Fragment implements View.OnClickListener {
 
     private static final String TEST_KEY = "testKey";
     private static final String TEST_VALUE = "testValue";
-
-    @VisibleForTesting
-    BrowserSwitchClient browserSwitchClient = null;
 
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
@@ -54,22 +48,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            browserSwitchClient.deliverResult(getActivity());
-        } catch (BrowserSwitchException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.browser_switch:
@@ -88,8 +66,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .requestCode(1)
                 .url(url)
                 .returnUrlScheme("my-custom-url-scheme");
+
         try {
-            browserSwitchClient.start(getActivity(), browserSwitchOptions);
+            ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
             String statusText = "Browser Switch Error: " + e.getMessage();
             mBrowserSwitchStatusTextView.setText(statusText);
@@ -105,8 +84,10 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
                 .url(url)
                 .returnUrlScheme("my-custom-url-scheme");
         try {
-            browserSwitchClient.start(getActivity(), browserSwitchOptions);
+            ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
+            String statusText = "Browser Switch Error: " + e.getMessage();
+            mBrowserSwitchStatusTextView.setText(statusText);
             e.printStackTrace();
         }
     }
@@ -127,7 +108,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         return null;
     }
 
-    @Override
     public void onBrowserSwitchResult(BrowserSwitchResult result) {
         String resultText = null;
         String selectedColorText = "";
