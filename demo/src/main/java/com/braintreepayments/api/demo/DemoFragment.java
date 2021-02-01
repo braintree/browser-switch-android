@@ -64,7 +64,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
+                .returnUrlScheme(getReturnUrlScheme());
 
         try {
             getDemoActivity().startBrowserSwitch(browserSwitchOptions);
@@ -81,7 +81,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
+                .returnUrlScheme(getReturnUrlScheme());
         try {
             getDemoActivity().startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -94,7 +94,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                getDemoActivity().getReturnUrlScheme() + "://";
+                getReturnUrlScheme() + "://";
         return Uri.parse(url);
     }
 
@@ -144,5 +144,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
     private DemoActivity getDemoActivity() {
         return (DemoActivity) getActivity();
+    }
+
+    private String getReturnUrlScheme() {
+        return getDemoActivity().getReturnUrlScheme();
     }
 }
