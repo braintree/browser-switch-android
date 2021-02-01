@@ -95,14 +95,13 @@ public class BrowserSwitchClient {
     }
 
     /**
-     * Deliver a pending browser switch result to an Android activity that is also a BrowserSwitchListener.
      * We recommend you call this method in onResume to receive a browser switch result once your
      * app has re-entered the foreground.
      *
      * Cancel and Success results will be delivered only once. If there are no pending
      * browser switch results, this method does nothing.
      *
-     * @param activity the BrowserSwitchListener that will receive a pending browser switch result
+     * @param activity the activity that received the deep link back into the app
      */
     public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();

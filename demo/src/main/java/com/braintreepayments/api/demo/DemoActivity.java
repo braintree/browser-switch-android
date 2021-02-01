@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager;
 
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
-import com.braintreepayments.api.BrowserSwitchListener;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 
