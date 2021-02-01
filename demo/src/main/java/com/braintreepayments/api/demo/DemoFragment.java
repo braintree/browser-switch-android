@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -49,14 +50,12 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.browser_switch:
-                startBrowserSwitch();
-                break;
-            case R.id.browser_switch_with_metadata:
-                JSONObject metadata = buildMetadataObject(TEST_KEY, TEST_VALUE);
-                startBrowserSwitchWithMetadata(metadata);
-                break;
+        @IdRes int viewId = v.getId();
+        if (viewId == R.id.browser_switch) {
+            startBrowserSwitch();
+        } else if (viewId == R.id.browser_switch_with_metadata) {
+            JSONObject metadata = buildMetadataObject();
+            startBrowserSwitchWithMetadata(metadata);
         }
     }
 
@@ -68,7 +67,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
 
         try {
-            ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
+            getDemoActivity().startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
             String statusText = "Browser Switch Error: " + e.getMessage();
             mBrowserSwitchStatusTextView.setText(statusText);
@@ -84,7 +83,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .url(url)
                 .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
         try {
-            ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
+            getDemoActivity().startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
             String statusText = "Browser Switch Error: " + e.getMessage();
             mBrowserSwitchStatusTextView.setText(statusText);
@@ -99,9 +98,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         return Uri.parse(url);
     }
 
-    private JSONObject buildMetadataObject(String key, String value) {
+    private JSONObject buildMetadataObject() {
         try {
-            return new JSONObject().put(key, value);
+            return new JSONObject().put(DemoFragment.TEST_KEY, DemoFragment.TEST_VALUE);
         } catch (JSONException ignore) {
             // do nothing
         }
