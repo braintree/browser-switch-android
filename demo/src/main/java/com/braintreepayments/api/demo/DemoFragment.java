@@ -62,7 +62,11 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
     @Override
     public void onResume() {
         super.onResume();
-        browserSwitchClient.deliverResult(getActivity(), this);
+        try {
+            browserSwitchClient.deliverResult(getActivity());
+        } catch (BrowserSwitchException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
