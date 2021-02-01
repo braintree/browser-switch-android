@@ -45,7 +45,8 @@ public class BrowserSwitchTest {
     }
 
     @Test(timeout = 60000)
-    public void startWithoutMetadata() {
+    public void standardLaunchMode_startWithoutMetadata() {
+        onDevice(withText("Launch Mode: Standard")).perform(click());
         onDevice(withText("Start Browser Switch")).perform(click());
         onDevice(withText("Red")).waitForExists().perform(click());
 
@@ -57,7 +58,34 @@ public class BrowserSwitchTest {
     }
 
     @Test(timeout = 60000)
-    public void startWithMetadata() {
+    public void standardLaunchMode_startWithMetadata() {
+        onDevice(withText("Launch Mode: Standard")).perform(click());
+        onDevice(withText("Start Browser Switch With Metadata")).perform(click());
+        onDevice(withText("Red")).waitForExists().perform(click());
+
+        onDevice(withText("Browser Switch Successful")).waitForExists();
+
+        assertTrue(onDevice(withText("Browser Switch Successful")).exists());
+        assertTrue(onDevice(withText("Selected Color: red")).exists());
+        assertTrue(onDevice(withText("Metadata: testKey=testValue")).exists());
+    }
+
+    @Test(timeout = 60000)
+    public void singleTopLaunchMode_startWithoutMetadata() {
+        onDevice(withText("Launch Mode: Single Top")).perform(click());
+        onDevice(withText("Start Browser Switch")).perform(click());
+        onDevice(withText("Red")).waitForExists().perform(click());
+
+        onDevice(withText("Browser Switch Successful")).waitForExists();
+
+        assertTrue(onDevice(withText("Browser Switch Successful")).exists());
+        assertTrue(onDevice(withText("Selected Color: red")).exists());
+        assertTrue(onDevice(withText("Metadata: null")).exists());
+    }
+
+    @Test(timeout = 60000)
+    public void singleTopLaunchMode_startWithMetadata() {
+        onDevice(withText("Launch Mode: Single Top")).perform(click());
         onDevice(withText("Start Browser Switch With Metadata")).perform(click());
         onDevice(withText("Red")).waitForExists().perform(click());
 
