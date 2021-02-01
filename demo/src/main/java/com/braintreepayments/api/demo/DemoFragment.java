@@ -65,7 +65,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme("my-custom-url-scheme");
+                .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
 
         try {
             ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
@@ -82,7 +82,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
-                .returnUrlScheme("my-custom-url-scheme");
+                .returnUrlScheme(getDemoActivity().getReturnUrlScheme());
         try {
             ((DemoActivity) getActivity()).startBrowserSwitch(browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -95,7 +95,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     private Uri buildBrowserSwitchUrl() {
         String url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                "my-custom-url-scheme://";
+                getDemoActivity().getReturnUrlScheme() + "://";
         return Uri.parse(url);
     }
 
@@ -141,5 +141,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
             }
         }
         mMetadataTextView.setText(String.format("Metadata: %s", metadataOutput));
+    }
+
+    private DemoActivity getDemoActivity() {
+        return (DemoActivity) getActivity();
     }
 }

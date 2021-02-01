@@ -20,7 +20,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="my-custom-url-scheme" />
+                <data android:scheme="my-custom-url-scheme-standard" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DemoActivitySingleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="my-custom-url-scheme-single-top" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

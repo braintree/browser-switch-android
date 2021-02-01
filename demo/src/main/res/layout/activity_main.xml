@@ -22,12 +22,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Launch Mode: Standard"
+        android:onClick="launchStandardBrowserSwitch"
         />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Launch Mode: Single Top"
+        android:onClick="launchSingleTopBrowserSwitch"
         />
 
 </LinearLayout>

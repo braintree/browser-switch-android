@@ -1,6 +1,5 @@
 package com.braintreepayments.api.demo;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -21,9 +20,17 @@ public class DemoActivity extends AppCompatActivity {
     @VisibleForTesting
     BrowserSwitchClient browserSwitchClient = null;
 
+    private String returnUrlScheme;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            returnUrlScheme = args.getString("returnUrlScheme");
+        }
+
         browserSwitchClient = new BrowserSwitchClient();
 
         FragmentManager fm = getSupportFragmentManager();
@@ -47,12 +54,6 @@ public class DemoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent newIntent) {
-        super.onNewIntent(newIntent);
-        setIntent(newIntent);
-    }
-
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         browserSwitchClient.start(this, options);
     }
@@ -64,5 +65,9 @@ public class DemoActivity extends AppCompatActivity {
             return ((DemoFragment) fragment);
         }
         return null;
+    }
+
+    public String getReturnUrlScheme() {
+        return returnUrlScheme;
     }
 }
