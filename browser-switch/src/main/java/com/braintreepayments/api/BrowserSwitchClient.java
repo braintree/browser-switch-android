@@ -91,6 +91,8 @@ public class BrowserSwitchClient {
     }
 
     /**
+     * Deliver a pending browser switch result to an Android activity.
+     *
      * We recommend you call this method in onResume to receive a browser switch result once your
      * app has re-entered the foreground.
      *
