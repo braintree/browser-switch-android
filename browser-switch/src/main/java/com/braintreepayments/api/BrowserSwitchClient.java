@@ -91,57 +91,37 @@ public class BrowserSwitchClient {
     }
 
     /**
-     * Deliver a pending browser switch result to an Android activity that is also a BrowserSwitchListener.
+     * Deliver a pending browser switch result to an Android activity.
+     *
      * We recommend you call this method in onResume to receive a browser switch result once your
      * app has re-entered the foreground.
      *
      * Cancel and Success results will be delivered only once. If there are no pending
      * browser switch results, this method does nothing.
      *
-     * @param activity the BrowserSwitchListener that will receive a pending browser switch result
+     * @param activity the activity that received the deep link back into the app
      */
-    public void deliverResult(FragmentActivity activity) {
-        if (activity instanceof BrowserSwitchListener) {
-            deliverResult(activity, (BrowserSwitchListener) activity);
-        } else {
-            throw new IllegalArgumentException("Activity must implement BrowserSwitchListener.");
-        }
-    }
-
-    /**
-     * Deliver a pending browser switch result to an Android activity that is also a BrowserSwitchListener.
-     * We recommend you call this method in onResume to receive a browser switch result once your
-     * app has re-entered the foreground.
-     *
-     * Cancel and Success results will be delivered only once. If there are no pending
-     * browser switch results, this method does nothing.
-     *
-     * @param activity the BrowserSwitchListener that will receive a pending browser switch result
-     * @param listener the listener that will receive browser switch callbacks
-     */
-    public void deliverResult(@NonNull FragmentActivity activity, @NonNull BrowserSwitchListener listener) {
-        Context appContext = activity.getApplicationContext();
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request == null) {
-            // no pending browser switch request found
-            return;
-        }
-
-        Uri deepLinkUri = null;
+    public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();
-        if (intent != null) {
-            deepLinkUri = intent.getData();
+        Context appContext = activity.getApplicationContext();
+
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
+        if (request == null || intent == null) {
+            // no pending browser switch request found
+            return null;
         }
 
         BrowserSwitchResult result;
+
+        Uri deepLinkUri = intent.getData();
         if (deepLinkUri == null) {
             result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, request);
         } else {
             result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, request, deepLinkUri);
         }
-        listener.onBrowserSwitchResult(result);
 
         // ensure that browser switch result is delivered exactly one time
         persistentStore.clearActiveRequest(appContext);
+        return result;
     }
 }

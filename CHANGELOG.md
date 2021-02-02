@@ -10,13 +10,14 @@
   * Remove `BrowserSwitchFragment`
   * Remove `BrowserSwitchActivity`
   * Remove convenience `start` methods
+  * Remove convenience `deliverResult` methods
   * Remove `STATUS_ERROR` and throw error in `start` method
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Remove support for `Intent` on `BrowserSwitchOptions`
   * Remove `ChromeCustomTabs`
   * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchResult.STATUS_SUCCESS` 
   * Remove `BrowserSwitchClient#captureResult`
-  * Change `BrowserSwitchListener#onBrowserSwitchResult` method to take a single `BrowserSwitchResult` parameter
+  * Remove `BrowserSwitchListener`
 
 ## 1.1.3
 

@@ -7,18 +7,35 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo"
         android:theme="@style/AppTheme">
-        <activity android:name="com.braintreepayments.api.demo.DemoActivity">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="my-custom-url-scheme" />
+
+                <data android:scheme="my-custom-url-scheme-standard" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DemoActivitySingleTop" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="my-custom-url-scheme-single-top" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

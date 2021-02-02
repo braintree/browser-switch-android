@@ -19,18 +19,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BrowserSwitchClientTest {
-
-    static abstract class ActivityListener extends FragmentActivity implements BrowserSwitchListener {}
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -40,12 +35,9 @@ public class BrowserSwitchClientTest {
     private CustomTabsIntent.Builder customTabsIntentBuilder;
 
     private Uri uri;
-    private FragmentActivity plainActivity;
-    private ActivityListener activityAndListener;
-
     private Context applicationContext;
-    private BrowserSwitchListener browserSwitchListener;
 
+    private FragmentActivity activity;
     private String returnUrlScheme;
     private CustomTabsIntent customTabsIntent;
 
@@ -58,16 +50,13 @@ public class BrowserSwitchClientTest {
 
         uri = mock(Uri.class);
 
-        plainActivity = mock(FragmentActivity.class);
-        activityAndListener = mock(ActivityListener.class);
-
+        activity = mock(FragmentActivity.class);
         applicationContext = mock(Context.class);
-        browserSwitchListener = mock(BrowserSwitchListener.class);
 
         returnUrlScheme = "sample-url-scheme";
         customTabsIntent = mock(CustomTabsIntent.class);
 
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(customTabsIntentBuilder.build()).thenReturn(customTabsIntent);
     }
 
@@ -84,9 +73,9 @@ public class BrowserSwitchClientTest {
                 .url(uri)
                 .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
-        sut.start(plainActivity, options);
+        sut.start(activity, options);
 
-        verify(customTabsIntent).launchUrl(plainActivity, uri);
+        verify(customTabsIntent).launchUrl(activity, uri);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
                 ArgumentCaptor.forClass(BrowserSwitchRequest.class);
@@ -112,7 +101,7 @@ public class BrowserSwitchClientTest {
                 .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
         try {
-            sut.start(plainActivity, options);
+            sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals(e.getMessage(), "Request code cannot be Integer.MIN_VALUE");
@@ -134,7 +123,7 @@ public class BrowserSwitchClientTest {
                 .metadata(metadata);
 
         try {
-            sut.start(plainActivity, options);
+            sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
@@ -160,7 +149,7 @@ public class BrowserSwitchClientTest {
                 .returnUrlScheme(returnUrlScheme)
                 .metadata(metadata);
         try {
-            sut.start(plainActivity, options);
+            sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("No installed activities can open this URL: https://example.com/", e.getMessage());
@@ -183,7 +172,7 @@ public class BrowserSwitchClientTest {
                 .url(uri)
                 .metadata(metadata);
         try {
-            sut.start(plainActivity, options);
+            sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("A returnUrlScheme is required.", e.getMessage());
@@ -192,13 +181,13 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUri = mock(Uri.class);
         Intent deepLinkIntent = mock(Intent.class);
         when(deepLinkIntent.getData()).thenReturn(deepLinkUri);
 
-        when(plainActivity.getIntent()).thenReturn(deepLinkIntent);
+        when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -206,13 +195,8 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
-        sut.deliverResult(plainActivity, browserSwitchListener);
+        BrowserSwitchResult result = sut.deliverResult(activity);
 
-        ArgumentCaptor<BrowserSwitchResult> captor =
-                ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(captor.capture());
-
-        BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
         assertSame(uri, result.getRequestUrl());
@@ -225,7 +209,8 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsPending_clearsResultStoreAndNotifiesResultCANCELLED() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getIntent()).thenReturn(mock(Intent.class));
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -233,13 +218,8 @@ public class BrowserSwitchClientTest {
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
-        sut.deliverResult(plainActivity, browserSwitchListener);
+        BrowserSwitchResult result = sut.deliverResult(activity);
 
-        ArgumentCaptor<BrowserSwitchResult> captor =
-                ArgumentCaptor.forClass(BrowserSwitchResult.class);
-        verify(browserSwitchListener).onBrowserSwitchResult(captor.capture());
-
-        BrowserSwitchResult result = captor.getValue();
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
         assertSame(uri, result.getRequestUrl());
@@ -252,31 +232,13 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void deliverResult_whenRequestIsNull_doesNothing() {
-        when(plainActivity.getApplicationContext()).thenReturn(applicationContext);
-
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
-        sut.deliverResult(plainActivity, browserSwitchListener);
-
-        verify(browserSwitchListener, never()).onBrowserSwitchResult(any());
-        verify(persistentStore, never()).clearActiveRequest(plainActivity);
-    }
-
-    @Test
-    public void deliverResult_whenActivityIsNotABrowserSwitchListener_throwsIllegalArgumentException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Activity must implement BrowserSwitchListener.");
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
-        sut.deliverResult(plainActivity);
-    }
+        BrowserSwitchResult result = sut.deliverResult(activity);
 
-    @Test
-    public void convenience_deliverResultWithActivityListener_forwardsInvocationToPrimaryDeliverResultMethod() {
-        BrowserSwitchClient sut = spy(new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder));
-        doNothing().when(sut).deliverResult(any(FragmentActivity.class), any(BrowserSwitchListener.class));
-
-        sut.deliverResult(activityAndListener);
-        verify(sut).deliverResult(activityAndListener, activityAndListener);
+        assertNull(result);
+        verify(persistentStore, never()).clearActiveRequest(activity);
     }
 }
