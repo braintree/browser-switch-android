@@ -34,7 +34,7 @@ public class DemoActivity extends AppCompatActivity {
         browserSwitchClient = new BrowserSwitchClient();
 
         FragmentManager fm = getSupportFragmentManager();
-        if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
+        if (findDemoFragment() == null) {
             fm.beginTransaction()
                     .add(android.R.id.content, new DemoFragment(), FRAGMENT_TAG)
                     .commit();
