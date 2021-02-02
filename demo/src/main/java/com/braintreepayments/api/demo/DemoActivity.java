@@ -34,7 +34,7 @@ public class DemoActivity extends AppCompatActivity {
         browserSwitchClient = new BrowserSwitchClient();
 
         FragmentManager fm = getSupportFragmentManager();
-        if (findDemoFragment() == null) {
+        if (getDemoFragment() == null) {
             fm.beginTransaction()
                     .add(android.R.id.content, new DemoFragment(), FRAGMENT_TAG)
                     .commit();
@@ -47,7 +47,7 @@ public class DemoActivity extends AppCompatActivity {
 
         BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
         if (result != null) {
-            DemoFragment demoFragment = findDemoFragment();
+            DemoFragment demoFragment = getDemoFragment();
             if (demoFragment != null) {
                 demoFragment.onBrowserSwitchResult(result);
             }
@@ -58,7 +58,7 @@ public class DemoActivity extends AppCompatActivity {
         browserSwitchClient.start(this, options);
     }
 
-    private DemoFragment findDemoFragment() {
+    private DemoFragment getDemoFragment() {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
         if (fragment instanceof DemoFragment) {
