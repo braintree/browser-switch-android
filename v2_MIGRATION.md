@@ -37,7 +37,6 @@ If these requirements are not met, an exception will be thrown in the `BrowserSw
 
 ```java
 package com.company.app;
-...
 
 public class MyBrowserSwitchActivity extends AppCompatActivity {
 
