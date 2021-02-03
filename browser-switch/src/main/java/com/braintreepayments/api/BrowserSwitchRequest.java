@@ -33,7 +33,7 @@ class BrowserSwitchRequest {
         return requestCode;
     }
 
-    public JSONObject getMetadata() {
+    JSONObject getMetadata() {
         return metadata;
     }
 
