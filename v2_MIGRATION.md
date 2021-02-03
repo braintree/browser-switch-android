@@ -44,7 +44,7 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
   private BrowserSwitchClient browserSwitchClient;
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ...
 
@@ -53,7 +53,7 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onResume() {
+  protected void onResume() {
     super.onResume();
     ...
 
