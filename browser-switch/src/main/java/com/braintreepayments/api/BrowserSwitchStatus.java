@@ -5,9 +5,13 @@ import androidx.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * The status of a {@link BrowserSwitchResult}.
+ */
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({BrowserSwitchStatus.SUCCESS, BrowserSwitchStatus.CANCELED})
 public @interface BrowserSwitchStatus {
+
     /**
      * Browser switch is considered a success when a user is deep linked back into the app.
      */

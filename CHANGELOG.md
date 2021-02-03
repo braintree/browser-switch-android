@@ -15,7 +15,8 @@
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Remove support for `Intent` on `BrowserSwitchOptions`
   * Remove `ChromeCustomTabs`
-  * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchResult.STATUS_SUCCESS` 
+  * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchStatus.SUCCESS` 
+  * Rename `BrowserSwitchResult.STATUS_CANCELED` to `BrowserSwitchStatus.CANCELED` 
   * Remove `BrowserSwitchClient#captureResult`
   * Remove `BrowserSwitchListener`
 
