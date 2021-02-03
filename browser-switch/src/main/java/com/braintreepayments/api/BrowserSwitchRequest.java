@@ -7,9 +7,9 @@ import org.json.JSONObject;
 
 class BrowserSwitchRequest {
 
-    final private Uri uri;
-    final private int requestCode;
-    final private JSONObject metadata;
+    private final Uri uri;
+    private final int requestCode;
+    private final JSONObject metadata;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);

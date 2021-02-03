@@ -2,6 +2,9 @@ package com.braintreepayments.api;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -24,7 +27,7 @@ public class BrowserSwitchOptions {
      *                 {@link BrowserSwitchResult} when the app has re-entered the foreground
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions metadata(JSONObject metadata) {
+    public BrowserSwitchOptions metadata(@NonNull JSONObject metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -46,7 +49,7 @@ public class BrowserSwitchOptions {
      * @param url The target url to use for browser switch
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions url(Uri url) {
+    public BrowserSwitchOptions url(@NonNull Uri url) {
         this.url = url;
         return this;
     }
@@ -58,7 +61,7 @@ public class BrowserSwitchOptions {
      *                        after browser switch
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions returnUrlScheme(String returnUrlScheme) {
+    public BrowserSwitchOptions returnUrlScheme(@NonNull String returnUrlScheme) {
         this.returnUrlScheme = returnUrlScheme;
         return this;
     }
@@ -66,6 +69,7 @@ public class BrowserSwitchOptions {
     /**
      * @return The metadata associated with the browser switch request
      */
+    @Nullable
     public JSONObject getMetadata() {
         return metadata;
     }
@@ -80,6 +84,7 @@ public class BrowserSwitchOptions {
     /**
      * @return The target url used for browser switch
      */
+    @Nullable
     public Uri getUrl() {
         return url;
     }
@@ -87,6 +92,7 @@ public class BrowserSwitchOptions {
     /**
      * @return The return url scheme for deep linking back into the application after browser switch
      */
+    @Nullable
     public String getReturnUrlScheme() {
         return returnUrlScheme;
     }

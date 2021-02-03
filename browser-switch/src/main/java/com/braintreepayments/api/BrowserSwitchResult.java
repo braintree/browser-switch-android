@@ -3,6 +3,7 @@ package com.braintreepayments.api;
 import android.net.Uri;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 import org.json.JSONObject;
 
@@ -39,6 +40,7 @@ public class BrowserSwitchResult {
     /**
      * @return A {@link JSONObject} containing metadata persisted through the browser switch
      */
+    @Nullable
     public JSONObject getRequestMetadata() {
         return request.getMetadata();
     }
@@ -53,6 +55,7 @@ public class BrowserSwitchResult {
     /**
      * @return The target url used to initiate the browser switch
      */
+    @Nullable
     public Uri getRequestUrl() {
         return request.getUri();
     }
@@ -60,6 +63,7 @@ public class BrowserSwitchResult {
     /**
      * @return The return url used for deep linking back into the application after browser switch
      */
+    @Nullable
     public Uri getDeepLinkUrl() {
         return deepLinkUri;
     }

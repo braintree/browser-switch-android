@@ -16,10 +16,10 @@ import org.json.JSONObject;
  */
 public class BrowserSwitchClient {
 
-    final private BrowserSwitchInspector browserSwitchInspector;
-    final private BrowserSwitchPersistentStore persistentStore;
+    private final BrowserSwitchInspector browserSwitchInspector;
+    private final BrowserSwitchPersistentStore persistentStore;
 
-    final private CustomTabsIntent.Builder customTabsIntentBuilder;
+    private final CustomTabsIntent.Builder customTabsIntentBuilder;
 
     /**
      * Construct a client that manages the logic for browser switching.
