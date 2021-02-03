@@ -11,6 +11,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 
+/**
+ * Client that manages the logic for browser switching.
+ */
 public class BrowserSwitchClient {
 
     final private BrowserSwitchInspector browserSwitchInspector;
@@ -18,6 +21,9 @@ public class BrowserSwitchClient {
 
     final private CustomTabsIntent.Builder customTabsIntentBuilder;
 
+    /**
+     * Construct a client that manages the logic for browser switching.
+     */
     public BrowserSwitchClient() {
         this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new CustomTabsIntent.Builder());
     }
@@ -33,10 +39,10 @@ public class BrowserSwitchClient {
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
-     * @param browserSwitchOptions {@link BrowserSwitchOptions}
      * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
      */
-    public void start(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    public void start(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
 
         Context appContext = activity.getApplicationContext();
@@ -45,8 +51,8 @@ public class BrowserSwitchClient {
         int requestCode = browserSwitchOptions.getRequestCode();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
-        BrowserSwitchRequest request = new BrowserSwitchRequest(
-                requestCode, browserSwitchUrl, metadata);
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata);
         persistentStore.putActiveRequest(request, appContext);
 
         CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
