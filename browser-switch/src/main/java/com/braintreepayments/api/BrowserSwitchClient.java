@@ -121,9 +121,9 @@ public class BrowserSwitchClient {
 
         Uri deepLinkUri = intent.getData();
         if (deepLinkUri == null) {
-            result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_CANCELED, request);
+            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         } else {
-            result = new BrowserSwitchResult(BrowserSwitchResult.STATUS_SUCCESS, request, deepLinkUri);
+            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUri);
         }
 
         // ensure that browser switch result is delivered exactly one time

@@ -18,20 +18,6 @@ public class BrowserSwitchResult {
     private final Uri deepLinkUri;
     private final BrowserSwitchRequest request;
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({BrowserSwitchStatus.SUCCESS, BrowserSwitchStatus.CANCELED})
-    public @interface BrowserSwitchStatus {
-        /**
-         * Browser switch is considered a success when a user is deep linked back into the app.
-         */
-        int SUCCESS = 1;
-
-        /**
-         * Browser switch is considered canceled when a user re-enters the app without deep link.
-         */
-        int CANCELED = 2;
-    }
-
     BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request) {
         this(status, request, null);
     }
@@ -73,7 +59,7 @@ public class BrowserSwitchResult {
 
     /**
      * @return The return url used for deep linking back into the application after browser switch
-     */                      
+     */
     public Uri getDeepLinkUrl() {
         return deepLinkUri;
     }
