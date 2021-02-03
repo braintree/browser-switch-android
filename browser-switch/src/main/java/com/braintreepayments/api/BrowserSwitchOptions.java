@@ -7,9 +7,8 @@ import androidx.fragment.app.FragmentActivity;
 import org.json.JSONObject;
 
 /**
- * Parameter object that contains a set of BrowserSwitch parameters for use with
- * {@link BrowserSwitchClient#start(FragmentActivity, BrowserSwitchOptions)} )}
- * and related convenience methods.
+ * Object that contains a set of browser switch parameters for use with
+ * {@link BrowserSwitchClient#start(FragmentActivity, BrowserSwitchOptions)}.
  */
 public class BrowserSwitchOptions {
 
@@ -19,9 +18,11 @@ public class BrowserSwitchOptions {
     private String returnUrlScheme;
 
     /**
-     * Set browser switch metadata
-     * @param metadata JSONObject containing metadata necessary for handling the return from browser to app. This data will be persisted and returned in {@link BrowserSwitchResult} even if the app is terminated during the browser switch.
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
+     * Set browser switch metadata.
+     *
+     * @param metadata JSONObject containing metadata that will be persisted and returned in a
+     *                 {@link BrowserSwitchResult} when the app has re-entered the foreground
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions metadata(JSONObject metadata) {
         this.metadata = metadata;
@@ -29,9 +30,10 @@ public class BrowserSwitchOptions {
     }
 
     /**
-     * Set browser switch request code
+     * Set browser switch request code.
+     *
      * @param requestCode Request code int to associate with the browser switch request
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions requestCode(int requestCode) {
         this.requestCode = requestCode;
@@ -39,9 +41,10 @@ public class BrowserSwitchOptions {
     }
 
     /**
-     * Set browser switch url
+     * Set browser switch url.
+     *
      * @param url The target url to use for browser switch
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions url(Uri url) {
         this.url = url;
@@ -49,9 +52,11 @@ public class BrowserSwitchOptions {
     }
 
     /**
-     * Set browser switch return url scheme
-     * @param returnUrlScheme The return url scheme to use for browser switch
-     * @return {@link BrowserSwitchOptions} returns reference to instance to allow setter invocations to be chained
+     * Set browser switch return url scheme.
+     *
+     * @param returnUrlScheme The return url scheme to use for deep linking back into the application
+     *                        after browser switch
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions returnUrlScheme(String returnUrlScheme) {
         this.returnUrlScheme = returnUrlScheme;
@@ -80,7 +85,7 @@ public class BrowserSwitchOptions {
     }
 
     /**
-     * @return The return url scheme used for browser switch
+     * @return The return url scheme for deep linking back into the application after browser switch
      */
     public String getReturnUrlScheme() {
         return returnUrlScheme;
