@@ -1,8 +1,8 @@
-# Browser Switch Android v2 (Beta) Migration Guide
+# Android Browser Switch v2 (Beta) Migration Guide
  
-See the [CHANGELOG](/CHANGELOG.md) for a complete list of changes. This migration guide outlines the basics for updating your client integration from v1 to v2.
+See the [CHANGELOG](/CHANGELOG.md) for a complete list of changes. This migration guide outlines the basics for updating your browser switch integration from v1 to v2.
 
-_Documentation for v5 will be published to https://developers.braintreepayments.com once it is available for general release._
+_Documentation for v2 will be published to https://developers.braintreepayments.com once it is available for general release._
 
 ## Setup
 
@@ -14,7 +14,7 @@ dependencies {
 }
 ```
 
-Then, add an `intent-filter` in the `AndroidManifest.xml` to configure your activity to handle deep links:
+Then, add an `intent-filter` in the `AndroidManifest.xml` to your deep link destination activity:
 
 ```xml
 <activity android:name="com.company.app.MyBrowserSwitchActivity">
@@ -28,7 +28,7 @@ Then, add an `intent-filter` in the `AndroidManifest.xml` to configure your acti
 </activity>
 ```
 
-**Note**: The scheme you define must use all lowercase letters. This is due to [scheme matching on the Android framework being case sensitive, expecting lower case](https://developer.android.com/guide/topics/manifest/data-element#scheme). If your package contains underscores, the underscores should be removed when specifying the scheme.
+**Note**: The scheme you define must use all lowercase letters. This is due to [scheme matching on the Android framework being case sensitive, expecting lower case](https://developer.android.com/guide/topics/manifest/data-element#scheme).
 
 If these requirements are not met, an exception will be thrown in the `BrowserSwitchClient#start` method and no browser switch will occur.
 
@@ -56,8 +56,7 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
     super.onResume();
     ...
 
-    // call 'deliverResult' in onResume to ensure that all pending
-    // browser switch results are delivered to the listener
+    // call 'deliverResult' in onResume to capture a pending browser switch result
     BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
     if (result != null) {
       myHandleBrowserSwitchResultMethod(result); 
@@ -89,8 +88,8 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
 
 ## Launch Modes
 
-If your deep link destination activity is configured in the `AndroidManifest.xml` with `android:launchMode=` `"singleTop"`, `"singleTask"` or `"singleInstance"`
-add the following:
+If your deep link destination activity is configured in the `AndroidManifest.xml` with `android:launchMode="singleTop"`, 
+`android:launchMode="singleTask"` or `android:launchMode="singleInstance"` add the following code snippet:
 
 
 ```java
