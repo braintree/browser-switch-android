@@ -34,7 +34,6 @@ If these requirements are not met, an exception will be thrown in the `BrowserSw
 
 ## Usage
 
-
 ```java
 package com.company.app;
 
@@ -48,7 +47,6 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
     ...
 
     browserSwitchClient = new BrowserSwitchClient();
-    browserSwitchClient.start();
   }
 
   @Override
@@ -58,8 +56,30 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
 
     // call 'deliverResult' in onResume to ensure that all pending
     // browser switch results are delivered to the listener
-    browserSwitchClient.deliverResult();
+    BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
+    myHandleBrowserSwitchResultMethod(result); 
   }
+  
+  public void myStartBrowserSwitchMethod() { 
+    BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+            .requestCode(1)
+            .url("browser-switch-url")
+            .returnUrlScheme("return-url-scheme");
+
+    browserSwitchClient.start(this, browserSwitchOptions);
+  }   
+
+  private void myHandleBrowserSwitchResultMethod(BrowserSwitchResult browserSwitchResult) {
+    int statusCode = browserSwitchResult.getStatus();
+    switch (statusCode) {
+      case BrowserSwitchStatus.SUCCESS:
+        // handle success
+        break;
+      case BrowserSwitchStatus.CANCELED:
+        // handle cancel
+        break;
+     }
+  }   
 }
 ```
 
