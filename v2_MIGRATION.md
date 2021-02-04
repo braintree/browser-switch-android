@@ -39,6 +39,8 @@ package com.company.app;
 
 public class MyBrowserSwitchActivity extends AppCompatActivity {
 
+  private static final int MY_REQUEST_CODE = 123;
+
   private BrowserSwitchClient browserSwitchClient;
 
   @Override
@@ -57,14 +59,16 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
     // call 'deliverResult' in onResume to ensure that all pending
     // browser switch results are delivered to the listener
     BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
-    myHandleBrowserSwitchResultMethod(result); 
+    if (result != null) {
+      myHandleBrowserSwitchResultMethod(result); 
+    }
   }
   
   public void myStartBrowserSwitchMethod() { 
     BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-            .requestCode(1)
-            .url("browser-switch-url")
-            .returnUrlScheme("return-url-scheme");
+            .requestCode(MY_REQUEST_CODE)
+            .url("https://example.com")
+            .returnUrlScheme("my-custom-url-scheme");
 
     browserSwitchClient.start(this, browserSwitchOptions);
   }   
