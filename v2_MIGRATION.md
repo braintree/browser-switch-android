@@ -87,3 +87,22 @@ public class MyBrowserSwitchActivity extends AppCompatActivity {
 }
 ```
 
+## Launch Modes
+
+If your deep link destination activity is configured in the `AndroidManifest.xml` with `android:launchMode=` `"singleTop"`, `"singleTask"` or `"singleInstance"`
+add the following:
+
+
+```java
+package com.company.app;
+
+public class MyBrowserSwitchActivity extends AppCompatActivity {
+  ... 
+
+  @Override
+  protected void onNewIntent(Intent newIntent) {
+    super.onNewIntent(newIntent);
+    setIntent(newIntent);
+  }
+}
+```
