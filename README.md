@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/braintree/browser-switch-android.svg?branch=master)](https://travis-ci.org/braintree/browser-switch-android)
 
+> :mega: A new major version of the SDK is available in beta. See the [v2 migration guide](v2_MIGRATION.md) for details.
+
 Android Browser Switch makes it easy to open a url in a browser or
 [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) and receive a
 response as the result of user interaction, either cancel or response data from the web page.
-
-> :mega: A new major version of the SDK is available in beta. See the [v2 migration guide](v2_MIGRATION.md) for details.
 
 ## Setup
 
