@@ -2,22 +2,22 @@
 
 ## unreleased
 
-* Add `BrowserSwitchClient`
+* Add `BrowserSwitchException`
 * Add `returnUrlScheme` to `BrowserSwitchOptions`
-* Add `requestCode`, `requestUri` and `deepLinkUri` properties to `BrowserSwitchResult`
+* Add `requestCode`, `requestUrl` and `deepLinkUrl` properties to `BrowserSwitchResult`
 * Breaking Changes
   * Move BrowserSwitch module from `com.braintreepayments.browserswitch` package to `com.braintreepayments.api`
   * Remove `BrowserSwitchFragment`
   * Remove `BrowserSwitchActivity`
-  * Remove convenience `start` methods
-  * Remove convenience `deliverResult` methods
+  * Remove `BrowserSwitchClient` static constructor
+  * Remove convenience `BrowserSwitchClient#start` methods
+  * Remove convenience `BrowserSwitchClient#deliverResult` methods
   * Remove `STATUS_ERROR` and throw error in `start` method
   * Remove `BrowserSwitchResult#getErrorMessages`
   * Remove support for `Intent` on `BrowserSwitchOptions`
   * Remove `ChromeCustomTabs`
   * Rename `BrowserSwitchResult.STATUS_OK` to `BrowserSwitchStatus.SUCCESS` 
   * Rename `BrowserSwitchResult.STATUS_CANCELED` to `BrowserSwitchStatus.CANCELED` 
-  * Remove `BrowserSwitchClient#captureResult`
   * Remove `BrowserSwitchListener`
 
 ## 1.1.3

@@ -52,6 +52,7 @@ public class BrowserSwitchResult {
         return request.getRequestCode();
     }
 
+    // TODO: Make url and uri variable and method naming consistent
     /**
      * @return The target url used to initiate the browser switch
      */
