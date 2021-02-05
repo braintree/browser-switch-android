@@ -49,6 +49,40 @@ task :release => :unit_tests do
   post_release(version)
 end
 
+desc "Interactive release to publish new beta version"
+task :release_beta => :unit_tests do
+  Rake::Task["assumptions"].invoke
+
+  puts "What version are you releasing? (x.x.x format)"
+  version = $stdin.gets.chomp
+
+  update_version(version)
+  update_migration_guide_version(version)
+
+  prompt_for_sonatype_username_and_password
+
+  sh "./gradlew clean :browser-switch:publishToSonatype"
+  sh "./gradlew closeAndReleaseRepository"
+
+  puts "\nArchives are uploaded! Committing and tagging #{version} and preparing for the next development iteration"
+
+  sh "git commit -am 'Release #{version}'"
+  sh "git tag #{version} -a -m 'Release #{version}'"
+
+  version_match = version.match /(\d+\.\d+\.\d+-beta)(\d+)/
+  beta_version_prefix = version_match[1]
+  next_beta_version_number = version_match[2].to_i + 1
+
+  update_version("#{beta_version_prefix}#{next_beta_version_number}-SNAPSHOT")
+  increment_version_code
+  sh "git commit -am 'Prepare for deployment'"
+
+  puts "\nDone. Commits and tags have been created. If everything appears to be in order, hit ENTER to push."
+  $stdin.gets
+
+  sh "git push origin master #{version}"
+end
+
 def post_release(version)
   puts "\nArchives are uploaded! Committing and tagging #{version} and preparing for the next development iteration"
 
@@ -58,7 +92,6 @@ def post_release(version)
   version_values = version.split('.')
   version_values[2] = version_values[2].to_i + 1
   update_version("#{version_values.join('.')}-SNAPSHOT")
-  update_readme_snapshot_version(version_values.join('.'))
   increment_version_code
   sh "git commit -am 'Prepare for deployment'"
 
@@ -109,7 +142,7 @@ end
 def update_version(version)
   IO.write("build.gradle",
     File.open("build.gradle") do |file|
-      file.read.gsub(/^version '\d+\.\d+\.\d+(-SNAPSHOT)?'/, "version '#{version}'")
+      file.read.gsub(/^version '\d+\.\d+\.\d+(-beta\d+)?(-SNAPSHOT)?'/, "version '#{version}'")
     end
   )
 end
@@ -122,10 +155,10 @@ def update_readme_version(version)
   )
 end
 
-def update_readme_snapshot_version(snapshot_version)
-  IO.write("README.md",
-    File.open("README.md") do |file|
-      file.read.gsub(/:browser-switch:\d+\.\d+\.\d+-SNAPSHOT'/, ":browser-switch:#{snapshot_version}-SNAPSHOT'")
+def update_migration_guide_version(version)
+  IO.write("v2_MIGRATION.md",
+    File.open("v2_MIGRATION.md") do |file|
+    file.read.gsub(/:browser-switch:\d+\.\d+\.\d+-.*'/, ":browser-switch:#{version}'")
     end
   )
 end
