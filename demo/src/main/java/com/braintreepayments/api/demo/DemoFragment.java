@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
+import com.braintreepayments.api.BrowserSwitchStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,7 +114,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
         int statusCode = result.getStatus();
         switch (statusCode) {
-            case BrowserSwitchResult.STATUS_SUCCESS:
+            case BrowserSwitchStatus.SUCCESS:
                 resultText = "Browser Switch Successful";
 
                 Uri returnUri = result.getDeepLinkUrl();
@@ -122,7 +123,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                     selectedColorText = String.format("Selected color: %s", color);
                 }
                 break;
-            case BrowserSwitchResult.STATUS_CANCELED:
+            case BrowserSwitchStatus.CANCELED:
                 resultText = "Browser Switch Cancelled by User";
                 break;
         }

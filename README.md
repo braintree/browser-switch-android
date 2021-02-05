@@ -6,6 +6,8 @@ Android Browser Switch makes it easy to open a url in a browser or
 [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) and receive a
 response as the result of user interaction, either cancel or response data from the web page.
 
+:mega: A new major version of the SDK is available in beta. See the [v2 migration guide](v2_MIGRATION.md) for details.
+
 ## Setup
 
 Add the library to your dependencies in your `build.gradle`:
@@ -124,6 +126,15 @@ public class CustomFragment extends Fragment {
   }
 }
 ```
+
+## Versions
+
+This SDK abides by our Client SDK Deprecation Policy. For more information on the potential statuses of an SDK check our [developer docs](http://developers.braintreepayments.com/guides/client-sdk/deprecation-policy).
+
+| Major version number | Status | Released | Deprecated | Unsupported |
+| -------------------- | ------ | -------- | ---------- | ----------- |
+| 2.x.x | Beta | February 2021 | TBA | TBA |
+| 1.x.x | Active | June 2020 | TBA | TBA |
 
 ## License
 
