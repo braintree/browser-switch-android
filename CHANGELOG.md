@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.0.0-beta1
 
 * Add `BrowserSwitchException`
 * Add `returnUrlScheme` to `BrowserSwitchOptions`
