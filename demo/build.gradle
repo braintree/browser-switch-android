@@ -7,7 +7,7 @@ android {
     buildToolsVersion '30.0.2'
 
     defaultConfig {
-        applicationId "com.braintreepayments.browserswitch.demo"
+        applicationId "com.braintreepayments.api.browserswitch.demo"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionCode
