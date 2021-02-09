@@ -98,7 +98,7 @@ afterEvaluate {
                 // Applies the component for the release build variant.
                 from components.release
 
-                groupId = 'com.braintreepayments'
+                groupId = 'com.braintreepayments.api'
                 artifactId = 'browser-switch'
                 version = rootProject.versionName
 
