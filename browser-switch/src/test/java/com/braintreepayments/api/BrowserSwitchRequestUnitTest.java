@@ -23,7 +23,7 @@ public class BrowserSwitchRequestUnitTest {
         BrowserSwitchRequest sut = BrowserSwitchRequest.fromJson(json);
 
         assertEquals(sut.getRequestCode(), 123);
-        assertEquals(sut.getUri().toString(), "https://example.com");
+        assertEquals(sut.getUrl().toString(), "https://example.com");
         assertNull(sut.getMetadata());
     }
 
@@ -37,7 +37,7 @@ public class BrowserSwitchRequestUnitTest {
         BrowserSwitchRequest restored = BrowserSwitchRequest.fromJson(original.toJson());
 
         assertEquals(restored.getRequestCode(), original.getRequestCode());
-        assertEquals(restored.getUri(), original.getUri());
+        assertEquals(restored.getUrl(), original.getUrl());
         assertNull(restored.getMetadata());
     }
 
@@ -53,7 +53,7 @@ public class BrowserSwitchRequestUnitTest {
         BrowserSwitchRequest sut = BrowserSwitchRequest.fromJson(json);
 
         assertEquals(sut.getRequestCode(), 123);
-        assertEquals(sut.getUri().toString(), "https://example.com");
+        assertEquals(sut.getUrl().toString(), "https://example.com");
         JSONAssert.assertEquals(sut.getMetadata(), new JSONObject().put("testKey", "testValue"), true);
     }
 
@@ -70,7 +70,7 @@ public class BrowserSwitchRequestUnitTest {
         BrowserSwitchRequest restored = BrowserSwitchRequest.fromJson(original.toJson());
 
         assertEquals(restored.getRequestCode(), original.getRequestCode());
-        assertEquals(restored.getUri(), original.getUri());
+        assertEquals(restored.getUrl(), original.getUrl());
         JSONAssert.assertEquals(restored.getMetadata(), original.getMetadata(), true);
     }
 }

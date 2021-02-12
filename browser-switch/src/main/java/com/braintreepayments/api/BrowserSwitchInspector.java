@@ -15,8 +15,8 @@ class BrowserSwitchInspector {
         return canResolveActivityForIntent(context, deepLinkIntent);
     }
 
-    boolean canDeviceOpenUrl(Context context, Uri uri) {
-        Intent browserSwitchIntent = new Intent(Intent.ACTION_VIEW, uri);
+    boolean canDeviceOpenUrl(Context context, Uri url) {
+        Intent browserSwitchIntent = new Intent(Intent.ACTION_VIEW, url);
         return canResolveActivityForIntent(context, browserSwitchIntent);
     }
 
