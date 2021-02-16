@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 class BrowserSwitchRequest {
 
-    private final Uri uri;
+    private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
 
@@ -19,14 +19,14 @@ class BrowserSwitchRequest {
         return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri uri, JSONObject metadata) {
-        this.uri = uri;
+    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata) {
+        this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
     }
 
-    Uri getUri() {
-        return uri;
+    Uri getUrl() {
+        return url;
     }
 
     int getRequestCode() {
@@ -40,7 +40,7 @@ class BrowserSwitchRequest {
     String toJson() throws JSONException {
         JSONObject result = new JSONObject();
         result.put("requestCode", requestCode);
-        result.put("url", uri.toString());
+        result.put("url", url.toString());
         if (metadata != null) {
             result.put("metadata", metadata);
         }
