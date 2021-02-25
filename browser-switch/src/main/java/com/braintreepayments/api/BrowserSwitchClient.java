@@ -49,10 +49,11 @@ public class BrowserSwitchClient {
 
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
+        String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata);
+                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme);
         persistentStore.putActiveRequest(request, appContext);
 
         CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
@@ -120,10 +121,10 @@ public class BrowserSwitchClient {
         BrowserSwitchResult result;
 
         Uri deepLinkUrl = intent.getData();
-        if (deepLinkUrl == null) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
-        } else {
+        if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+        } else {
+            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         }
 
         // ensure that browser switch result is delivered exactly one time

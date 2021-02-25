@@ -180,7 +180,7 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void deliverResult_whenRequestIsSuccessful_clearsResultStoreAndNotifiesResultOK() {
+    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeMatches_clearsResultStoreAndNotifiesResultOK() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = mock(Uri.class);
@@ -208,7 +208,35 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void deliverResult_whenRequestIsPending_clearsResultStoreAndNotifiesResultCANCELLED() {
+    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatch_clearsResultStoreAndNotifiesResultOK() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        Uri deepLinkUrl = mock(Uri.class);
+        Intent deepLinkIntent = mock(Intent.class);
+        when(deepLinkIntent.getData()).thenReturn(deepLinkUrl);
+
+        when(activity.getIntent()).thenReturn(deepLinkIntent);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(123, url, requestMetadata);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
+        BrowserSwitchResult result = sut.deliverResult(activity);
+
+        assertNotNull(result);
+        assertEquals(123, result.getRequestCode());
+        assertSame(url, result.getRequestUrl());
+        assertEquals(BrowserSwitchStatus.SUCCESS, result.getStatus());
+        assertSame(requestMetadata, result.getRequestMetadata());
+        assertSame(deepLinkUrl, result.getDeepLinkUrl());
+
+        verify(persistentStore).clearActiveRequest(applicationContext);
+    }
+
+    @Test
+    public void deliverResult_whenDeepLinkUrlDoesNotExist_clearsResultStoreAndNotifiesResultCANCELLED() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(activity.getIntent()).thenReturn(mock(Intent.class));
 

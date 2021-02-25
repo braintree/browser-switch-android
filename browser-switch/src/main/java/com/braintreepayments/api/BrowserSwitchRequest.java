@@ -2,6 +2,8 @@ package com.braintreepayments.api;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,10 +18,10 @@ class BrowserSwitchRequest {
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
         JSONObject metadata = jsonObject.optJSONObject("metadata");
-        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata);
+        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, null);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata) {
+    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
@@ -45,5 +47,10 @@ class BrowserSwitchRequest {
             result.put("metadata", metadata);
         }
         return result.toString();
+    }
+
+    boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
+        // TODO: implement
+        return true;
     }
 }
