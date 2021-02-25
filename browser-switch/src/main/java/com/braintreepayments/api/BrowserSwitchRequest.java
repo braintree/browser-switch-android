@@ -12,19 +12,22 @@ class BrowserSwitchRequest {
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
+    private final String returnUrlScheme;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
+        String returnUrlScheme = jsonObject.getString("returnUrlScheme");
         JSONObject metadata = jsonObject.optJSONObject("metadata");
-        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, null);
+        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, returnUrlScheme);
     }
 
     BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
+        this.returnUrlScheme = returnUrlScheme;
     }
 
     Uri getUrl() {
@@ -43,6 +46,7 @@ class BrowserSwitchRequest {
         JSONObject result = new JSONObject();
         result.put("requestCode", requestCode);
         result.put("url", url.toString());
+        result.put("returnUrlScheme", returnUrlScheme);
         if (metadata != null) {
             result.put("metadata", metadata);
         }
@@ -50,7 +54,6 @@ class BrowserSwitchRequest {
     }
 
     boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
-        // TODO: implement
-        return true;
+        return url.getScheme().equals(returnUrlScheme);
     }
 }
