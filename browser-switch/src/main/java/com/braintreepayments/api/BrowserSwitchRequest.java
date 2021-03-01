@@ -53,7 +53,10 @@ class BrowserSwitchRequest {
         return result.toString();
     }
 
-    boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
-        return url.getScheme().equals(returnUrlScheme);
+    boolean matchesDeepLinkUrlScheme(Uri url) {
+        if (url != null && url.getScheme() != null) {
+            return url.getScheme().equals(returnUrlScheme);
+        }
+        return false;
     }
 }

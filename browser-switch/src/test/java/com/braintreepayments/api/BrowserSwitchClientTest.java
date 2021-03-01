@@ -22,7 +22,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -185,15 +184,15 @@ public class BrowserSwitchClientTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = mock(Uri.class);
+        when(deepLinkUrl.getScheme()).thenReturn("my-return-url-scheme");
+
         Intent deepLinkIntent = mock(Intent.class);
         when(deepLinkIntent.getData()).thenReturn(deepLinkUrl);
 
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request =
-            spy(new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme"));
-        when(request.matchesDeepLinkUrlScheme(deepLinkUrl)).thenReturn(true);
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme");
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
@@ -214,15 +213,15 @@ public class BrowserSwitchClientTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = mock(Uri.class);
+        when(deepLinkUrl.getScheme()).thenReturn("another-return-url-scheme");
+
         Intent deepLinkIntent = mock(Intent.class);
         when(deepLinkIntent.getData()).thenReturn(deepLinkUrl);
 
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request =
-                spy(new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme"));
-        when(request.matchesDeepLinkUrlScheme(deepLinkUrl)).thenReturn(false);
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme");
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsIntentBuilder);
