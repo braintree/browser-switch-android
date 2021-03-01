@@ -19,20 +19,20 @@ public class BrowserSwitchClient {
     private final BrowserSwitchInspector browserSwitchInspector;
     private final BrowserSwitchPersistentStore persistentStore;
 
-    private final CustomTabsIntent.Builder customTabsIntentBuilder;
+    private final ChromeCustomTabsInternalClient customTabsInternalClient;
 
     /**
      * Construct a client that manages the logic for browser switching.
      */
     public BrowserSwitchClient() {
-        this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new CustomTabsIntent.Builder());
+        this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new ChromeCustomTabsInternalClient());
     }
 
     @VisibleForTesting
-    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector, BrowserSwitchPersistentStore persistentStore, CustomTabsIntent.Builder customTabsIntentBuilder) {
+    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector, BrowserSwitchPersistentStore persistentStore, ChromeCustomTabsInternalClient customTabsInternalClient) {
         this.browserSwitchInspector = browserSwitchInspector;
         this.persistentStore = persistentStore;
-        this.customTabsIntentBuilder = customTabsIntentBuilder;
+        this.customTabsInternalClient = customTabsInternalClient;
     }
 
     /**
@@ -56,8 +56,7 @@ public class BrowserSwitchClient {
                 new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme);
         persistentStore.putActiveRequest(request, appContext);
 
-        CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
-        customTabsIntent.launchUrl(activity, browserSwitchUrl);
+        customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
     }
 
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
