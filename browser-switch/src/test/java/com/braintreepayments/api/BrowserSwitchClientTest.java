@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchClientTest {
 
     @Rule
@@ -34,11 +37,10 @@ public class BrowserSwitchClientTest {
 
     private ChromeCustomTabsInternalClient customTabsInternalClient;
 
-    private Uri url;
+    private Uri browserSwitchDestinationUrl;
     private Context applicationContext;
 
     private FragmentActivity activity;
-    private String returnUrlScheme;
 
     @Before
     public void beforeEach() {
@@ -47,32 +49,30 @@ public class BrowserSwitchClientTest {
         browserSwitchInspector = mock(BrowserSwitchInspector.class);
         customTabsInternalClient = mock(ChromeCustomTabsInternalClient.class);
 
-        url = mock(Uri.class);
+        browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
 
         activity = mock(FragmentActivity.class);
         applicationContext = mock(Context.class);
-
-        returnUrlScheme = "sample-url-scheme";
 
         when(activity.getApplicationContext()).thenReturn(applicationContext);
     }
 
     @Test
     public void start_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, url)).thenReturn(true);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
-                .url(url)
-                .returnUrlScheme(returnUrlScheme)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
         sut.start(activity, options);
 
-        verify(customTabsInternalClient).launchUrl(activity, url);
+        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
                 ArgumentCaptor.forClass(BrowserSwitchRequest.class);
@@ -80,22 +80,22 @@ public class BrowserSwitchClientTest {
 
         BrowserSwitchRequest browserSwitchRequest = captor.getValue();
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
-        assertEquals(browserSwitchRequest.getUrl(), url);
+        assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
         assertSame(browserSwitchRequest.getMetadata(), metadata);
     }
 
     @Test
     public void start_whenRequestCodeIsIntegerMinValue_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, url)).thenReturn(true);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(Integer.MIN_VALUE)
-                .url(url)
-                .returnUrlScheme(returnUrlScheme)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
         try {
             sut.start(activity, options);
@@ -107,16 +107,16 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenDeviceIsNotConfiguredForDeepLinking_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, url)).thenReturn(true);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(false);
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(false);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
-                .url(url)
-                .returnUrlScheme(returnUrlScheme)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
 
         try {
@@ -132,33 +132,29 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenNoActivityFoundCanOpenURL_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, url)).thenReturn(false);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
-
-        when(url.toString()).thenReturn("https://example.com/");
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(false);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
-                .url(url)
-                .returnUrlScheme(returnUrlScheme)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
         try {
             sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
-            assertEquals("No installed activities can open this URL: https://example.com/", e.getMessage());
+            assertEquals("No installed activities can open this URL: https://example.com/browser_switch_destination", e.getMessage());
         }
     }
 
     @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, url)).thenReturn(true);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, returnUrlScheme)).thenReturn(true);
-
-        when(url.toString()).thenReturn("https://example.com/");
+        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
@@ -166,7 +162,7 @@ public class BrowserSwitchClientTest {
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .returnUrlScheme(null)
-                .url(url)
+                .url(browserSwitchDestinationUrl)
                 .metadata(metadata);
         try {
             sut.start(activity, options);
@@ -180,16 +176,12 @@ public class BrowserSwitchClientTest {
     public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeMatches_clearsResultStoreAndNotifiesResultSUCCESS() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
-        Uri deepLinkUrl = mock(Uri.class);
-        when(deepLinkUrl.getScheme()).thenReturn("my-return-url-scheme");
-
-        Intent deepLinkIntent = mock(Intent.class);
-        when(deepLinkIntent.getData()).thenReturn(deepLinkUrl);
-
+        Uri deepLinkUrl = Uri.parse("return-url-scheme://test");
+        Intent deepLinkIntent = new Intent().setData(deepLinkUrl);
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request = new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme");
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -197,7 +189,7 @@ public class BrowserSwitchClientTest {
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
-        assertSame(url, result.getRequestUrl());
+        assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
         assertEquals(BrowserSwitchStatus.SUCCESS, result.getStatus());
         assertSame(requestMetadata, result.getRequestMetadata());
         assertSame(deepLinkUrl, result.getDeepLinkUrl());
@@ -209,16 +201,12 @@ public class BrowserSwitchClientTest {
     public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatch_clearsResultStoreAndNotifiesResultCANCELED() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
-        Uri deepLinkUrl = mock(Uri.class);
-        when(deepLinkUrl.getScheme()).thenReturn("another-return-url-scheme");
-
-        Intent deepLinkIntent = mock(Intent.class);
-        when(deepLinkIntent.getData()).thenReturn(deepLinkUrl);
-
+        Uri deepLinkUrl = Uri.parse("another-return-url-scheme://test");
+        Intent deepLinkIntent = new Intent().setData(deepLinkUrl);
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request = new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme");
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -226,7 +214,7 @@ public class BrowserSwitchClientTest {
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
-        assertSame(url, result.getRequestUrl());
+        assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
         assertEquals(result.getStatus(), BrowserSwitchStatus.CANCELED);
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
@@ -238,11 +226,11 @@ public class BrowserSwitchClientTest {
     @Test
     public void deliverResult_whenDeepLinkUrlDoesNotExist_clearsResultStoreAndNotifiesResultCANCELED() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
-        when(activity.getIntent()).thenReturn(mock(Intent.class));
+        when(activity.getIntent()).thenReturn(new Intent());
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, url, requestMetadata, "my-return-url-scheme");
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -250,7 +238,7 @@ public class BrowserSwitchClientTest {
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
-        assertSame(url, result.getRequestUrl());
+        assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
         assertEquals(result.getStatus(), BrowserSwitchStatus.CANCELED);
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
