@@ -6,7 +6,6 @@ import android.net.Uri;
 import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsIntent;
 
-// TODO: unit test
 class ChromeCustomTabsInternalClient {
 
     private final CustomTabsIntent.Builder customTabsIntentBuilder;
