@@ -1,5 +1,7 @@
 package com.braintreepayments.api;
 
+import android.net.Uri;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -8,30 +10,36 @@ import org.robolectric.RobolectricTestRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchRequestUnitTest {
 
     @Test
     public void fromJson_withoutMetadata() throws JSONException {
-
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
-                "  \"url\": \"https://example.com\"\n" +
+                "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\"\n" +
                 "}";
         BrowserSwitchRequest sut = BrowserSwitchRequest.fromJson(json);
 
         assertEquals(sut.getRequestCode(), 123);
         assertEquals(sut.getUrl().toString(), "https://example.com");
         assertNull(sut.getMetadata());
+
+        assertTrue(sut.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
+        assertFalse(sut.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
     }
 
     @Test
     public void toJson_withoutMetadata() throws JSONException {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
-                "  \"url\": \"https://example.com\"\n" +
+                "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\"\n" +
                 "}";
         BrowserSwitchRequest original = BrowserSwitchRequest.fromJson(json);
         BrowserSwitchRequest restored = BrowserSwitchRequest.fromJson(original.toJson());
@@ -39,6 +47,9 @@ public class BrowserSwitchRequestUnitTest {
         assertEquals(restored.getRequestCode(), original.getRequestCode());
         assertEquals(restored.getUrl(), original.getUrl());
         assertNull(restored.getMetadata());
+
+        assertTrue(restored.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
+        assertFalse(restored.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
     }
 
     @Test
@@ -46,6 +57,7 @@ public class BrowserSwitchRequestUnitTest {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
                 "  \"metadata\": {\n" +
                 "    \"testKey\": \"testValue\"" +
                 "  }" +
@@ -55,6 +67,9 @@ public class BrowserSwitchRequestUnitTest {
         assertEquals(sut.getRequestCode(), 123);
         assertEquals(sut.getUrl().toString(), "https://example.com");
         JSONAssert.assertEquals(sut.getMetadata(), new JSONObject().put("testKey", "testValue"), true);
+
+        assertTrue(sut.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
+        assertFalse(sut.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
     }
 
     @Test
@@ -62,6 +77,7 @@ public class BrowserSwitchRequestUnitTest {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
                 "  \"metadata\": {\n" +
                 "    \"testKey\": \"testValue\"" +
                 "  }" +
@@ -72,5 +88,8 @@ public class BrowserSwitchRequestUnitTest {
         assertEquals(restored.getRequestCode(), original.getRequestCode());
         assertEquals(restored.getUrl(), original.getUrl());
         JSONAssert.assertEquals(restored.getMetadata(), original.getMetadata(), true);
+
+        assertTrue(restored.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
+        assertFalse(restored.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
     }
 }

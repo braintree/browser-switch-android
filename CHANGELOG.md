@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Fix issue of false successful result when `deepLinkUrl` did not match request `returnUrlScheme`
+
 ## 2.0.0-beta1
 
 * Add `BrowserSwitchException`
