@@ -83,38 +83,38 @@ public class BrowserSwitchInspectorUnitTest extends TestCase {
     }
 
     @Test
-    public void canDeviceOpenUrl_queriesPackageManagerForIntentForBrowserSwitching() {
+    public void deviceHasBrowser_queriesPackageManagerForIntentForBrowserSwitching() {
         when(context.getPackageManager()).thenReturn(packageManager);
         when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.emptyList());
 
         BrowserSwitchInspector sut = new BrowserSwitchInspector();
-        sut.canDeviceOpenUrl(context, Uri.parse("https://example.com"));
+        sut.deviceHasBrowser(context);
 
         ArgumentCaptor<Intent> captor = ArgumentCaptor.forClass(Intent.class);
         verify(packageManager).queryIntentActivities(captor.capture(), eq(0));
 
         Intent intent = captor.getValue();
         assertEquals(Intent.ACTION_VIEW, intent.getAction());
-        assertEquals(Uri.parse("https://example.com"), intent.getData());
+        assertEquals(Uri.parse("https://"), intent.getData());
     }
 
     @Test
-    public void canDeviceOpenUrl_whenNoActivityFound_returnsFalse() {
+    public void deviceHasBrowser_whenNoActivityFound_returnsFalse() {
         when(context.getPackageManager()).thenReturn(packageManager);
         when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.emptyList());
 
         BrowserSwitchInspector sut = new BrowserSwitchInspector();
-        assertFalse(sut.canDeviceOpenUrl(context, Uri.parse("https://example.com")));
+        assertFalse(sut.deviceHasBrowser(context));
     }
 
     @Test
-    public void canDeviceOpenUrl_whenActivityFound_returnsTrue() {
+    public void deviceHasBrowser_whenActivityFound_returnsTrue() {
         when(context.getPackageManager()).thenReturn(packageManager);
 
         ResolveInfo resolveInfo = mock(ResolveInfo.class);
         when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(resolveInfo));
 
         BrowserSwitchInspector sut = new BrowserSwitchInspector();
-        assertTrue(sut.canDeviceOpenUrl(context, Uri.parse("https://example.com")));
+        assertTrue(sut.deviceHasBrowser(context));
     }
 }

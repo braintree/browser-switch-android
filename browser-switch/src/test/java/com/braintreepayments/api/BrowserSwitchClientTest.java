@@ -59,7 +59,7 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -86,7 +86,7 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenRequestCodeIsIntegerMinValue_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -107,7 +107,7 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenDeviceIsNotConfiguredForDeepLinking_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(false);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -132,7 +132,7 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenNoActivityFoundCanOpenURL_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(false);
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(false);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -153,7 +153,7 @@ public class BrowserSwitchClientTest {
 
     @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
-        when(browserSwitchInspector.canDeviceOpenUrl(applicationContext, browserSwitchDestinationUrl)).thenReturn(true);
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);

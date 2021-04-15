@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -79,7 +78,7 @@ public class BrowserSwitchClient {
                 "scheme in it's Android Manifest. See " +
                 "https://github.com/braintree/browser-switch-android for more " +
                 "information on setting up a return url scheme.";
-        } else if (!browserSwitchInspector.canDeviceOpenUrl(appContext, browserSwitchUrl)) {
+        } else if (!browserSwitchInspector.deviceHasBrowser(appContext)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             if (browserSwitchUrl != null) {
                 messageBuilder.append(String.format(": %s", browserSwitchUrl.toString()));
