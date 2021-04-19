@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.0.0-beta3
 
 * Fix issue where app links couldn't be opened by `BrowserSwitchClient#start()`
 
