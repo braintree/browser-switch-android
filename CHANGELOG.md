@@ -4,6 +4,10 @@
 
 * Fix issue where app links couldn't be opened by `BrowserSwitchClient#start()`
 
+## 1.1.4
+
+* Fix issue where app links couldn't be opened by `BrowserSwitchClient#start()`
+
 ## 2.0.0-beta2
 
 * Fix issue of false successful result when `deepLinkUrl` did not match request `returnUrlScheme`
