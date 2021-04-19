@@ -268,7 +268,7 @@ public class BrowserSwitchClient {
                 "scheme in it's Android Manifest. See " +
                 "https://github.com/braintree/browser-switch-android for more " +
                 "information on setting up a return url scheme.";
-        } else if (!canOpenUrl(context, intent)) {
+        } else if (!deviceHasBrowser(context)) {
             StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
             Uri uri = intent.getData();
             if (uri != null) {
@@ -290,8 +290,8 @@ public class BrowserSwitchClient {
         return activityFinder.canResolveActivityForIntent(context, browserSwitchActivityIntent);
     }
 
-    private boolean canOpenUrl(Context context, Intent intent) {
-        return activityFinder.canResolveActivityForIntent(context, intent);
+    private boolean deviceHasBrowser(Context context) {
+        return activityFinder.deviceHasBrowser(context);
     }
 
     /**

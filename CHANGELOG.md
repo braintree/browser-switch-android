@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Fix issue where app links couldn't be opened by `BrowserSwitchClient#start()`
+
 ## 1.1.3
 
 * Update androidx dependencies to latest versions
