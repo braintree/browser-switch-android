@@ -1,7 +1,7 @@
 # browser-switch-android Release Notes
 
 
-## unreleased
+## 2.0.0
 
 * Includes all changes in [2.0.0-beta1](#200-beta1), [2.0.0-beta2](#200-beta2), and [2.0.0-beta3](#200-beta3)
 
