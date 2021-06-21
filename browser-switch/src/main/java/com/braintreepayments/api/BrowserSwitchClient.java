@@ -123,13 +123,13 @@ public class BrowserSwitchClient {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
             persistentStore.clearActiveRequest(appContext);
         } else if (request.getShouldNotifyCancellation()) {
+            // ensure that cancellation result is delivered exactly one time
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
 
             request.setShouldNotifyCancellation(false);
             persistentStore.putActiveRequest(request, activity);
         }
 
-        // ensure that browser switch result is delivered exactly one time
         return result;
     }
 }
