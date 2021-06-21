@@ -13,7 +13,7 @@ class BrowserSwitchRequest {
     private final int requestCode;
     private final JSONObject metadata;
     private final String returnUrlScheme;
-    private boolean shouldNotify;
+    private boolean shouldNotifyCancellation;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
@@ -25,12 +25,12 @@ class BrowserSwitchRequest {
         return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, returnUrlScheme, shouldNotify);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, boolean shouldNotify) {
+    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, boolean shouldNotifyCancellation) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
         this.returnUrlScheme = returnUrlScheme;
-        this.shouldNotify = shouldNotify;
+        this.shouldNotifyCancellation = shouldNotifyCancellation;
     }
 
     Uri getUrl() {
@@ -45,12 +45,12 @@ class BrowserSwitchRequest {
         return metadata;
     }
 
-    boolean getShouldNotify() {
-        return shouldNotify;
+    boolean getShouldNotifyCancellation() {
+        return shouldNotifyCancellation;
     }
 
-    void setShouldNotify(boolean shouldNotify) {
-        this.shouldNotify = shouldNotify;
+    void setShouldNotifyCancellation(boolean shouldNotifyCancellation) {
+        this.shouldNotifyCancellation = shouldNotifyCancellation;
     }
 
     String toJson() throws JSONException {
@@ -58,7 +58,7 @@ class BrowserSwitchRequest {
         result.put("requestCode", requestCode);
         result.put("url", url.toString());
         result.put("returnUrlScheme", returnUrlScheme);
-        result.put("shouldNotify", shouldNotify);
+        result.put("shouldNotify", shouldNotifyCancellation);
         if (metadata != null) {
             result.put("metadata", metadata);
         }
