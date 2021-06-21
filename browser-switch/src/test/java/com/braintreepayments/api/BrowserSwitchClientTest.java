@@ -16,10 +16,13 @@ import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -82,6 +85,7 @@ public class BrowserSwitchClientTest {
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
         assertSame(browserSwitchRequest.getMetadata(), metadata);
+        assertTrue(browserSwitchRequest.getShouldNotifyCancellation());
     }
 
     @Test
@@ -181,7 +185,7 @@ public class BrowserSwitchClientTest {
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -198,7 +202,7 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatch_clearsResultStoreAndNotifiesResultCANCELED() {
+    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatchAndShouldNotifyCancellation_notifiesResultCANCELEDAndSetsRequestShouldNotifyCancellationToFalse() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = Uri.parse("another-return-url-scheme://test");
@@ -206,7 +210,7 @@ public class BrowserSwitchClientTest {
         when(activity.getIntent()).thenReturn(deepLinkIntent);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -219,18 +223,41 @@ public class BrowserSwitchClientTest {
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
-        verify(persistentStore).clearActiveRequest(applicationContext);
+        ArgumentCaptor<BrowserSwitchRequest> captor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(captor.capture(), same(activity));
 
+        BrowserSwitchRequest updatedRequest = captor.getValue();
+        assertSame(request, updatedRequest);
+        assertFalse(updatedRequest.getShouldNotifyCancellation());
     }
 
     @Test
-    public void deliverResult_whenDeepLinkUrlDoesNotExist_clearsResultStoreAndNotifiesResultCANCELED() {
+    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatchAndShouldNotNotifyCancellation_returnsNull() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        Uri deepLinkUrl = Uri.parse("another-return-url-scheme://test");
+        Intent deepLinkIntent = new Intent().setData(deepLinkUrl);
+        when(activity.getIntent()).thenReturn(deepLinkIntent);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchResult result = sut.deliverResult(activity);
+
+        assertNull(result);
+        verify(persistentStore, never()).putActiveRequest(any(BrowserSwitchRequest.class), any(FragmentActivity.class));
+    }
+
+    @Test
+    public void deliverResult_whenDeepLinkUrlDoesNotExistAndShouldNotifyCancellation_notifiesResultCANCELEDAndSetsRequestShouldNotifyCancellationToFalse() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(activity.getIntent()).thenReturn(new Intent());
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme");
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -243,7 +270,29 @@ public class BrowserSwitchClientTest {
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
-        verify(persistentStore).clearActiveRequest(applicationContext);
+        ArgumentCaptor<BrowserSwitchRequest> captor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(captor.capture(), same(activity));
+
+        BrowserSwitchRequest updatedRequest = captor.getValue();
+        assertSame(request, updatedRequest);
+        assertFalse(updatedRequest.getShouldNotifyCancellation());
+    }
+
+    @Test
+    public void deliverResult_whenDeepLinkUrlDoesNotExistAndShouldNotNotifyCancellation_returnsNull() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getIntent()).thenReturn(new Intent());
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchResult result = sut.deliverResult(activity);
+
+        assertNull(result);
+        verify(persistentStore, never()).putActiveRequest(any(BrowserSwitchRequest.class), any(FragmentActivity.class));
     }
 
     @Test

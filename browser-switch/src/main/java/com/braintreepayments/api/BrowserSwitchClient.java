@@ -52,7 +52,7 @@ public class BrowserSwitchClient {
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme);
+                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
         persistentStore.putActiveRequest(request, appContext);
 
         customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
@@ -116,17 +116,20 @@ public class BrowserSwitchClient {
             return null;
         }
 
-        BrowserSwitchResult result;
+        BrowserSwitchResult result = null;
 
         Uri deepLinkUrl = intent.getData();
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-        } else {
+            persistentStore.clearActiveRequest(appContext);
+        } else if (request.getShouldNotifyCancellation()) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+
+            request.setShouldNotifyCancellation(false);
+            persistentStore.putActiveRequest(request, activity);
         }
 
         // ensure that browser switch result is delivered exactly one time
-        persistentStore.clearActiveRequest(appContext);
         return result;
     }
 }
