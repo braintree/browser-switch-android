@@ -27,7 +27,7 @@ public class BrowserSwitchOptions {
      *                 {@link BrowserSwitchResult} when the app has re-entered the foreground
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions metadata(@NonNull JSONObject metadata) {
+    public BrowserSwitchOptions metadata(@Nullable JSONObject metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -49,7 +49,7 @@ public class BrowserSwitchOptions {
      * @param url The target url to use for browser switch
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions url(@NonNull Uri url) {
+    public BrowserSwitchOptions url(@Nullable Uri url) {
         this.url = url;
         return this;
     }
@@ -61,7 +61,7 @@ public class BrowserSwitchOptions {
      *                        after browser switch
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
-    public BrowserSwitchOptions returnUrlScheme(@NonNull String returnUrlScheme) {
+    public BrowserSwitchOptions returnUrlScheme(@Nullable String returnUrlScheme) {
         this.returnUrlScheme = returnUrlScheme;
         return this;
     }
