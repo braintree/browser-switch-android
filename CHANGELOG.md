@@ -2,8 +2,8 @@
 
 ## unreleased
 
-* Fix nullability annotations in `BrowserSwitchOptions` setters 
 * Update `BrowserSwitchClient#deliverResult()` to allow canceled browser switches a chance to reach the success state (See braintree_android [#409](https://github.com/braintree/braintree_android/issues/409))
+* Fix nullability annotations in `BrowserSwitchOptions` setters 
 
 ## 2.0.0
 
