@@ -18,17 +18,30 @@ import static org.junit.Assert.assertTrue;
 public class BrowserSwitchRequestUnitTest {
 
     @Test
-    public void fromJson_withoutMetadata() throws JSONException {
+    public void fromJson_withoutShouldNotifyProperty_defaultsShouldNotifyToTrue() throws JSONException {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
                 "  \"returnUrlScheme\": \"my-return-url-scheme\"\n" +
                 "}";
         BrowserSwitchRequest sut = BrowserSwitchRequest.fromJson(json);
+        assertTrue(sut.getShouldNotify());
+    }
+
+    @Test
+    public void fromJson_withoutMetadata() throws JSONException {
+        String json = "{\n" +
+                "  \"requestCode\": 123,\n" +
+                "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": true\n" +
+                "}";
+        BrowserSwitchRequest sut = BrowserSwitchRequest.fromJson(json);
 
         assertEquals(sut.getRequestCode(), 123);
         assertEquals(sut.getUrl().toString(), "https://example.com");
         assertNull(sut.getMetadata());
+        assertTrue(sut.getShouldNotify());
 
         assertTrue(sut.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
         assertFalse(sut.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
@@ -39,7 +52,8 @@ public class BrowserSwitchRequestUnitTest {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
-                "  \"returnUrlScheme\": \"my-return-url-scheme\"\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": false\n" +
                 "}";
         BrowserSwitchRequest original = BrowserSwitchRequest.fromJson(json);
         BrowserSwitchRequest restored = BrowserSwitchRequest.fromJson(original.toJson());
@@ -47,6 +61,7 @@ public class BrowserSwitchRequestUnitTest {
         assertEquals(restored.getRequestCode(), original.getRequestCode());
         assertEquals(restored.getUrl(), original.getUrl());
         assertNull(restored.getMetadata());
+        assertFalse(restored.getShouldNotify());
 
         assertTrue(restored.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
         assertFalse(restored.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
@@ -58,6 +73,7 @@ public class BrowserSwitchRequestUnitTest {
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
                 "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": true,\n" +
                 "  \"metadata\": {\n" +
                 "    \"testKey\": \"testValue\"" +
                 "  }" +
@@ -66,6 +82,7 @@ public class BrowserSwitchRequestUnitTest {
 
         assertEquals(sut.getRequestCode(), 123);
         assertEquals(sut.getUrl().toString(), "https://example.com");
+        assertTrue(sut.getShouldNotify());
         JSONAssert.assertEquals(sut.getMetadata(), new JSONObject().put("testKey", "testValue"), true);
 
         assertTrue(sut.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
@@ -78,6 +95,7 @@ public class BrowserSwitchRequestUnitTest {
                 "  \"requestCode\": 123,\n" +
                 "  \"url\": \"https://example.com\",\n" +
                 "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": false,\n" +
                 "  \"metadata\": {\n" +
                 "    \"testKey\": \"testValue\"" +
                 "  }" +
@@ -87,6 +105,7 @@ public class BrowserSwitchRequestUnitTest {
 
         assertEquals(restored.getRequestCode(), original.getRequestCode());
         assertEquals(restored.getUrl(), original.getUrl());
+        assertFalse(restored.getShouldNotify());
         JSONAssert.assertEquals(restored.getMetadata(), original.getMetadata(), true);
 
         assertTrue(restored.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
