@@ -9,7 +9,7 @@ class PersistentStore {
 
     @VisibleForTesting
     static final String PREFERENCES_KEY =
-        "com.braintreepayament.browserswitch.persistentstore";
+        "com.braintreepayment.browserswitch.persistentstore";
 
     static void put(String key, String value, Context context) {
         Context applicationContext = context.getApplicationContext();
