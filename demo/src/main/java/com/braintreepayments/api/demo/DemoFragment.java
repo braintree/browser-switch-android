@@ -53,38 +53,24 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         @IdRes int viewId = v.getId();
         if (viewId == R.id.browser_switch) {
-            startBrowserSwitch();
+            startBrowserSwitch(null);
         } else if (viewId == R.id.browser_switch_with_metadata) {
             JSONObject metadata = buildMetadataObject();
-            startBrowserSwitchWithMetadata(metadata);
+            startBrowserSwitch(metadata);
         }
     }
 
-    private void startBrowserSwitch() {
-        Uri url = buildBrowserSwitchUrl();
-        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-                .requestCode(1)
-                .url(url)
-                .returnUrlScheme(getReturnUrlScheme());
-
-        try {
-            getDemoActivity().startBrowserSwitch(browserSwitchOptions);
-        } catch (BrowserSwitchException e) {
-            String statusText = "Browser Switch Error: " + e.getMessage();
-            mBrowserSwitchStatusTextView.setText(statusText);
-            e.printStackTrace();
-        }
-    }
-
-    private void startBrowserSwitchWithMetadata(JSONObject metadata) {
+    private void startBrowserSwitch(@Nullable JSONObject metadata) {
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
                 .returnUrlScheme(getReturnUrlScheme());
+
         try {
             getDemoActivity().startBrowserSwitch(browserSwitchOptions);
+            clearTextViews();
         } catch (BrowserSwitchException e) {
             String statusText = "Browser Switch Error: " + e.getMessage();
             mBrowserSwitchStatusTextView.setText(statusText);
@@ -106,6 +92,12 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
             // do nothing
         }
         return null;
+    }
+
+    private void clearTextViews() {
+        mBrowserSwitchStatusTextView.setText("");
+        mSelectedColorTextView.setText("");
+        mMetadataTextView.setText("");
     }
 
     public void onBrowserSwitchResult(BrowserSwitchResult result) {
