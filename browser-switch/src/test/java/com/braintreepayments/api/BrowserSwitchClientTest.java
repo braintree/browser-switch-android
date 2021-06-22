@@ -202,7 +202,7 @@ public class BrowserSwitchClientTest {
     }
 
     @Test
-    public void deliverResult_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatchAndShouldNotifyCancellation_notifiesResultCANCELEDAndSetsRequestShouldNotifyCancellationToFalse() {
+    public void deliverResult_whenDeepLinkUrlExists_AndReturnUrlSchemeDoesNotMatch_AndShouldNotifyCancellation_notifiesResultCANCELED_AndSetsRequestShouldNotifyCancellationToFalse() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = Uri.parse("another-return-url-scheme://test");
