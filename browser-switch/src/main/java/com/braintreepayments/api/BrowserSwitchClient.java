@@ -107,6 +107,42 @@ public class BrowserSwitchClient {
      * @param activity the activity that received the deep link back into the app
      */
     public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
+        BrowserSwitchResult result = getResult(activity);
+        if (result != null) {
+
+            Context appContext = activity.getApplicationContext();
+            BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
+
+            @BrowserSwitchStatus int status = result.getStatus();
+            switch (status) {
+                case BrowserSwitchStatus.SUCCESS:
+                    // ensure that success result is delivered exactly once
+                    persistentStore.clearActiveRequest(appContext);
+                    break;
+                case BrowserSwitchStatus.CANCELED:
+                    // ensure that cancellation result is delivered exactly once, but allow for
+                    // a cancellation result to remain in shared storage in case it
+                    // later becomes successful
+                    request.setShouldNotifyCancellation(false);
+                    persistentStore.putActiveRequest(request, activity);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Peek at a pending browser switch result to an Android activity.
+     *
+     * We recommend you call this method in onResume to receive a browser switch result once your
+     * app has re-entered the foreground.
+     *
+     * This can be used in place of {@link BrowserSwitchClient#deliverResult(FragmentActivity)} when
+     * you want to know the contents of a pending browser switch result before it is delivered.
+     *
+     * @param activity the activity that received the deep link back into the app
+     */
+    BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
 
@@ -121,13 +157,8 @@ public class BrowserSwitchClient {
         Uri deepLinkUrl = intent.getData();
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-            persistentStore.clearActiveRequest(appContext);
         } else if (request.getShouldNotifyCancellation()) {
-            // ensure that cancellation result is delivered exactly one time
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
-
-            request.setShouldNotifyCancellation(false);
-            persistentStore.putActiveRequest(request, activity);
         }
 
         return result;
