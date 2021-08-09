@@ -142,7 +142,7 @@ public class BrowserSwitchClient {
      *
      * @param activity the activity that received the deep link back into the app
      */
-    public BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
+    BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
 

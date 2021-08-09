@@ -2,7 +2,7 @@
 
 ## unreleased
 
-* Add `BrowserSwitchClient#getResult()` to preview a browser switch result before it is delivered.
+* Add internal methods for usage with other Braintree libraries.
 
 ## 2.0.1
 
