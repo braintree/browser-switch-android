@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ChromeCustomTabsInternalClientTest {
+public class ChromeCustomTabsInternalClientUnitTest {
 
     CustomTabsIntent customTabsIntent;
     CustomTabsIntent.Builder customTabsIntentBuilder;

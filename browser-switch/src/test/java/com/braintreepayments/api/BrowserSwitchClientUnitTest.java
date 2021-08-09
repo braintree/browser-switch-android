@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
-public class BrowserSwitchClientTest {
+public class BrowserSwitchClientUnitTest {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
