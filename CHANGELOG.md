@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.0.2
 
 * Add internal methods for usage with other Braintree libraries.
 
