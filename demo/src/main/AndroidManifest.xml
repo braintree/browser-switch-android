@@ -8,7 +8,8 @@
         android:label="Browser Switch Demo"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -16,7 +17,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DemoActivity">
+        <activity android:name=".DemoActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -26,7 +28,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name=".DemoActivitySingleTop" android:launchMode="singleTop">
+        <activity android:name=".DemoActivitySingleTop"
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
