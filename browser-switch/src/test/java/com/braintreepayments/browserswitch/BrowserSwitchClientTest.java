@@ -92,7 +92,7 @@ public class BrowserSwitchClientTest {
         when(browserSwitchConfig.createIntentToLaunchUriInBrowser(applicationContext, uri)).thenReturn(browserSwitchIntent);
 
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
+        when(activityFinder.deviceHasBrowser(applicationContext)).thenReturn(true);
 
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
@@ -127,7 +127,7 @@ public class BrowserSwitchClientTest {
 
         Intent browserSwitchIntent = mock(Intent.class);
         when(activityFinder.canResolveActivityForIntent(applicationContext, queryIntent)).thenReturn(true);
-        when(activityFinder.canResolveActivityForIntent(applicationContext, browserSwitchIntent)).thenReturn(true);
+        when(activityFinder.deviceHasBrowser(applicationContext)).thenReturn(true);
 
         when(browserSwitchIntent.getData()).thenReturn(uri);
 
