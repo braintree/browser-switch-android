@@ -17,7 +17,8 @@ dependencies {
 Then, add an `intent-filter` in the `AndroidManifest.xml` to your deep link destination activity:
 
 ```xml
-<activity android:name="com.company.app.MyBrowserSwitchActivity">
+<activity android:name="com.company.app.MyBrowserSwitchActivity"
+    android:exported="true">
     ...
     <intent-filter>
         <action android:name="android.intent.action.VIEW"/>

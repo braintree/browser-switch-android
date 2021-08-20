@@ -22,7 +22,8 @@ Then, declare `BrowserSwitchActivity` in your `AndroidManifest.xml`:
 
 ```xml
 <activity android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
-    android:launchMode="singleTask">
+    android:launchMode="singleTask"
+    android:exported="true">
     <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
         <data android:scheme="${applicationId}.browserswitch"/>
