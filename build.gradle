@@ -19,9 +19,9 @@ plugins {
 
 version '1.1.5-SNAPSHOT'
 ext {
-    compileSdkVersion = 30
+    compileSdkVersion = 31
     minSdkVersion = 21
-    targetSdkVersion = 30
+    targetSdkVersion = 31
     versionCode = 51
     versionName = version
 }

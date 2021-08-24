@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Upgrade `compileSdkVersion` and `targetSdkVersion` to API 31
+
 ## 1.1.4
 
 * Fix issue where app links couldn't be opened by `BrowserSwitchClient#start()`
