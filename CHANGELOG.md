@@ -4,6 +4,10 @@
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 31
 
+## 1.2.0
+
+* Upgrade `compileSdkVersion` and `targetSdkVersion` to API 31
+
 ## 2.0.2
 
 * Add internal methods for usage with other Braintree libraries.
