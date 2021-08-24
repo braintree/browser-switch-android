@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 1.2.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 31
 
