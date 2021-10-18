@@ -55,7 +55,11 @@ public class BrowserSwitchClient {
                 new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
         persistentStore.putActiveRequest(request, appContext);
 
-        customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
+        if (browserSwitchInspector.deviceHasChromeCustomTabs(activity)) {
+            customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
+        } else {
+            // TODO: use traditional browser
+        }
     }
 
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
