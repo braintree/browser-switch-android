@@ -29,20 +29,18 @@ class BrowserSwitchInspector {
 
     boolean deviceHasChromeCustomTabs(Context context) {
         PackageManager pm = context.getPackageManager();
-        // Get default VIEW intent handler.
         Intent activityIntent = new Intent()
                 .setAction(Intent.ACTION_VIEW)
                 .addCategory(Intent.CATEGORY_BROWSABLE)
-                .setData(Uri.fromParts("http", "", null));
+                .setData(Uri.parse("https://"));
 
-        // Get all apps that can handle VIEW intents.
         List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(activityIntent, 0);
         ArrayList<ResolveInfo> packagesSupportingCustomTabs = new ArrayList<>();
         for (ResolveInfo info : resolvedActivityList) {
             Intent serviceIntent = new Intent();
             serviceIntent.setAction(ACTION_CUSTOM_TABS_CONNECTION);
             serviceIntent.setPackage(info.activityInfo.packageName);
-            // Check if this package also resolves the Custom Tabs service.
+
             if (pm.resolveService(serviceIntent, 0) != null) {
                 packagesSupportingCustomTabs.add(info);
             }
