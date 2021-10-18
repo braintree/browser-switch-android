@@ -58,7 +58,8 @@ public class BrowserSwitchClient {
         if (browserSwitchInspector.deviceHasChromeCustomTabs(activity)) {
             customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
         } else {
-            // TODO: use traditional browser
+            Intent launchUrlInBrowser = new Intent(Intent.ACTION_VIEW, browserSwitchUrl);
+            activity.startActivity(launchUrlInBrowser);
         }
     }
 
