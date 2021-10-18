@@ -55,7 +55,7 @@ public class BrowserSwitchClient {
                 new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
         persistentStore.putActiveRequest(request, appContext);
 
-        if (browserSwitchInspector.deviceHasChromeCustomTabs(activity)) {
+        if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
             customTabsInternalClient.launchUrl(activity, browserSwitchUrl);
         } else {
             Intent launchUrlInBrowser = new Intent(Intent.ACTION_VIEW, browserSwitchUrl);
