@@ -16,21 +16,14 @@ import com.braintreepayments.api.BrowserSwitchResult;
 public class DemoActivity extends AppCompatActivity {
 
     private static final String FRAGMENT_TAG = DemoFragment.class.getSimpleName();
+    private static final String RETURN_URL_SCHEME = "my-custom-url-scheme-standard";
 
     @VisibleForTesting
     BrowserSwitchClient browserSwitchClient = null;
 
-    private String returnUrlScheme;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Bundle args = getIntent().getExtras();
-        if (args != null) {
-            returnUrlScheme = args.getString("returnUrlScheme");
-        }
-
         browserSwitchClient = new BrowserSwitchClient();
 
         FragmentManager fm = getSupportFragmentManager();
@@ -68,6 +61,6 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     public String getReturnUrlScheme() {
-        return returnUrlScheme;
+        return RETURN_URL_SCHEME;
     }
 }
