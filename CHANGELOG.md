@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Fallback to browser when Chrome Custom Tabs is unavailable (thanks! @calvarez-ov)
+
 ## 2.1.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 31
