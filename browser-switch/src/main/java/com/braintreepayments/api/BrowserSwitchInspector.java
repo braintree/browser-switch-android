@@ -28,6 +28,7 @@ class BrowserSwitchInspector {
     }
 
     boolean deviceHasChromeCustomTabs(Context context) {
+        // Ref: https://developer.chrome.com/docs/android/custom-tabs/integration-guide/#how-can-i-check-whether-the-android-device-has-a-browser-that-supports-custom-tab
         PackageManager pm = context.getPackageManager();
         Intent activityIntent = new Intent()
                 .setAction(Intent.ACTION_VIEW)
