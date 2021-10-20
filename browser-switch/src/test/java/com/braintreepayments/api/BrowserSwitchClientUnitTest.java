@@ -14,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.shadows.ShadowActivity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -61,9 +62,10 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
+    public void start_whenChromeCustomTabsSupported_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
         when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
+        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
@@ -76,6 +78,42 @@ public class BrowserSwitchClientUnitTest {
         sut.start(activity, options);
 
         verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl);
+        verify(activity, never()).startActivity(any(Intent.class));
+
+        ArgumentCaptor<BrowserSwitchRequest> captor =
+                ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(captor.capture(), same(applicationContext));
+
+        BrowserSwitchRequest browserSwitchRequest = captor.getValue();
+        assertEquals(browserSwitchRequest.getRequestCode(), 123);
+        assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
+        assertSame(browserSwitchRequest.getMetadata(), metadata);
+        assertTrue(browserSwitchRequest.getShouldNotifyCancellation());
+    }
+
+    @Test
+    public void start_whenChromeCustomTabsNotSupported_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
+        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(false);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+        sut.start(activity, options);
+
+        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl);
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(activity).startActivity(intentCaptor.capture());
+
+        Intent intent = intentCaptor.getValue();
+        assertEquals(intent.getData(), browserSwitchDestinationUrl);
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
                 ArgumentCaptor.forClass(BrowserSwitchRequest.class);

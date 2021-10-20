@@ -16,15 +16,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchStandardBrowserSwitch(View view) {
         Intent intent = new Intent(this, DemoActivity.class);
-        intent.putExtra("returnUrlScheme", "my-custom-url-scheme-standard");
-
         startActivity(intent);
     }
 
     public void launchSingleTopBrowserSwitch(View view) {
         Intent intent = new Intent(this, DemoActivitySingleTop.class);
-        intent.putExtra("returnUrlScheme", "my-custom-url-scheme-single-top");
-
         startActivity(intent);
     }
 }

@@ -1,7 +1,10 @@
 package com.braintreepayments.api;
 
+import static androidx.browser.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -73,7 +76,7 @@ public class BrowserSwitchInspectorUnitTest extends TestCase {
         when(context.getPackageName()).thenReturn("sample.package.name");
         when(context.getPackageManager()).thenReturn(packageManager);
 
-        ResolveInfo resolveInfo = mock(ResolveInfo.class);
+        ResolveInfo resolveInfo = new ResolveInfo();
         when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(resolveInfo));
 
         String returnUrlScheme = "sample.package.name.browserswitch";
@@ -111,10 +114,89 @@ public class BrowserSwitchInspectorUnitTest extends TestCase {
     public void deviceHasBrowser_whenActivityFound_returnsTrue() {
         when(context.getPackageManager()).thenReturn(packageManager);
 
-        ResolveInfo resolveInfo = mock(ResolveInfo.class);
+        ResolveInfo resolveInfo = new ResolveInfo();
         when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(resolveInfo));
 
         BrowserSwitchInspector sut = new BrowserSwitchInspector();
         assertTrue(sut.deviceHasBrowser(context));
+    }
+
+    @Test
+    public void deviceHasChromeCustomTabs_queriesForBrowserCapableActivity() {
+        when(context.getPackageManager()).thenReturn(packageManager);
+
+        BrowserSwitchInspector sut = new BrowserSwitchInspector();
+        sut.deviceHasChromeCustomTabs(context);
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(packageManager).queryIntentActivities(intentCaptor.capture(), eq(0));
+
+        Intent activityIntent = intentCaptor.getValue();
+        assertEquals(Intent.ACTION_VIEW, activityIntent.getAction());
+        assertTrue(activityIntent.hasCategory(Intent.CATEGORY_BROWSABLE));
+        assertEquals(Uri.parse("https://"), activityIntent.getData());
+    }
+
+    @Test
+    public void deviceHasChromeCustomTabs_checksIfBrowserCapableActivityCanResolveChromeCustomTabsService() {
+        when(context.getPackageManager()).thenReturn(packageManager);
+
+        ResolveInfo browserInfo = new ResolveInfo();
+        browserInfo.activityInfo = new ActivityInfo();
+        browserInfo.activityInfo.packageName = "sample.package.name";
+        when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(browserInfo));
+
+        BrowserSwitchInspector sut = new BrowserSwitchInspector();
+        sut.deviceHasChromeCustomTabs(context);
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(packageManager).resolveService(intentCaptor.capture(), eq(0));
+
+        Intent serviceIntent = intentCaptor.getValue();
+        assertEquals(ACTION_CUSTOM_TABS_CONNECTION, serviceIntent.getAction());
+        assertEquals("sample.package.name", serviceIntent.getPackage());
+    }
+
+    @Test
+    public void deviceHasChromeCustomTabs_whenChromeCustomTabsServiceIsResolvable_returnsTrue() {
+        when(context.getPackageManager()).thenReturn(packageManager);
+
+        ResolveInfo browserInfo = new ResolveInfo();
+        browserInfo.activityInfo = new ActivityInfo();
+        browserInfo.activityInfo.packageName = "sample.package.name";
+        when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(browserInfo));
+
+        Intent serviceIntent = new Intent();
+        serviceIntent.setAction(ACTION_CUSTOM_TABS_CONNECTION);
+        serviceIntent.setPackage("sample.package.name");
+
+        ResolveInfo serviceInfo = new ResolveInfo();
+        when(packageManager.resolveService(any(Intent.class), eq(0))).thenReturn(serviceInfo);
+
+        BrowserSwitchInspector sut = new BrowserSwitchInspector();
+        assertTrue(sut.deviceHasChromeCustomTabs(context));
+    }
+
+    @Test
+    public void deviceHasChromeCustomTabs_whenChromeCustomTabsServiceIsNotResolvable_returnsFalse() {
+        when(context.getPackageManager()).thenReturn(packageManager);
+
+        ResolveInfo browserInfo = new ResolveInfo();
+        browserInfo.activityInfo = new ActivityInfo();
+        browserInfo.activityInfo.packageName = "sample.package.name";
+        when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.singletonList(browserInfo));
+        when(packageManager.resolveService(any(Intent.class), eq(0))).thenReturn(null);
+
+        BrowserSwitchInspector sut = new BrowserSwitchInspector();
+        assertFalse(sut.deviceHasChromeCustomTabs(context));
+    }
+
+    @Test
+    public void deviceHasChromeCustomTabs_whenNoBrowserFound_returnsFalse() {
+        when(context.getPackageManager()).thenReturn(packageManager);
+        when(packageManager.queryIntentActivities(any(Intent.class), eq(0))).thenReturn(Collections.emptyList());
+
+        BrowserSwitchInspector sut = new BrowserSwitchInspector();
+        assertFalse(sut.deviceHasChromeCustomTabs(context));
     }
 }
