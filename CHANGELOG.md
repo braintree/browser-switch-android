@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.1.1
 
 * Fallback to browser when Chrome Custom Tabs is unavailable (thanks! @calvarez-ov)
 
