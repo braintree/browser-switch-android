@@ -43,14 +43,6 @@ public class DemoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         browserSwitchObserver.onActivityResumed(this);
-
-//        BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
-//        if (result != null) {
-//            DemoFragment demoFragment = getDemoFragment();
-//            if (demoFragment != null) {
-//                demoFragment.onBrowserSwitchResult(result);
-//            }
-//        }
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
