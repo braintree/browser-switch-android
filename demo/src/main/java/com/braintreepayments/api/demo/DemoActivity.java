@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
+import com.braintreepayments.api.BrowserSwitchObserver;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 
@@ -21,10 +22,14 @@ public class DemoActivity extends AppCompatActivity {
     @VisibleForTesting
     BrowserSwitchClient browserSwitchClient = null;
 
+    @VisibleForTesting
+    BrowserSwitchObserver browserSwitchObserver = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         browserSwitchClient = new BrowserSwitchClient();
+        browserSwitchObserver = new BrowserSwitchObserver();
 
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
@@ -37,14 +42,15 @@ public class DemoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        browserSwitchObserver.onActivityResumed(this);
 
-        BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
-        if (result != null) {
-            DemoFragment demoFragment = getDemoFragment();
-            if (demoFragment != null) {
-                demoFragment.onBrowserSwitchResult(result);
-            }
-        }
+//        BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
+//        if (result != null) {
+//            DemoFragment demoFragment = getDemoFragment();
+//            if (demoFragment != null) {
+//                demoFragment.onBrowserSwitchResult(result);
+//            }
+//        }
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
