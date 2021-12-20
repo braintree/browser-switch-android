@@ -31,7 +31,7 @@ public class BrowserSwitchLauncher {
         this.customTabsInternalClient = customTabsInternalClient;
     }
 
-    void launch(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException  {
+    public void launch(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException  {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
 
         Context appContext = activity.getApplicationContext();

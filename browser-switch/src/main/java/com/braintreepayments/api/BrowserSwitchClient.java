@@ -13,6 +13,7 @@ import org.json.JSONObject;
 /**
  * Client that manages the logic for browser switching.
  */
+@Deprecated
 public class BrowserSwitchClient {
 
     private final BrowserSwitchInspector browserSwitchInspector;

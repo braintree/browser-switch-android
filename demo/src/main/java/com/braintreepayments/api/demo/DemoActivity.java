@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
+import com.braintreepayments.api.BrowserSwitchLauncher;
 import com.braintreepayments.api.BrowserSwitchObserver;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
@@ -19,17 +20,12 @@ public class DemoActivity extends AppCompatActivity {
     private static final String FRAGMENT_TAG = DemoFragment.class.getSimpleName();
     private static final String RETURN_URL_SCHEME = "my-custom-url-scheme-standard";
 
-    @VisibleForTesting
-    BrowserSwitchClient browserSwitchClient = null;
-
-    @VisibleForTesting
-    BrowserSwitchObserver browserSwitchObserver = null;
+    private final BrowserSwitchLauncher browserSwitchLauncher = new BrowserSwitchLauncher();
+    private final BrowserSwitchObserver browserSwitchObserver = new BrowserSwitchObserver();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
-        browserSwitchObserver = new BrowserSwitchObserver();
 
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
@@ -46,7 +42,7 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
-        browserSwitchClient.start(this, options);
+        browserSwitchLauncher.launch(this, options);
     }
 
     private DemoFragment getDemoFragment() {
