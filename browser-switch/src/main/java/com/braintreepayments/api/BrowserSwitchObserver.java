@@ -33,17 +33,17 @@ public class BrowserSwitchObserver {
             BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
 
             boolean wasDelivered = false;
-            if (activity instanceof BrowserSwitchResultListener) {
+            if (activity instanceof BrowserSwitchListener) {
                 wasDelivered = true;
-                ((BrowserSwitchResultListener) activity).onBrowserSwitchResult(result);
+                ((BrowserSwitchListener) activity).onBrowserSwitchResult(result);
             }
 
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             List<Fragment> fragments = fragmentManager.getFragments();
             for (Fragment fragment : fragments) {
-                if (fragment instanceof BrowserSwitchResultListener) {
+                if (fragment instanceof BrowserSwitchListener) {
                     wasDelivered = true;
-                    ((BrowserSwitchResultListener) fragment).onBrowserSwitchResult(result);
+                    ((BrowserSwitchListener) fragment).onBrowserSwitchResult(result);
                 }
             }
 

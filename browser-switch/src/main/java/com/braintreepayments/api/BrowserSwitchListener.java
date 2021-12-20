@@ -1,5 +1,5 @@
 package com.braintreepayments.api;
 
-public interface BrowserSwitchResultListener {
+public interface BrowserSwitchListener {
     void onBrowserSwitchResult(BrowserSwitchResult result);
 }
