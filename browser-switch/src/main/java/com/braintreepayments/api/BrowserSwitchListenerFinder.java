@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrowserSwitchListenerFinder {
+class BrowserSwitchListenerFinder {
 
     List<BrowserSwitchListener> findActiveListeners(FragmentActivity activity) {
         List<BrowserSwitchListener> result = new ArrayList<>();
