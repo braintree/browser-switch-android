@@ -39,6 +39,8 @@ public class BrowserSwitchObserver {
                 listener.onBrowserSwitchResult(result);
             }
 
+            // TODO: consider if we should skip modifying persistent store when
+            // there are no active listeners to deliver a result to
             @BrowserSwitchStatus int status = result.getStatus();
             switch (status) {
                 case BrowserSwitchStatus.SUCCESS:
