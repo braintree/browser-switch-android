@@ -24,6 +24,7 @@ public class BrowserSwitchClient {
     /**
      * Construct a client that manages the logic for browser switching.
      */
+    @SuppressWarnings("unused")
     public BrowserSwitchClient() {
         this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new ChromeCustomTabsInternalClient());
     }
