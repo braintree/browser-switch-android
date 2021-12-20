@@ -1,6 +1,10 @@
 package com.braintreepayments.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -23,12 +27,15 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.Collections;
+
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchObserverUnitTest {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
+    private BrowserSwitchListenerFinder listenerFinder;
     private BrowserSwitchPersistentStore persistentStore;
 
     private Uri browserSwitchDestinationUrl;
@@ -38,8 +45,10 @@ public class BrowserSwitchObserverUnitTest {
 
     @Before
     public void beforeEach() {
-        persistentStore = mock(BrowserSwitchPersistentStore.class);
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
+
+        listenerFinder = mock(BrowserSwitchListenerFinder.class);
+        persistentStore = mock(BrowserSwitchPersistentStore.class);
 
         activity = mock(FragmentActivity.class);
         applicationContext = mock(Context.class);
@@ -59,8 +68,17 @@ public class BrowserSwitchObserverUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
+
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        ArgumentCaptor<BrowserSwitchResult> captor =
+            ArgumentCaptor.forClass(BrowserSwitchResult.class);
+
+        verify(listener).onBrowserSwitchResult(captor.capture());
+        BrowserSwitchResult result = captor.getValue();
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
@@ -84,8 +102,17 @@ public class BrowserSwitchObserverUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
+
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        ArgumentCaptor<BrowserSwitchResult> resultCaptor =
+                ArgumentCaptor.forClass(BrowserSwitchResult.class);
+
+        verify(listener).onBrowserSwitchResult(resultCaptor.capture());
+        BrowserSwitchResult result = resultCaptor.getValue();
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
@@ -94,10 +121,10 @@ public class BrowserSwitchObserverUnitTest {
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
-        ArgumentCaptor<BrowserSwitchRequest> captor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
-        verify(persistentStore).putActiveRequest(captor.capture(), same(activity));
+        ArgumentCaptor<BrowserSwitchRequest> requestCaptor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(requestCaptor.capture(), same(activity));
 
-        BrowserSwitchRequest updatedRequest = captor.getValue();
+        BrowserSwitchRequest updatedRequest = requestCaptor.getValue();
         assertSame(request, updatedRequest);
         assertFalse(updatedRequest.getShouldNotifyCancellation());
     }
@@ -114,10 +141,13 @@ public class BrowserSwitchObserverUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
 
-        assertNull(result);
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        verify(listener, never()).onBrowserSwitchResult(any(BrowserSwitchResult.class));
         verify(persistentStore, never()).putActiveRequest(any(BrowserSwitchRequest.class), any(FragmentActivity.class));
     }
 
@@ -131,8 +161,17 @@ public class BrowserSwitchObserverUnitTest {
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
+
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        ArgumentCaptor<BrowserSwitchResult> resultCaptor =
+                ArgumentCaptor.forClass(BrowserSwitchResult.class);
+
+        verify(listener).onBrowserSwitchResult(resultCaptor.capture());
+        BrowserSwitchResult result = resultCaptor.getValue();
 
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
@@ -141,10 +180,10 @@ public class BrowserSwitchObserverUnitTest {
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
-        ArgumentCaptor<BrowserSwitchRequest> captor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
-        verify(persistentStore).putActiveRequest(captor.capture(), same(activity));
+        ArgumentCaptor<BrowserSwitchRequest> requestCaptor = ArgumentCaptor.forClass(BrowserSwitchRequest.class);
+        verify(persistentStore).putActiveRequest(requestCaptor.capture(), same(activity));
 
-        BrowserSwitchRequest updatedRequest = captor.getValue();
+        BrowserSwitchRequest updatedRequest = requestCaptor.getValue();
         assertSame(request, updatedRequest);
         assertFalse(updatedRequest.getShouldNotifyCancellation());
     }
@@ -159,10 +198,13 @@ public class BrowserSwitchObserverUnitTest {
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
 
-        assertNull(result);
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        verify(listener, never()).onBrowserSwitchResult(any(BrowserSwitchResult.class));
         verify(persistentStore, never()).putActiveRequest(any(BrowserSwitchRequest.class), any(FragmentActivity.class));
     }
 
@@ -171,10 +213,13 @@ public class BrowserSwitchObserverUnitTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
 
-        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore);
-        BrowserSwitchResult result = sut.onActivityResumed(activity);
+        BrowserSwitchListener listener = mock(BrowserSwitchListener.class);
+        when(listenerFinder.findActiveListeners(activity)).thenReturn(Collections.singletonList(listener));
 
-        assertNull(result);
+        BrowserSwitchObserver sut = new BrowserSwitchObserver(persistentStore, listenerFinder);
+        sut.onActivityResumed(activity);
+
+        verify(listener, never()).onBrowserSwitchResult(any(BrowserSwitchResult.class));
         verify(persistentStore, never()).clearActiveRequest(activity);
     }
 }

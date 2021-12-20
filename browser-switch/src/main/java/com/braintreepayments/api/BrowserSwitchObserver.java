@@ -15,14 +15,16 @@ import java.util.List;
 public class BrowserSwitchObserver {
 
     private final BrowserSwitchPersistentStore persistentStore;
+    private final BrowserSwitchListenerFinder listenerFinder;
 
     public BrowserSwitchObserver() {
-        this(BrowserSwitchPersistentStore.getInstance());
+        this(BrowserSwitchPersistentStore.getInstance(), new BrowserSwitchListenerFinder());
     }
 
     @VisibleForTesting
-    BrowserSwitchObserver(BrowserSwitchPersistentStore persistentStore) {
+    BrowserSwitchObserver(BrowserSwitchPersistentStore persistentStore, BrowserSwitchListenerFinder listenerFinder) {
         this.persistentStore = persistentStore;
+        this.listenerFinder = listenerFinder;
     }
 
     public void onActivityResumed(FragmentActivity activity) {
@@ -32,46 +34,34 @@ public class BrowserSwitchObserver {
             Context appContext = activity.getApplicationContext();
             BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
 
-            boolean wasDelivered = false;
-            if (activity instanceof BrowserSwitchListener) {
-                wasDelivered = true;
-                ((BrowserSwitchListener) activity).onBrowserSwitchResult(result);
+            List<BrowserSwitchListener> listeners = listenerFinder.findActiveListeners(activity);
+            for (BrowserSwitchListener listener : listeners) {
+                listener.onBrowserSwitchResult(result);
             }
 
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            List<Fragment> fragments = fragmentManager.getFragments();
-            for (Fragment fragment : fragments) {
-                if (fragment instanceof BrowserSwitchListener) {
-                    wasDelivered = true;
-                    ((BrowserSwitchListener) fragment).onBrowserSwitchResult(result);
-                }
-            }
-
-            if (wasDelivered) {
-                @BrowserSwitchStatus int status = result.getStatus();
-                switch (status) {
-                    case BrowserSwitchStatus.SUCCESS:
-                        // ensure that success result is delivered exactly once
-                        persistentStore.clearActiveRequest(appContext);
-                        break;
-                    case BrowserSwitchStatus.CANCELED:
-                        // ensure that cancellation result is delivered exactly once, but allow for
-                        // a cancellation result to remain in shared storage in case it
-                        // later becomes successful
-                        request.setShouldNotifyCancellation(false);
-                        persistentStore.putActiveRequest(request, activity);
-                        break;
-                }
+            @BrowserSwitchStatus int status = result.getStatus();
+            switch (status) {
+                case BrowserSwitchStatus.SUCCESS:
+                    // ensure that success result is delivered exactly once
+                    persistentStore.clearActiveRequest(appContext);
+                    break;
+                case BrowserSwitchStatus.CANCELED:
+                    // ensure that cancellation result is delivered exactly once, but allow for
+                    // a cancellation result to remain in shared storage in case it
+                    // later becomes successful
+                    request.setShouldNotifyCancellation(false);
+                    persistentStore.putActiveRequest(request, activity);
+                    break;
             }
         }
     }
 
     /**
      * Peek at a pending browser switch result to an Android activity.
-     *
+     * <p>
      * We recommend you call this method in onResume to receive a browser switch result once your
      * app has re-entered the foreground.
-     *
+     * <p>
      * This can be used in place of {@link BrowserSwitchClient#deliverResult(FragmentActivity)} when
      * you want to know the contents of a pending browser switch result before it is delivered.
      *
