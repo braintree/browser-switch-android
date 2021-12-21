@@ -189,7 +189,7 @@ public class BrowserSwitchObserverUnitTest {
     }
 
     @Test
-    public void onActivityResumed_whenDeepLinkUrlDoesNotExistAndShouldNotNotifyCancellation_returnsNull() {
+    public void onActivityResumed_whenDeepLinkUrlDoesNotExistAndShouldNotNotifyCancellation_doesNothing() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(activity.getIntent()).thenReturn(new Intent());
 
