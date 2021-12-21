@@ -130,7 +130,7 @@ public class BrowserSwitchObserverUnitTest {
     }
 
     @Test
-    public void onActivityResumed_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatchAndShouldNotNotifyCancellation_returnsNull() {
+    public void onActivityResumed_whenDeepLinkUrlExistsAndReturnUrlSchemeDoesNotMatchAndShouldNotNotifyCancellation_doesNothing() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         Uri deepLinkUrl = Uri.parse("another-return-url-scheme://test");
