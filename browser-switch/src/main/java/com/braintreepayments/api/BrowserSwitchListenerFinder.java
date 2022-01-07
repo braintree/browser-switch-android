@@ -7,6 +7,11 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Locate all {@link BrowserSwitchListener} references associated with an activity. A listener can
+ * be the root activity, along with any fragments attached to that activity, and any child,
+ * grand-child, great-grand-child etc. fragments that can be traced back to the root activity.
+ */
 class BrowserSwitchListenerFinder {
 
     List<BrowserSwitchListener> findActiveListeners(FragmentActivity activity) {
