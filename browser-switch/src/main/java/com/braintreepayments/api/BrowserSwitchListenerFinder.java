@@ -10,18 +10,18 @@ import java.util.List;
 class BrowserSwitchListenerFinder {
 
     List<BrowserSwitchListener> findActiveListeners(FragmentActivity activity) {
-        List<BrowserSwitchListener> result = new ArrayList<>();
+        List<BrowserSwitchListener> listeners = new ArrayList<>();
         if (activity instanceof BrowserSwitchListener) {
-            result.add((BrowserSwitchListener) activity);
+            listeners.add((BrowserSwitchListener) activity);
         }
 
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
         for (Fragment fragment : fragments) {
             if (fragment instanceof BrowserSwitchListener) {
-                result.add((BrowserSwitchListener) fragment);
+                listeners.add((BrowserSwitchListener) fragment);
             }
         }
-        return result;
+        return listeners;
     }
 }
