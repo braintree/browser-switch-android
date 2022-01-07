@@ -10,6 +10,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 
+/**
+ * Class that manages the logic for browser switching.
+ */
 public class BrowserSwitchLauncher {
 
     private final BrowserSwitchInspector browserSwitchInspector;
