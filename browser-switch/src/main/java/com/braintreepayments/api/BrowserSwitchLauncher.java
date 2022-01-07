@@ -34,6 +34,13 @@ public class BrowserSwitchLauncher {
         this.customTabsInternalClient = customTabsInternalClient;
     }
 
+   /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     */
     public void launch(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException  {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
 
