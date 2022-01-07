@@ -4,7 +4,7 @@
 
 * Create `BrowserSwitchLauncher`
 * Create `BrowserSwitchObserver`
-* Deprecate `BrowserSwitchClient` in favor of `BrowserSwitchLauncher`
+* Deprecate `BrowserSwitchClient` in favor of `BrowserSwitchLauncher` and `BrowserSwitchObserver`
 
 ## 2.1.1
 
