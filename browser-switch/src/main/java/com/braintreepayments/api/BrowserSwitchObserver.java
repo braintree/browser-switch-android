@@ -12,6 +12,10 @@ import androidx.fragment.app.FragmentManager;
 
 import java.util.List;
 
+/**
+ * Class that is used to deliver a browser switch result to a deep link destination FragmentActivity
+ * and any attached Fragments that implement {@link BrowserSwitchListener}.
+ */
 public class BrowserSwitchObserver {
 
     private final BrowserSwitchPersistentStore persistentStore;
@@ -27,6 +31,10 @@ public class BrowserSwitchObserver {
         this.listenerFinder = listenerFinder;
     }
 
+    /**
+     * Call this method in FragmentActivity#onResume to notify all listeners of a browser switch result.
+     * @param activity Deep link destination activity
+     */
     public void onActivityResumed(FragmentActivity activity) {
         BrowserSwitchResult result = getResult(activity);
         if (result != null) {
