@@ -101,6 +101,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener, Brow
         mMetadataTextView.setText("");
     }
 
+    @Override
     public void onBrowserSwitchResult(BrowserSwitchResult result) {
         String resultText = null;
         String selectedColorText = "";
