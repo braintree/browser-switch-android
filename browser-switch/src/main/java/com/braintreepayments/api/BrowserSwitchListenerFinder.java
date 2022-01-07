@@ -21,6 +21,14 @@ class BrowserSwitchListenerFinder {
             if (fragment instanceof BrowserSwitchListener) {
                 listeners.add((BrowserSwitchListener) fragment);
             }
+
+            FragmentManager childFragmentManager = fragment.getChildFragmentManager();
+            List<Fragment> childFragments = childFragmentManager.getFragments();
+            for (Fragment childFragment : childFragments) {
+                if (childFragment instanceof BrowserSwitchListener) {
+                    listeners.add((BrowserSwitchListener) childFragment);
+                }
+            }
         }
         return listeners;
     }
