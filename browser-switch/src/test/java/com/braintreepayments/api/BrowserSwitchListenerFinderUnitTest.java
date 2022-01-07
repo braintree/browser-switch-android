@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class BrowserSwitchListenerFinderUnitTest {
@@ -30,8 +29,8 @@ public class BrowserSwitchListenerFinderUnitTest {
         }
     }
 
-    private FragmentActivity plainActivity;
     private ListenerActivity listenerActivity;
+    private FragmentActivity nonListenerActivity;
 
     private FragmentManager fragmentManager;
 
@@ -42,20 +41,20 @@ public class BrowserSwitchListenerFinderUnitTest {
     public void beforeEach() {
         fragmentManager = mock(FragmentManager.class);
 
-        plainActivity = mock(FragmentActivity.class);
+        nonListenerActivity = mock(FragmentActivity.class);
         listenerActivity = mock(ListenerActivity.class);
 
         fragment = mock(Fragment.class);
         listenerFragment = mock(ListenerFragment.class);
 
-        when(plainActivity.getSupportFragmentManager()).thenReturn(fragmentManager);
+        when(nonListenerActivity.getSupportFragmentManager()).thenReturn(fragmentManager);
         when(listenerActivity.getSupportFragmentManager()).thenReturn(fragmentManager);
     }
 
     @Test
     public void findActiveListeners_whenActivityIsNotAListener_excludesActivityInTheResult() {
         BrowserSwitchListenerFinder sut = new BrowserSwitchListenerFinder();
-        List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(plainActivity);
+        List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(nonListenerActivity);
 
         assertEquals(0, activeListeners.size());
     }
@@ -74,7 +73,7 @@ public class BrowserSwitchListenerFinderUnitTest {
         when(fragmentManager.getFragments()).thenReturn(Arrays.asList(fragment, listenerFragment));
 
         BrowserSwitchListenerFinder sut = new BrowserSwitchListenerFinder();
-        List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(plainActivity);
+        List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(nonListenerActivity);
 
         assertEquals(1, activeListeners.size());
         assertSame(activeListeners.get(0), listenerFragment);
