@@ -100,7 +100,9 @@ public class BrowserSwitchListenerFinderUnitTest {
     @Test
     public void findActiveListeners_whenNonListenerActivityHasGrandchildListenerFragments_includesFragmentsInResult() {
         when(fragmentManager.getFragments()).thenReturn(Collections.singletonList(fragment));
-        when(childFragmentManager.getFragments()).thenReturn(Collections.singletonList(listenerFragment));
+        when(childFragmentManager.getFragments())
+                .thenReturn(Collections.singletonList(listenerFragment))
+                .thenReturn(Collections.emptyList());
 
         BrowserSwitchListenerFinder sut = new BrowserSwitchListenerFinder();
         List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(activity);
@@ -112,7 +114,9 @@ public class BrowserSwitchListenerFinderUnitTest {
     @Test
     public void findActiveListeners_whenListenerActivityHasGrandchildListenerFragments_includesFragmentsInResult() {
         when(fragmentManager.getFragments()).thenReturn(Collections.singletonList(fragment));
-        when(childFragmentManager.getFragments()).thenReturn(Collections.singletonList(listenerFragment));
+        when(childFragmentManager.getFragments())
+                .thenReturn(Collections.singletonList(listenerFragment))
+                .thenReturn(Collections.emptyList());
 
         BrowserSwitchListenerFinder sut = new BrowserSwitchListenerFinder();
         List<BrowserSwitchListener> activeListeners = sut.findActiveListeners(listenerActivity);

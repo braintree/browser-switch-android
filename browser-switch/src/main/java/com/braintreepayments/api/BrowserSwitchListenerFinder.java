@@ -22,13 +22,24 @@ class BrowserSwitchListenerFinder {
                 listeners.add((BrowserSwitchListener) fragment);
             }
 
-            FragmentManager childFragmentManager = fragment.getChildFragmentManager();
-            List<Fragment> childFragments = childFragmentManager.getFragments();
-            for (Fragment childFragment : childFragments) {
-                if (childFragment instanceof BrowserSwitchListener) {
-                    listeners.add((BrowserSwitchListener) childFragment);
-                }
+            listeners.addAll(findChildFragmentActiveListeners(fragment));
+        }
+        return listeners;
+    }
+
+    private List<BrowserSwitchListener> findChildFragmentActiveListeners(Fragment fragment) {
+        List<BrowserSwitchListener> listeners = new ArrayList<>();
+
+        FragmentManager childFragmentManager = fragment.getChildFragmentManager();
+        List<Fragment> childFragments = childFragmentManager.getFragments();
+        for (Fragment childFragment : childFragments) {
+            if (childFragment instanceof BrowserSwitchListener) {
+                listeners.add((BrowserSwitchListener) childFragment);
             }
+
+            // recursively find additional child fragments until no descendant listener
+            // fragments exist
+            listeners.addAll(findChildFragmentActiveListeners(childFragment));
         }
         return listeners;
     }
