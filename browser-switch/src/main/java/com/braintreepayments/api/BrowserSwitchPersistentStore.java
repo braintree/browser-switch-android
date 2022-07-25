@@ -16,6 +16,9 @@ class BrowserSwitchPersistentStore {
     @VisibleForTesting
     static final String REQUEST_KEY = "browserSwitch.request";
 
+    @VisibleForTesting
+    static final String RESULT_KEY = "browserSwitch.result";
+
     private static final BrowserSwitchPersistentStore INSTANCE = new BrowserSwitchPersistentStore();
 
     static BrowserSwitchPersistentStore getInstance() {
@@ -48,7 +51,35 @@ class BrowserSwitchPersistentStore {
         }
     }
 
+    void putActiveResult(BrowserSwitchResult result, Context context) {
+        try {
+            PersistentStore.put(RESULT_KEY, result.toJson(), context);
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+            Log.d(TAG, Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    BrowserSwitchResult getActiveResult(Context context) {
+        BrowserSwitchResult request = null;
+
+        String activeResultJSON = PersistentStore.get(RESULT_KEY, context);
+        if (activeResultJSON != null) {
+            try {
+                request = BrowserSwitchResult.fromJson(activeResultJSON);
+            } catch (JSONException e) {
+                Log.d(TAG, e.getMessage());
+                Log.d(TAG, Arrays.toString(e.getStackTrace()));
+            }
+        }
+        return request;
+    }
+
     void clearActiveRequest(Context context) {
         PersistentStore.remove(REQUEST_KEY, context);
+    }
+
+    public void clearActiveResult(Context context) {
+        PersistentStore.remove(RESULT_KEY, context);
     }
 }
