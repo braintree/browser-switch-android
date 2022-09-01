@@ -136,6 +136,12 @@ public class BrowserSwitchClient {
         return result;
     }
 
+    public BrowserSwitchResult getResultFromCache(Context context) {
+        Context appContext = context.getApplicationContext();
+        BrowserSwitchResult result = persistentStore.getActiveResult(appContext);
+        return result;
+    }
+
     public BrowserSwitchResult deliverResultFromCache(Context context) {
         Context appContext = context.getApplicationContext();
         BrowserSwitchResult result = persistentStore.getActiveResult(appContext);
