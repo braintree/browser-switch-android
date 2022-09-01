@@ -66,6 +66,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
+                .launchAsNewTask(true)
                 .returnUrlScheme(getReturnUrlScheme());
 
         try {

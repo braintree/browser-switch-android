@@ -20,6 +20,8 @@ public class BrowserSwitchOptions {
     private Uri url;
     private String returnUrlScheme;
 
+    private boolean launchAsNewTask;
+
     /**
      * Set browser switch metadata.
      *
@@ -95,5 +97,14 @@ public class BrowserSwitchOptions {
     @Nullable
     public String getReturnUrlScheme() {
         return returnUrlScheme;
+    }
+
+    public boolean isLaunchAsNewTask() {
+        return launchAsNewTask;
+    }
+
+    public BrowserSwitchOptions launchAsNewTask(boolean launchAsNewTask) {
+        this.launchAsNewTask = launchAsNewTask;
+        return this;
     }
 }

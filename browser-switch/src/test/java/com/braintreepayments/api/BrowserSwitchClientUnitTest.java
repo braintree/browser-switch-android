@@ -14,7 +14,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.shadows.ShadowActivity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -77,7 +76,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         sut.start(activity, options);
 
-        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl);
+        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl, false);
         verify(activity, never()).startActivity(any(Intent.class));
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
@@ -107,7 +106,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         sut.start(activity, options);
 
-        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl);
+        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl, false);
 
         ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
         verify(activity).startActivity(intentCaptor.capture());
