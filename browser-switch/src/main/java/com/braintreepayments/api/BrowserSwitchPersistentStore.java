@@ -79,7 +79,7 @@ class BrowserSwitchPersistentStore {
         PersistentStore.remove(REQUEST_KEY, context);
     }
 
-    public void clearActiveResult(Context context) {
+    void clearActiveResult(Context context) {
         PersistentStore.remove(RESULT_KEY, context);
     }
 }
