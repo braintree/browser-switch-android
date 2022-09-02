@@ -124,6 +124,7 @@ public class BrowserSwitchClient {
                 case BrowserSwitchStatus.SUCCESS:
                     // ensure that success result is delivered exactly once
                     persistentStore.clearActiveRequest(appContext);
+                    persistentStore.clearActiveResult(appContext);
                     break;
                 case BrowserSwitchStatus.CANCELED:
                     // ensure that cancellation result is delivered exactly once, but allow for
@@ -148,7 +149,7 @@ public class BrowserSwitchClient {
      *
      * @param activity the activity that received the deep link back into the app
      */
-    BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
+    public BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
 
@@ -163,10 +164,34 @@ public class BrowserSwitchClient {
         Uri deepLinkUrl = intent.getData();
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-        } else if (request.getShouldNotifyCancellation()) {
+        }
+
+        // check the cache for a "captured" result that has not yet been delivered
+        if (result == null) {
+            result = persistentStore.getActiveResult(appContext);
+        }
+
+        if (result == null && request.getShouldNotifyCancellation()) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         }
 
         return result;
+    }
+
+    /**
+     * Capture a browser switch result so that a different activity can consume the result in
+     * the near future.
+     *
+     * {@link BrowserSwitchClient#deliverResult(FragmentActivity)} will return a "cached" browser
+     * switch result as a fallback when the calling activity has not intent data to parse.
+     *
+     * @param activity
+     */
+    public void captureResult(@NonNull FragmentActivity activity) {
+        BrowserSwitchResult result = getResult(activity);
+        if (result != null) {
+            Context appContext = activity.getApplicationContext();
+            persistentStore.putActiveResult(result, appContext);
+        }
     }
 }
