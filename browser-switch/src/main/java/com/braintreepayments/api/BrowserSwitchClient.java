@@ -169,4 +169,24 @@ public class BrowserSwitchClient {
 
         return result;
     }
+
+    BrowserSwitchResult getResultFromCache(@NonNull Context context) {
+        return persistentStore.getActiveResult(context.getApplicationContext());
+    }
+
+    public BrowserSwitchResult deliverResultFromCache(@NonNull Context context) {
+        Context applicationContext = context.getApplicationContext();
+        BrowserSwitchResult result = getResultFromCache(applicationContext);
+        if (result != null) {
+            persistentStore.clearActiveResult(applicationContext);
+        }
+        return result;
+    }
+
+    public void captureResult(@NonNull FragmentActivity activity) {
+        BrowserSwitchResult result = getResult(activity);
+        if (result != null) {
+            persistentStore.putActiveResult(result, activity.getApplicationContext());
+        }
+    }
 }
