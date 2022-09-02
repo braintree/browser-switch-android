@@ -343,4 +343,32 @@ public class BrowserSwitchClientUnitTest {
         assertNull(result);
         verify(persistentStore, never()).clearActiveRequest(activity);
     }
+
+    @Test
+    public void captureResult_whenDeepLinkUrlExistsAndReturnUrlSchemeMatches_storesSuccessResultInPersistentStore() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        Uri deepLinkUrl = Uri.parse("return-url-scheme://test");
+        Intent deepLinkIntent = new Intent().setData(deepLinkUrl);
+        when(activity.getIntent()).thenReturn(deepLinkIntent);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        ArgumentCaptor<BrowserSwitchResult> captor =
+            ArgumentCaptor.forClass(BrowserSwitchResult.class);
+        verify(persistentStore).putActiveResult(captor.capture(), same(applicationContext));
+
+        BrowserSwitchResult result = captor.getValue();
+        assertNotNull(result);
+        assertEquals(123, result.getRequestCode());
+        assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
+        assertEquals(BrowserSwitchStatus.SUCCESS, result.getStatus());
+        assertSame(requestMetadata, result.getRequestMetadata());
+        assertSame(deepLinkUrl, result.getDeepLinkUrl());
+    }
 }

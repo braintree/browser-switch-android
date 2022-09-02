@@ -31,7 +31,7 @@ public class ChromeCustomTabsInternalClientUnitTest {
 
         Uri url = mock(Uri.class);
         Context context = mock(Context.class);
-        sut.launchUrl(context, url, launchAsNewTask);
+        sut.launchUrl(context, url, false);
 
         verify(customTabsIntent).launchUrl(context, url);
     }
