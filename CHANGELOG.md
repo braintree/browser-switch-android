@@ -3,7 +3,7 @@
 ## unreleased
 
 * Add BrowserSwitchClient#captureResult() method to capture a browser switch result into persistent storage
-* Add BrowserSwitchClient#deliverResultFromCache() method to deliver a previously capture browser switch result 
+* Add BrowserSwitchClient#deliverResultFromCache() method to deliver a previously captured browser switch result 
 
 ## 2.1.1
 
