@@ -184,8 +184,19 @@ public class BrowserSwitchClient {
     }
 
     public void captureResult(@NonNull FragmentActivity activity) {
-        BrowserSwitchResult result = getResult(activity);
-        if (result != null) {
+        Intent intent = activity.getIntent();
+        Context appContext = activity.getApplicationContext();
+
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
+        if (request == null || intent == null) {
+            // no pending browser switch request found
+            return;
+        }
+
+        Uri deepLinkUrl = intent.getData();
+        if (deepLinkUrl != null) {
+            BrowserSwitchResult result =
+                new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
             persistentStore.putActiveResult(result, activity.getApplicationContext());
         }
     }
