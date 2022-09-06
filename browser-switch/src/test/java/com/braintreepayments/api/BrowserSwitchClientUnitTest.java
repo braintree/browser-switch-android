@@ -371,4 +371,46 @@ public class BrowserSwitchClientUnitTest {
         assertSame(requestMetadata, result.getRequestMetadata());
         assertSame(deepLinkUrl, result.getDeepLinkUrl());
     }
+
+    @Test
+    public void captureResult_whenRequestIsNull_doesNothing() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
+    }
+
+    @Test
+    public void captureResult_whenIntentIsNull_doesNothing() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getIntent()).thenReturn(null);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
+    }
+
+    @Test
+    public void deliverResultFromCache_forwardsResultFromBrowserSwitchResultPersistentStorageAndClearsActiveResult() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        BrowserSwitchResult cachedResult = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, Uri.parse("example://success/url"));
+        when(persistentStore.getActiveResult(same(applicationContext))).thenReturn(cachedResult);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchResult actualResult = sut.deliverResultFromCache(activity);
+
+        assertSame(cachedResult, actualResult);
+        verify(persistentStore).clearActiveResult(applicationContext);
+    }
 }
