@@ -182,6 +182,13 @@ public class BrowserSwitchClient {
         return result;
     }
 
+    /**
+     * Capture a pending browser switch result for an Android activity.
+     * <p>
+     * To obtain the result in a separate activity, call {@link #deliverResultFromCache(Context)}.
+     *
+     * @param activity the activity that received the deep link back into the app
+     */
     public void captureResult(@NonNull FragmentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
