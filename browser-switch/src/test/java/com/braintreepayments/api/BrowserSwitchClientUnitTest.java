@@ -1,5 +1,20 @@
 package com.braintreepayments.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,21 +28,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.robolectric.android.controller.ActivityController;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchClientUnitTest {
@@ -43,6 +46,7 @@ public class BrowserSwitchClientUnitTest {
     private Uri browserSwitchDestinationUrl;
     private Context applicationContext;
 
+    private ActivityController<FragmentActivity> activityController;
     private FragmentActivity activity;
 
     @Before
@@ -54,10 +58,10 @@ public class BrowserSwitchClientUnitTest {
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
 
-        activity = mock(FragmentActivity.class);
-        applicationContext = mock(Context.class);
+        activityController = Robolectric.buildActivity(FragmentActivity.class).setup();
+        activity = spy(activityController.get());
 
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        applicationContext = activity.getApplicationContext();
     }
 
     @Test

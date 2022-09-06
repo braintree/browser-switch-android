@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
 
+import com.braintreepayments.api.browserswitch.R;
+
 import org.json.JSONObject;
 
 /**
@@ -74,22 +76,14 @@ public class BrowserSwitchClient {
         String errorMessage = null;
 
         if (!isValidRequestCode(requestCode)) {
-            errorMessage = "Request code cannot be Integer.MIN_VALUE";
+            errorMessage = activity.getString(R.string.error_request_code_invalid);
         } else if (returnUrlScheme == null) {
-            errorMessage = "A returnUrlScheme is required.";
+            errorMessage = activity.getString(R.string.error_return_url_required);
         } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
-            errorMessage =
-                    "The return url scheme was not set up, incorrectly set up, " +
-                            "or more than one Activity on this device defines the same url " +
-                            "scheme in it's Android Manifest. See " +
-                            "https://github.com/braintree/browser-switch-android for more " +
-                            "information on setting up a return url scheme.";
+            errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         } else if (!browserSwitchInspector.deviceHasBrowser(appContext)) {
-            StringBuilder messageBuilder = new StringBuilder("No installed activities can open this URL");
-            if (browserSwitchUrl != null) {
-                messageBuilder.append(String.format(": %s", browserSwitchUrl.toString()));
-            }
-            errorMessage = messageBuilder.toString();
+            String urlString = (browserSwitchUrl != null) ? browserSwitchUrl.toString() : "";
+            errorMessage = activity.getString(R.string.error_browser_not_found, urlString);
         }
 
         if (errorMessage != null) {
