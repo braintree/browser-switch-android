@@ -403,7 +403,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void deliverResultFromCache_forwardsResultFromBrowserSwitchResultPersistentStorageAndClearsActiveResult() {
+    public void deliverResultFromCache_forwardsCachedResultFromBrowserSwitchPersistentStorageAndRemovesAllItemsFromPersistentStorage() {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
 
         JSONObject requestMetadata = new JSONObject();
@@ -415,6 +415,6 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchResult actualResult = sut.deliverResultFromCache(activity);
 
         assertSame(cachedResult, actualResult);
-        verify(persistentStore).clearActiveResult(applicationContext);
+        verify(persistentStore).removeAll(applicationContext);
     }
 }

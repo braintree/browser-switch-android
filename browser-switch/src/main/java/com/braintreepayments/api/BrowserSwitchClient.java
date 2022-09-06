@@ -164,11 +164,20 @@ public class BrowserSwitchClient {
         return result;
     }
 
+    /**
+     * Deliver a pending browser switch result that was previously captured by another Android activity.
+     * <p>
+     * Success results will be delivered only once. If there are no pending
+     * browser switch results in the cache, this method does nothing.
+     *
+     * @param context the context used to access the cache
+     * @return {@link BrowserSwitchResult}
+     */
     public BrowserSwitchResult deliverResultFromCache(@NonNull Context context) {
         Context applicationContext = context.getApplicationContext();
         BrowserSwitchResult result = persistentStore.getActiveResult(applicationContext);
         if (result != null) {
-            persistentStore.clearActiveResult(applicationContext);
+            persistentStore.removeAll(applicationContext);
         }
         return result;
     }
