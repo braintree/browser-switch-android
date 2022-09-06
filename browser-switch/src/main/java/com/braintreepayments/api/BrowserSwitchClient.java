@@ -183,7 +183,7 @@ public class BrowserSwitchClient {
     }
 
     /**
-     * Capture a pending browser switch result for an Android activity.
+     * Capture a pending browser switch result for an Android activity into a persistent storage cache.
      * <p>
      * To obtain the result in a separate activity, call {@link #deliverResultFromCache(Context)}.
      *
