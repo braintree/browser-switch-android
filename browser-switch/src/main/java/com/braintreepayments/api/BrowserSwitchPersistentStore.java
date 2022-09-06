@@ -81,5 +81,6 @@ class BrowserSwitchPersistentStore {
 
     void removeAll(Context context) {
         PersistentStore.remove(RESULT_KEY, context);
+        PersistentStore.remove(REQUEST_KEY, context);
     }
 }

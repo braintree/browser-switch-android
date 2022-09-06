@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 class BrowserSwitchRequest {
 
+
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
