@@ -35,6 +35,7 @@ class BrowserSwitchPersistentStore {
             try {
                 request = BrowserSwitchRequest.fromJson(activeRequestJson);
             } catch (JSONException e) {
+                // NEXT_MAJOR_VERSION: Add explicit error handling instead of ignoring exception
                 Log.d(TAG, e.getMessage());
                 Log.d(TAG, Arrays.toString(e.getStackTrace()));
             }
@@ -46,6 +47,7 @@ class BrowserSwitchPersistentStore {
         try {
             PersistentStore.put(REQUEST_KEY, request.toJson(), context);
         } catch (JSONException e) {
+            // NEXT_MAJOR_VERSION: Add explicit error handling instead of ignoring exception
             Log.d(TAG, e.getMessage());
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
@@ -55,6 +57,7 @@ class BrowserSwitchPersistentStore {
         try {
             PersistentStore.put(RESULT_KEY, result.toJson(), context);
         } catch (JSONException e) {
+            // NEXT_MAJOR_VERSION: Add explicit error handling instead of ignoring exception
             Log.d(TAG, e.getMessage());
             Log.d(TAG, Arrays.toString(e.getStackTrace()));
         }
@@ -68,6 +71,7 @@ class BrowserSwitchPersistentStore {
             try {
                 request = BrowserSwitchResult.fromJson(activeResultJSON);
             } catch (JSONException e) {
+                // NEXT_MAJOR_VERSION: Add explicit error handling instead of ignoring exception
                 Log.d(TAG, e.getMessage());
                 Log.d(TAG, Arrays.toString(e.getStackTrace()));
             }
