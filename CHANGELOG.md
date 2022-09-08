@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add BrowserSwitchClient#getResult() method to peek at a pending browser switch result before it is delivered
+* Add BrowserSwitchClient#getResultFromCache() method to peek at a cached browser switch result before it is delivered
+
 ## 2.2.0
 
 * Add BrowserSwitchClient#captureResult() method to capture a browser switch result into persistent storage
