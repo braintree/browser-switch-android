@@ -1,5 +1,20 @@
 package com.braintreepayments.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,22 +28,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.shadows.ShadowActivity;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.robolectric.android.controller.ActivityController;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchClientUnitTest {
@@ -44,6 +46,7 @@ public class BrowserSwitchClientUnitTest {
     private Uri browserSwitchDestinationUrl;
     private Context applicationContext;
 
+    private ActivityController<FragmentActivity> activityController;
     private FragmentActivity activity;
 
     @Before
@@ -55,10 +58,10 @@ public class BrowserSwitchClientUnitTest {
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
 
-        activity = mock(FragmentActivity.class);
-        applicationContext = mock(Context.class);
+        activityController = Robolectric.buildActivity(FragmentActivity.class).setup();
+        activity = spy(activityController.get());
 
-        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        applicationContext = activity.getApplicationContext();
     }
 
     @Test
@@ -77,7 +80,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         sut.start(activity, options);
 
-        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl);
+        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl, false);
         verify(activity, never()).startActivity(any(Intent.class));
 
         ArgumentCaptor<BrowserSwitchRequest> captor =
@@ -107,7 +110,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         sut.start(activity, options);
 
-        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl);
+        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl, false);
 
         ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
         verify(activity).startActivity(intentCaptor.capture());
@@ -343,5 +346,75 @@ public class BrowserSwitchClientUnitTest {
 
         assertNull(result);
         verify(persistentStore, never()).clearActiveRequest(activity);
+    }
+
+    @Test
+    public void captureResult_whenDeepLinkUrlExistsAndReturnUrlSchemeMatches_storesSuccessResultInPersistentStore() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        Uri deepLinkUrl = Uri.parse("return-url-scheme://test");
+        Intent deepLinkIntent = new Intent().setData(deepLinkUrl);
+        when(activity.getIntent()).thenReturn(deepLinkIntent);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        ArgumentCaptor<BrowserSwitchResult> captor =
+            ArgumentCaptor.forClass(BrowserSwitchResult.class);
+        verify(persistentStore).putActiveResult(captor.capture(), same(applicationContext));
+
+        BrowserSwitchResult result = captor.getValue();
+        assertNotNull(result);
+        assertEquals(123, result.getRequestCode());
+        assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
+        assertEquals(BrowserSwitchStatus.SUCCESS, result.getStatus());
+        assertSame(requestMetadata, result.getRequestMetadata());
+        assertSame(deepLinkUrl, result.getDeepLinkUrl());
+    }
+
+    @Test
+    public void captureResult_whenRequestIsNull_doesNothing() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
+    }
+
+    @Test
+    public void captureResult_whenIntentIsNull_doesNothing() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+        when(activity.getIntent()).thenReturn(null);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        sut.captureResult(activity);
+
+        verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
+    }
+
+    @Test
+    public void deliverResultFromCache_forwardsCachedResultFromBrowserSwitchPersistentStorageAndRemovesAllItemsFromPersistentStorage() {
+        when(activity.getApplicationContext()).thenReturn(applicationContext);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
+        BrowserSwitchResult cachedResult = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, Uri.parse("example://success/url"));
+        when(persistentStore.getActiveResult(same(applicationContext))).thenReturn(cachedResult);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchResult actualResult = sut.deliverResultFromCache(activity);
+
+        assertSame(cachedResult, actualResult);
+        verify(persistentStore).removeAll(applicationContext);
     }
 }

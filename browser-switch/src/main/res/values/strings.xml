@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_request_code_invalid">Request code cannot be Integer.MIN_VALUE</string>
+    <string name="error_return_url_required">A returnUrlScheme is required.</string>
+    <string name="error_browser_not_found">No installed activities can open this URL: %1$s</string>
+    <string name="error_device_not_configured_for_deep_link">The return url scheme was not set up, incorrectly set up, or more than one Activity on this device defines the same url scheme in it\'s Android Manifest. See https://github.com/braintree/browser-switch-android for more information on setting up a return url scheme.</string>
+</resources>

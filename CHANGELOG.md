@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add BrowserSwitchClient#captureResult() method to capture a browser switch result into persistent storage
+* Add BrowserSwitchClient#deliverResultFromCache() method to deliver a previously captured browser switch result 
+
 ## 2.1.1
 
 * Fallback to browser when Chrome Custom Tabs is unavailable (thanks! @calvarez-ov)

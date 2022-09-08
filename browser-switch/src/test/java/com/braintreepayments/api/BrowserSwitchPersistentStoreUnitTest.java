@@ -1,6 +1,7 @@
 package com.braintreepayments.api;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -97,5 +98,22 @@ public class BrowserSwitchPersistentStoreUnitTest {
 
         verifyStatic(PersistentStore.class);
         PersistentStore.remove(REQUEST_KEY, context);
+    }
+
+    @Test
+    public void removeAll_removesBothRequestAndResponseItemsFromPersistentStore() throws JSONException {
+        String requestJson = "{\"request\":\"json\"}";
+        when(browserSwitchRequest.toJson()).thenReturn(requestJson);
+
+        Uri deepLinkUrl = mock(Uri.class);
+        BrowserSwitchResult result = new BrowserSwitchResult(123, browserSwitchRequest, deepLinkUrl);
+
+        BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
+        sut.putActiveRequest(browserSwitchRequest, context);
+        sut.putActiveResult(result, context);
+        sut.removeAll(context);
+
+        assertNull(sut.getActiveRequest(context));
+        assertNull(sut.getActiveResult(context));
     }
 }

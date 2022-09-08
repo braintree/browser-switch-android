@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -11,9 +12,21 @@ import org.json.JSONObject;
  */
 public class BrowserSwitchResult {
 
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_DEEP_LINK_URL = "deepLinkUrl";
+    private static final String KEY_BROWSER_SWITCH_REQUEST = "browserSwitchRequest";
+
     private final int status;
     private final Uri deepLinkUrl;
     private final BrowserSwitchRequest request;
+
+    static BrowserSwitchResult fromJson(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        int status = jsonObject.getInt(KEY_STATUS);
+        String deepLinkUrl = jsonObject.getString(KEY_DEEP_LINK_URL);
+        String browserSwitchRequest = jsonObject.getString(KEY_BROWSER_SWITCH_REQUEST);
+        return new BrowserSwitchResult(status, BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
+    }
 
     BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request) {
         this(status, request, null);
@@ -62,5 +75,13 @@ public class BrowserSwitchResult {
     @Nullable
     public Uri getDeepLinkUrl() {
         return deepLinkUrl;
+    }
+
+    public String toJson() throws JSONException {
+        JSONObject result = new JSONObject();
+        result.put(KEY_STATUS, status);
+        result.put(KEY_DEEP_LINK_URL, deepLinkUrl.toString());
+        result.put(KEY_BROWSER_SWITCH_REQUEST, request.toJson());
+        return result.toString();
     }
 }
