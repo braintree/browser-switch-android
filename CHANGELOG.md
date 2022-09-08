@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.2.0
 
 * Add BrowserSwitchClient#captureResult() method to capture a browser switch result into persistent storage
 * Add BrowserSwitchClient#deliverResultFromCache() method to deliver a previously captured browser switch result 
