@@ -240,6 +240,7 @@ public class BrowserSwitchClientUnitTest {
         assertSame(deepLinkUrl, result.getDeepLinkUrl());
 
         verify(persistentStore).clearActiveRequest(applicationContext);
+        verify(activity).setIntent(null);
     }
 
     @Test

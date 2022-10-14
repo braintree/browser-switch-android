@@ -118,6 +118,10 @@ public class BrowserSwitchClient {
                 case BrowserSwitchStatus.SUCCESS:
                     // ensure that success result is delivered exactly once
                     persistentStore.clearActiveRequest(appContext);
+
+                    // clear activity intent to prevent the browser switch result
+                    // from being parsed again
+                    activity.setIntent(null);
                     break;
                 case BrowserSwitchStatus.CANCELED:
                     // ensure that cancellation result is delivered exactly once, but allow for
