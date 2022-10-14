@@ -2,7 +2,7 @@
 
 ## unreleased
 
-* Fix issue that caused browser switch results to be parsed multiple times
+* Fix issue that causes successful deep links to be parsed multiple times
 
 ## 2.3.0
 
