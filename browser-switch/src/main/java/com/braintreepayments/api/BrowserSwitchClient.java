@@ -119,8 +119,7 @@ public class BrowserSwitchClient {
                     // ensure that success result is delivered exactly once
                     persistentStore.clearActiveRequest(appContext);
 
-                    // clear activity intent to prevent the browser switch result
-                    // from being parsed again
+                    // clear activity intent to prevent deep links from being parsed multiple times
                     activity.setIntent(null);
                     break;
                 case BrowserSwitchStatus.CANCELED:
