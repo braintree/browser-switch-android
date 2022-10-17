@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Fix issue that causes successful deep links to be parsed multiple times
+
 ## 2.3.0
 
 * Add BrowserSwitchClient#getResult() method to peek at a pending browser switch result before it is delivered
