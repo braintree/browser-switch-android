@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.3.1
 
 * Fix issue that causes successful deep links to be parsed multiple times
 
