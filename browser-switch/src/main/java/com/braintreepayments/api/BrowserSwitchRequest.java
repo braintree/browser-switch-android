@@ -7,31 +7,41 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class BrowserSwitchRequest {
+import java.util.UUID;
 
+class BrowserSwitchRequest {
 
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
+
     private final String returnUrlScheme;
-    private boolean shouldNotifyCancellation;
+    private final String pendingId;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
         String returnUrlScheme = jsonObject.getString("returnUrlScheme");
+        String pendingId = jsonObject.getString("pendingId");
         JSONObject metadata = jsonObject.optJSONObject("metadata");
-        boolean shouldNotify = jsonObject.optBoolean("shouldNotify", true);
-        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, returnUrlScheme, shouldNotify);
+        return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, returnUrlScheme, pendingId);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, boolean shouldNotifyCancellation) {
+    static String createUUID() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme) {
+        this(requestCode, url, metadata, returnUrlScheme, createUUID());
+    }
+
+    private BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, String pendingId) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
         this.returnUrlScheme = returnUrlScheme;
-        this.shouldNotifyCancellation = shouldNotifyCancellation;
+        this.pendingId = pendingId;
     }
 
     Uri getUrl() {
@@ -46,20 +56,16 @@ class BrowserSwitchRequest {
         return metadata;
     }
 
-    boolean getShouldNotifyCancellation() {
-        return shouldNotifyCancellation;
-    }
-
-    void setShouldNotifyCancellation(boolean shouldNotifyCancellation) {
-        this.shouldNotifyCancellation = shouldNotifyCancellation;
+    public String getReturnUrlScheme() {
+        return returnUrlScheme;
     }
 
     String toJson() throws JSONException {
         JSONObject result = new JSONObject();
         result.put("requestCode", requestCode);
         result.put("url", url.toString());
+        result.put("pendingId", pendingId);
         result.put("returnUrlScheme", returnUrlScheme);
-        result.put("shouldNotify", shouldNotifyCancellation);
         if (metadata != null) {
             result.put("metadata", metadata);
         }
@@ -68,5 +74,9 @@ class BrowserSwitchRequest {
 
     boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
         return url.getScheme().equals(returnUrlScheme);
+    }
+
+    public String getPendingId() {
+        return pendingId;
     }
 }

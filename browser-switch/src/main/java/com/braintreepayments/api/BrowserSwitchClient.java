@@ -39,11 +39,11 @@ public class BrowserSwitchClient {
     /**
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with a given set of {@link BrowserSwitchOptions} from an Android activity.
-     *
-     * @param activity             the activity used to start browser switch
+     *  @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     * @return
      */
-    public void start(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    public String start(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
 
         Context appContext = activity.getApplicationContext();
@@ -54,7 +54,7 @@ public class BrowserSwitchClient {
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme);
         persistentStore.putActiveRequest(request, appContext);
 
         if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
@@ -64,6 +64,8 @@ public class BrowserSwitchClient {
             Intent launchUrlInBrowser = new Intent(Intent.ACTION_VIEW, browserSwitchUrl);
             activity.startActivity(launchUrlInBrowser);
         }
+
+        return request.getPendingId();
     }
 
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
@@ -122,13 +124,6 @@ public class BrowserSwitchClient {
                     // clear activity intent to prevent deep links from being parsed multiple times
                     activity.setIntent(null);
                     break;
-                case BrowserSwitchStatus.CANCELED:
-                    // ensure that cancellation result is delivered exactly once, but allow for
-                    // a cancellation result to remain in shared storage in case it
-                    // later becomes successful
-                    request.setShouldNotifyCancellation(false);
-                    persistentStore.putActiveRequest(request, activity);
-                    break;
             }
         }
         return result;
@@ -160,11 +155,64 @@ public class BrowserSwitchClient {
         Uri deepLinkUrl = intent.getData();
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-        } else if (request.getShouldNotifyCancellation()) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         }
 
         return result;
+    }
+
+    public BrowserSwitchResult onNewIntent(@NonNull Context context, @NonNull Intent newIntent) {
+        Context appContext = context.getApplicationContext();
+
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
+        if (request == null) {
+            // no pending browser switch request found
+            return null;
+        }
+
+        BrowserSwitchResult result = null;
+
+        Uri deepLinkUrl = newIntent.getData();
+        if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+
+            // ensure that success result is delivered exactly once
+            persistentStore.clearActiveRequest(appContext);
+        }
+
+        return result;
+    }
+
+    // TODO: consider scenario where browser switch is no longer in progress e.g. user closed the app,
+    // but still completed a purchase via PayPal etc. We should return to merchant app and allow them
+    // to store enough metadata to recover
+    public boolean isBrowserSwitchInProgress(Context context, String pendingId) {
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(context);
+        if (request != null) {
+            return (request.getPendingId().equalsIgnoreCase(pendingId));
+        }
+        return false;
+    }
+
+    public boolean isBrowserSwitchAbandoned(Context context, int requestCode) {
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(context);
+        if (request != null) {
+            return (request.getRequestCode() == requestCode);
+        }
+        return false;
+    }
+
+    public void continueBrowserSwitch(FragmentActivity activity, int requestCode) throws BrowserSwitchException {
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(activity);
+        if (request.getRequestCode() == requestCode) {
+            BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                    .requestCode(requestCode)
+                    .url(request.getUrl())
+                    .returnUrlScheme(request.getReturnUrlScheme())
+                    // TODO: preserve all browser switch options
+//                    .launchAsNewTask(braintreeClient.launchesBrowserSwitchAsNewTask())
+                    .metadata(request.getMetadata());
+            start(activity, browserSwitchOptions);
+        }
     }
 
     /**

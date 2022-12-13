@@ -61,6 +61,8 @@ public class BrowserSwitchResult {
         return request.getRequestCode();
     }
 
+    public String getRequestPendingId() { return request.getPendingId(); }
+
     /**
      * @return The target url used to initiate the browser switch
      */
