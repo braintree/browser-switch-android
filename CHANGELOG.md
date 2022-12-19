@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Check if a pending browser switch request exists before delivering a browser switch result instead of setting Activity intent to null (fix for #634)
+
 ## 2.3.1
 
 * Fix issue that causes successful deep links to be parsed multiple times
