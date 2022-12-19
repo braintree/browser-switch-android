@@ -107,28 +107,27 @@ public class BrowserSwitchClient {
      * @param activity the activity that received the deep link back into the app
      */
     public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
-        BrowserSwitchResult result = getResult(activity);
-        if (result != null) {
+        BrowserSwitchResult result = null;
+        Context appContext = activity.getApplicationContext();
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
 
-            Context appContext = activity.getApplicationContext();
-            BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-
-            @BrowserSwitchStatus int status = result.getStatus();
-            switch (status) {
-                case BrowserSwitchStatus.SUCCESS:
-                    // ensure that success result is delivered exactly once
-                    persistentStore.clearActiveRequest(appContext);
-
-                    // clear activity intent to prevent deep links from being parsed multiple times
-                    activity.setIntent(null);
-                    break;
-                case BrowserSwitchStatus.CANCELED:
-                    // ensure that cancellation result is delivered exactly once, but allow for
-                    // a cancellation result to remain in shared storage in case it
-                    // later becomes successful
-                    request.setShouldNotifyCancellation(false);
-                    persistentStore.putActiveRequest(request, activity);
-                    break;
+        if (request != null) {
+            result = getResult(activity);
+            if (result != null) {
+                @BrowserSwitchStatus int status = result.getStatus();
+                switch (status) {
+                    case BrowserSwitchStatus.SUCCESS:
+                        // ensure that success result is delivered exactly once
+                        persistentStore.clearActiveRequest(appContext);
+                        break;
+                    case BrowserSwitchStatus.CANCELED:
+                        // ensure that cancellation result is delivered exactly once, but allow for
+                        // a cancellation result to remain in shared storage in case it
+                        // later becomes successful
+                        request.setShouldNotifyCancellation(false);
+                        persistentStore.putActiveRequest(request, activity);
+                        break;
+                }
             }
         }
         return result;
@@ -216,7 +215,7 @@ public class BrowserSwitchClient {
         Uri deepLinkUrl = intent.getData();
         if (deepLinkUrl != null) {
             BrowserSwitchResult result =
-                new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                    new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
             persistentStore.putActiveResult(result, activity.getApplicationContext());
         }
     }
