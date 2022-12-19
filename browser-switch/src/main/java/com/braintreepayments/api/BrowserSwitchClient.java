@@ -57,7 +57,11 @@ public class BrowserSwitchClient {
                 new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
         persistentStore.putActiveRequest(request, appContext);
 
-        if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
+        if (activity.isFinishing()) {
+            String activityFinishingMessage =
+                "Unable to start browser switch while host Activity is finishing.";
+            throw new BrowserSwitchException(activityFinishingMessage);
+        } else if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
             customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
         } else {

@@ -65,6 +65,31 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
+    public void start_whenActivityIsFinishing_throwsException() {
+        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
+        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(true);
+
+        when(activity.isFinishing()).thenReturn(true);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+
+        try {
+            sut.start(activity, options);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals(e.getMessage(), "Unable to start browser switch while host Activity is finishing.");
+        }
+    }
+
+    @Test
     public void start_whenChromeCustomTabsSupported_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
         when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
