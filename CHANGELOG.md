@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.3.2
 
 * Check if a pending browser switch request exists before delivering a browser switch result instead of setting Activity intent to null
 * Fix issue that causes a browser switch to start while the host Activity is finishing
