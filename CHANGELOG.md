@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Remove Jetifier
+
 ## 2.3.2
 
 * Check if a pending browser switch request exists before delivering a browser switch result instead of setting Activity intent to null
