@@ -2,7 +2,7 @@
 
 ## unreleased
 
-* Remove Jetifier
+* Remove Jetifier now that AndroidX is fully supported
 
 ## 2.3.2
 
