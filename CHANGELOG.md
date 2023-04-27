@@ -3,6 +3,8 @@
 ## unreleased
 
 * Remove Jetifier now that AndroidX is fully supported
+* Upgrade `compileSdkVersion` and `targetSdkVersion` to API 33
+* Remove unnecessary assertion for a browser application on the device
 
 ## 2.3.2
 
