@@ -85,9 +85,6 @@ public class BrowserSwitchClient {
             errorMessage = activity.getString(R.string.error_return_url_required);
         } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
-        } else if (!browserSwitchInspector.deviceHasBrowser(appContext)) {
-            String urlString = (browserSwitchUrl != null) ? browserSwitchUrl.toString() : "";
-            errorMessage = activity.getString(R.string.error_browser_not_found, urlString);
         }
 
         if (errorMessage != null) {

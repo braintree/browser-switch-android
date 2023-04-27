@@ -201,27 +201,6 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenNoActivityFoundCanOpenURL_throwsError() {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(false);
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
-
-        JSONObject metadata = new JSONObject();
-        BrowserSwitchOptions options = new BrowserSwitchOptions()
-                .requestCode(123)
-                .url(browserSwitchDestinationUrl)
-                .returnUrlScheme("return-url-scheme")
-                .metadata(metadata);
-        try {
-            sut.start(activity, options);
-            fail("should fail");
-        } catch (BrowserSwitchException e) {
-            assertEquals("No installed activities can open this URL: https://example.com/browser_switch_destination", e.getMessage());
-        }
-    }
-
-    @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
         when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
