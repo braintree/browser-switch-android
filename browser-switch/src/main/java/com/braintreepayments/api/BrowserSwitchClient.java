@@ -73,7 +73,6 @@ public class BrowserSwitchClient {
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
-        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
