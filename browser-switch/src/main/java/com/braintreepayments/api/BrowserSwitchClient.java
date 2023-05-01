@@ -166,6 +166,40 @@ public class BrowserSwitchClient {
         return result;
     }
 
+    public BrowserSwitchResult parseResultOnlyOnce(@NonNull Context context, @NonNull Intent intent, int requestCode) {
+        BrowserSwitchResult result = null;
+        Context appContext = context.getApplicationContext();
+
+        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
+        if (request != null && request.getRequestCode() == requestCode) {
+            Uri deepLinkUrl = intent.getData();
+            if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+            } else if (request.getShouldNotifyCancellation()) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+            }
+        }
+
+        if (result != null) {
+            @BrowserSwitchStatus int status = result.getStatus();
+            switch (status) {
+                case BrowserSwitchStatus.SUCCESS:
+                    // ensure that success result is delivered exactly once
+                    persistentStore.clearActiveRequest(appContext);
+                    break;
+                case BrowserSwitchStatus.CANCELED:
+                    // ensure that cancellation result is delivered exactly once, but allow for
+                    // a cancellation result to remain in shared storage in case it
+                    // later becomes successful
+                    request.setShouldNotifyCancellation(false);
+                    persistentStore.putActiveRequest(request, context);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Peek at a pending browser switch result that was previously captured by another Android activity.
      * <p>
