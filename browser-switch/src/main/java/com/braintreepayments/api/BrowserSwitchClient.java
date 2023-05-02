@@ -178,15 +178,13 @@ public class BrowserSwitchClient {
     @Nullable
     public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
-        if (intent != null) {
+        if (intent != null && intent.getData() != null) {
             BrowserSwitchRequest request =
                     persistentStore.getActiveRequest(context.getApplicationContext());
             if (request != null && request.getRequestCode() == requestCode) {
                 Uri deepLinkUrl = intent.getData();
-                if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
                     result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-                } else if (request.getShouldNotifyCancellation()) {
-                    result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
                 }
             }
         }
