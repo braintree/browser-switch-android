@@ -482,4 +482,12 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, null);
         assertNull(browserSwitchResult);
     }
+
+    @Test
+    public void clearActiveRequests_forwardsInvocationToPersistantStore() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        sut.clearActiveRequests(applicationContext);
+        verify(persistentStore).clearActiveRequest(applicationContext);
+    }
 }
