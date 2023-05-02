@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
 
@@ -59,7 +60,7 @@ public class BrowserSwitchClient {
 
         if (activity.isFinishing()) {
             String activityFinishingMessage =
-                "Unable to start browser switch while host Activity is finishing.";
+                    "Unable to start browser switch while host Activity is finishing.";
             throw new BrowserSwitchException(activityFinishingMessage);
         } else if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
@@ -166,38 +167,40 @@ public class BrowserSwitchClient {
         return result;
     }
 
-    public BrowserSwitchResult parseResultOnlyOnce(@NonNull Context context, @NonNull Intent intent, int requestCode) {
+    /**
+     * Parses and returns a browser switch result if a match is found.
+     *
+     * @param context     The context used to check for pending browser switch requests
+     * @param requestCode The request code for the matching pending request
+     * @param intent      Intent to evaluate for deep link result
+     * @return
+     */
+    @Nullable
+    BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
-        Context appContext = context.getApplicationContext();
-
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request != null && request.getRequestCode() == requestCode) {
-            Uri deepLinkUrl = intent.getData();
-            if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-            } else if (request.getShouldNotifyCancellation()) {
-                result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+        if (intent != null) {
+            BrowserSwitchRequest request =
+                    persistentStore.getActiveRequest(context.getApplicationContext());
+            if (request != null && request.getRequestCode() == requestCode) {
+                Uri deepLinkUrl = intent.getData();
+                if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                } else if (request.getShouldNotifyCancellation()) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+                }
             }
         }
-
-        if (result != null) {
-            @BrowserSwitchStatus int status = result.getStatus();
-            switch (status) {
-                case BrowserSwitchStatus.SUCCESS:
-                    // ensure that success result is delivered exactly once
-                    persistentStore.clearActiveRequest(appContext);
-                    break;
-                case BrowserSwitchStatus.CANCELED:
-                    // ensure that cancellation result is delivered exactly once, but allow for
-                    // a cancellation result to remain in shared storage in case it
-                    // later becomes successful
-                    request.setShouldNotifyCancellation(false);
-                    persistentStore.putActiveRequest(request, context);
-                    break;
-            }
-        }
-
         return result;
+    }
+
+    /**
+     * Clear singleton storage holding single pending browser switch request. Should be called after
+     * a successful call to {@link BrowserSwitchClient#parseResult(Context, int, Intent)}
+     *
+     * @param context Context for storage to be cleared
+     */
+    void clearActiveRequests(@NonNull Context context) {
+        persistentStore.clearActiveRequest(context.getApplicationContext());
     }
 
     /**
