@@ -5,6 +5,8 @@
 * Remove Jetifier now that AndroidX is fully supported
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 33
 * Remove unnecessary assertion for a browser application on the device
+* Add `BrowserSwitchClient#parseResult()` method
+* Add `BrowserSwitchClient#clearActiveRequests()` method
 
 ## 2.3.2
 

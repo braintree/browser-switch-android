@@ -176,7 +176,7 @@ public class BrowserSwitchClient {
      * @return
      */
     @Nullable
-    BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
+    public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
         if (intent != null) {
             BrowserSwitchRequest request =
@@ -199,7 +199,7 @@ public class BrowserSwitchClient {
      *
      * @param context Context for storage to be cleared
      */
-    void clearActiveRequests(@NonNull Context context) {
+    public void clearActiveRequests(@NonNull Context context) {
         persistentStore.clearActiveRequest(context.getApplicationContext());
     }
 
