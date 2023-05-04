@@ -1,4 +1,4 @@
-name: Release Snapshot
+name: Release SNAPSHOT
 on:
   # update SNAPSHOT build whenever a push or merge occurs on master
   push:
