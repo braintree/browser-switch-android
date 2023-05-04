@@ -1,0 +1,71 @@
+name: Release Snapshot
+on:
+  # update SNAPSHOT build whenever a push or merge occurs on master
+  push:
+    branches:
+      - master
+env:
+  SIGNING_KEY_FILE_PATH: /home/runner/secretKey.gpg
+jobs:
+  build_aar:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Decode Signing Key
+        uses: .github/actions/decode_signing_key
+        with:
+          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
+          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+      - name: Assemble
+        run: ./gradlew --stacktrace assemble
+        env:
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_KEY_FILE: ${{ env.SIGNING_KEY_FILE_PATH }}
+
+  # Run unit tests after a successful build
+  unit_test_browser_switch:
+    name: Unit Test Browser Switch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Run Unit Tests
+        run: ./gradlew --stacktrace testRelease
+
+  # Publish SNAPSHOT after successful build and unit tests
+  publish_snapshot:
+    needs: [ build_aar, unit_test_browser_switch ]
+    name: Publish SNAPSHOT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Decode Signing Key
+        uses: .github/actions/decode_signing_key
+        with:
+          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
+          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+      - name: Publish SNAPSHOT
+        uses: .github/actions/publish_to_sonatype
+        with:
+          sonatype_usr: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          sonatype_pwd: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          signing_key_id: ${{ secrets.SIGNING_KEY_ID }}
+          signing_key_pwd: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          signing_key_file: ${{ env.SIGNING_KEY_FILE_PATH }}
+
+  release_finished:
+    needs: [ publish_snapshot ]
+    name: Release Finished
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Release finished"
