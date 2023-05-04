@@ -170,6 +170,10 @@ public class BrowserSwitchClient {
     /**
      * Parses and returns a browser switch result if a match is found.
      *
+     * Parse result has no restriction to deliver a browser switch result only once. After a parsed
+     * result has been consumed, call {@link #clearActiveRequests(Context)} to enforce the same
+     * "deliver once" behavior provided by {@link #deliverResult(FragmentActivity)}.
+     *
      * @param context     The context used to check for pending browser switch requests
      * @param requestCode The request code for the matching pending request
      * @param intent      Intent to evaluate for deep link result
@@ -193,7 +197,7 @@ public class BrowserSwitchClient {
 
     /**
      * Clear singleton storage holding single pending browser switch request. Should be called after
-     * a successful call to {@link BrowserSwitchClient#parseResult(Context, int, Intent)}
+     * a successful call to {@link #parseResult(Context, int, Intent)}
      *
      * @param context Context for storage to be cleared
      */
