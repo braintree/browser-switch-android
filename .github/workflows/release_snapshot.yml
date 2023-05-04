@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew --stacktrace testRelease
 
   # Publish SNAPSHOT after successful build and unit tests
-  publish_snapshot:
+  publish_snapshot_to_sonatype:
     needs: [ build_aar, unit_test_browser_switch ]
     name: Publish SNAPSHOT
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
         with:
           signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
           signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
-      - name: Publish SNAPSHOT
+      - name: Publish SNAPSHOT to Sonatype
         uses: .github/actions/publish_to_sonatype
         with:
           sonatype_usr: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
@@ -64,7 +64,7 @@ jobs:
           signing_key_file: ${{ env.SIGNING_KEY_FILE_PATH }}
 
   release_finished:
-    needs: [ publish_snapshot ]
+    needs: [ publish_snapshot_to_sonatype ]
     name: Release Finished
     runs-on: ubuntu-latest
     steps:
