@@ -177,7 +177,7 @@ public class BrowserSwitchClient {
      * @param context     The context used to check for pending browser switch requests
      * @param requestCode The request code for the matching pending request
      * @param intent      Intent to evaluate for deep link result
-     * @return
+     * @return {@link BrowserSwitchResult} if one exists, null otherwise
      */
     @Nullable
     public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
