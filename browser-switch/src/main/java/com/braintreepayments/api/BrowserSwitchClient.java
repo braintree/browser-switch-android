@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
 
@@ -59,7 +60,7 @@ public class BrowserSwitchClient {
 
         if (activity.isFinishing()) {
             String activityFinishingMessage =
-                "Unable to start browser switch while host Activity is finishing.";
+                    "Unable to start browser switch while host Activity is finishing.";
             throw new BrowserSwitchException(activityFinishingMessage);
         } else if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
@@ -73,7 +74,6 @@ public class BrowserSwitchClient {
     void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
-        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
@@ -165,6 +165,44 @@ public class BrowserSwitchClient {
         }
 
         return result;
+    }
+
+    /**
+     * Parses and returns a browser switch result if a match is found.
+     *
+     * Parse result has no restriction to deliver a browser switch result only once. After a parsed
+     * result has been consumed, call {@link #clearActiveRequests(Context)} to enforce the same
+     * "deliver once" behavior provided by {@link #deliverResult(FragmentActivity)}.
+     *
+     * @param context     The context used to check for pending browser switch requests
+     * @param requestCode The request code for the matching pending request
+     * @param intent      Intent to evaluate for deep link result
+     * @return {@link BrowserSwitchResult} if one exists, null otherwise
+     */
+    @Nullable
+    public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
+        BrowserSwitchResult result = null;
+        if (intent != null && intent.getData() != null) {
+            BrowserSwitchRequest request =
+                    persistentStore.getActiveRequest(context.getApplicationContext());
+            if (request != null && request.getRequestCode() == requestCode) {
+                Uri deepLinkUrl = intent.getData();
+                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Clear singleton storage holding single pending browser switch request. Should be called after
+     * a successful call to {@link #parseResult(Context, int, Intent)}
+     *
+     * @param context Context for storage to be cleared
+     */
+    public void clearActiveRequests(@NonNull Context context) {
+        persistentStore.clearActiveRequest(context.getApplicationContext());
     }
 
     /**

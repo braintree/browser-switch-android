@@ -359,7 +359,7 @@ public class BrowserSwitchClientUnitTest {
         sut.captureResult(activity);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
-            ArgumentCaptor.forClass(BrowserSwitchResult.class);
+                ArgumentCaptor.forClass(BrowserSwitchResult.class);
         verify(persistentStore).putActiveResult(captor.capture(), same(applicationContext));
 
         BrowserSwitchResult result = captor.getValue();
@@ -411,5 +411,83 @@ public class BrowserSwitchClientUnitTest {
 
         assertSame(cachedResult, actualResult);
         verify(persistentStore).removeAll(applicationContext);
+    }
+
+    @Test
+    public void parseResult_whenActiveRequestMatchesRequestCodeAndDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+            new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
+
+        Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+
+        assertNotNull(browserSwitchResult);
+        assertEquals(BrowserSwitchStatus.SUCCESS, browserSwitchResult.getStatus());
+        assertEquals(deepLinkUrl, browserSwitchResult.getDeepLinkUrl());
+    }
+
+    @Test
+    public void parseResult_whenActiveRequestMatchesRequestCodeAndDeepLinkResultURLSchemeDoesntMatch_returnsNull() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
+
+        Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+
+        assertNull(browserSwitchResult);
+    }
+
+    @Test
+    public void parseResult_whenActiveRequestDoesntMatchRequestCode_returnsNull() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(456, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
+
+        Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+
+        assertNull(browserSwitchResult);
+    }
+
+    @Test
+    public void parseResult_whenNoActiveRequestExists_returnsNull() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(null);
+
+        Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+
+        assertNull(browserSwitchResult);
+    }
+
+    @Test
+    public void parseResult_whenIntentIsNull_returnsNull() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, null);
+        assertNull(browserSwitchResult);
+    }
+
+    @Test
+    public void clearActiveRequests_forwardsInvocationToPersistantStore() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+
+        sut.clearActiveRequests(applicationContext);
+        verify(persistentStore).clearActiveRequest(applicationContext);
     }
 }
