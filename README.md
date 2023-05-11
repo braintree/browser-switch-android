@@ -38,113 +38,69 @@ allprojects {
 
 ## AndroidManifest.xml
 
-Then, declare `BrowserSwitchActivity` in your `AndroidManifest.xml`:
+Declare an activity that you own as a deep link target in your `AndroidManifest.xml`:
 
 ```xml
-<activity android:name="com.braintreepayments.browserswitch.BrowserSwitchActivity"
+<activity android:name="com.myapp.MyDeepLinkTargetActivity"
     android:launchMode="singleTask"
     android:exported="true">
     <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
-        <data android:scheme="${applicationId}.browserswitch"/>
+        <data android:scheme="my-custom-url-scheme"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
     </intent-filter>
 </activity>
 ```
 
-Your app's url scheme must begin with your app's package and end with `.browserswitch`.
-For example, if the package is `com.your-company.your-app`, then your url scheme should be
-`com.your-company.your-app.browserswitch`.
-
-`${applicationId}` is automatically applied with your app's package when using Gradle.
-
-**Note**: The scheme you define must use all lowercase letters. This is due to [scheme matching on the Android framework being case sensitive, expecting lower case](https://developer.android.com/guide/topics/manifest/data-element#scheme). If your package contains underscores, the underscores should be removed when specifying the scheme.
+**Note**: The scheme you define must use all lowercase letters. This is due to [scheme matching on the Android framework being case sensitive, expecting lower case](https://developer.android.com/guide/topics/manifest/data-element#scheme). The scheme must also be [valid according to RFC 2396](https://datatracker.ietf.org/doc/html/rfc2396#section-3.1).
 
 If these requirements are not met, an error will be returned and no browser switch will occur.
 
 ## Usage
 
-`BrowserSwitchFragment` is an abstract `androidx.fragment.app.Fragment` that should be extended and used to start and
-handle the response from a browser switch.
+`BrowserSwitchClient` should be used to start and handle the response from a browser switch.
 
-**Note**: The `Activity` that `BrowserSwitchFragment` attaches to cannot have a launch mode of `singleInstance`. `BrowserSwitchFragment` needs access to the calling `Activity` to provide a result and cannot do so if the browser switch happens on a different activity stack.
+A browser switch can be initiated by calling `BrowserSwitchClient#start()`. Use the `BrowserSwitchOptions` to configure a browser switch:
 
-The url scheme to use to return to your app can be retrieved using:
-
-```java
-browserSwitchFragment.getReturnUrlScheme();
+```kotlin
+val browserSwitchOptions = BrowserSwitchOptions()
+    .requestCode(MY_REQUEST_CODE)
+    .url("https://site-to-load.com?callbackURL=my-custom-url-scheme%3A%2F%2Fsuccess")
+    .returnUrlScheme("my-custom-url-scheme")
+browserSwitchClient.start(activity, browserSwitchOptions)
 ```
 
-This scheme should be used to build a return url and passed along in the browser switch to the
-target web page. This url can be loaded to return to the app from the target web page.
+In the above example, notice the encoded `callbackURL` parameter is forwarded to the website that will be loaded. The callback url should have the same custom scheme set in `BrowserSwitchOptions`. When this URL is loaded by the site, the Android OS will re-direct the user to the deep link destination `Activity` defined in the `AndroidManifest.xml`.
 
-A browser switch can be initiated by calling:
+To capture a browser switch result, override your deep link target `Activity` with the following code snippet:
 
-```java
-browserSwitchFragment.browserSwitch(requestCode, "http://example.com/");
-// or
-browserSwitchFragment.browserSwitch(requestCode, intent);
-```
-
-The response will be returned in your implementation of `BrowserSwitchFragment#onBrowserSwitchResult`:
-
-```java
-@Override
-public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
-    switch (result) {
-        case OK:
-            // the browser switch returned data in the return uri
-            break;
-        case CANCELED:
-            // the user canceled and returned to your app
-            // return uri is null
-            break;
-        case ERROR:
-            // there was an error browser switching
-            // Some possible issues you may encounter are:
-            // - There are no activities installed that can handle a URL.
-            // - The integration is not setup correctly.
-            break;
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    browserSwitchClient.deliverResult(this)?.let { result ->
+        when (result) {
+            BrowserSwitchStatus.OK -> {
+                // the browser switch returned data in the return uri
+                // TODO: handle success
+            }
+            BrowserSwitchStatus.CANCEL -> {
+                // the user canceled and returned to your app return uri is null
+                // TODO: handle cancelation
+            }
+        }
     }
 }
 ```
 
-## Alternative Usage: BrowserSwitchClient
+## Launch Modes
 
-For more fine-grained control over browser switching, `BrowserSwitchClient` can be used in scenarios where a custom `BrowserSwitchListener` is preferred. 
+If your deep link target `Activity` has `android:launchMode="singleTop"`, `android:launchMode="singleTask"`, or `android:launchMode="singleInstance"`, add the following code snippet to your deep link target `Activity`:
 
-```java
-public class CustomFragment extends Fragment {
-
-  private BrowserSwitchClient browserSwitchClient;
-  private BrowserSwitchListener browserSwitchListener;
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    ...
-
-    browserSwitchListener = new BrowserSwitchListener() {
-      @Override
-      public void onBrowserSwitchResult(int requestCode, BrowserSwitchResult result, @Nullable Uri returnUri) {
-        // custom listener logic goes here
-      }
-    }; 
-
-    browserSwitchClient = BrowserSwitchClient.newInstance();
-    browserSwitchClient.start(requestCode, Uri.parse("http://example.com/"), this, browserSwitchListener);
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    ...
-
-    // call 'deliverResult' in onResume to ensure that all pending
-    // browser switch results are delivered to the listener
-    browserSwitchClient.deliverResult(this, browserSwitchListener);
-  }
+```kotlin
+override fun onNewIntent(newIntent: Intent?) {
+    super.onNewIntent(intent)
+    intent = newIntent
 }
 ```
 
