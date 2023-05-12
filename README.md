@@ -59,9 +59,7 @@ If these requirements are not met, an error will be returned and no browser swit
 
 ## Usage
 
-`BrowserSwitchClient` should be used to start and handle the response from a browser switch.
-
-A browser switch can be initiated by calling `BrowserSwitchClient#start()`. Use the `BrowserSwitchOptions` to configure a browser switch:
+A browser switch can be initiated by calling `BrowserSwitchClient#start()`. Use `BrowserSwitchOptions` to configure options for browser switching:
 
 ```kotlin
 val browserSwitchOptions = BrowserSwitchOptions()
@@ -71,7 +69,7 @@ val browserSwitchOptions = BrowserSwitchOptions()
 browserSwitchClient.start(activity, browserSwitchOptions)
 ```
 
-In the above example, notice the encoded `callbackURL` parameter is forwarded to the website that will be loaded. The callback url should have the same custom scheme set in `BrowserSwitchOptions`. When this URL is loaded by the site, the Android OS will re-direct the user to the deep link destination `Activity` defined in the `AndroidManifest.xml`.
+In the above example, notice the encoded `callbackURL` parameter is forwarded to the website that will be loaded. The callback url must have the same custom scheme set in `BrowserSwitchOptions`. When this URL is loaded by the site, the Android OS will re-direct the user to the deep link destination `Activity` defined in the `AndroidManifest.xml`.
 
 To capture a browser switch result, override your deep link target `Activity` with the following code snippet:
 
