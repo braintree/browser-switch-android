@@ -15,8 +15,11 @@ case $command_name in
     # change release version in build.gradle
     sed -i '' -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_version}'/" build.gradle
 
-    # change release version in README.md
+    # change most recent version in README.md
     sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+'/:browser-switch:${new_version}'/" README.md
+
+    # change most recent version in v2_MIGRATION.md
+    sed -I '' -E "s/:[0-9]+\.[0-9]+\.[0-9]+'/:${new_version}'/g" v2_MIGRATION.md
     ;;
 esac
 
