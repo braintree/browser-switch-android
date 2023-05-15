@@ -9,5 +9,14 @@ case $command_name in
   unit_tests)
     ./gradlew --continue clean testRelease
     ;;
+  set_new_version)
+    new_version="$2"
+
+    # change release version in build.gradle
+    sed -i '' -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_version}'/" build.gradle
+
+    # change release version in README.md
+    sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+'/:browser-switch:${new_version}'/" README.md
+    ;;
 esac
 
