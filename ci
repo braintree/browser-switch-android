@@ -19,7 +19,10 @@ case $command_name in
     sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+'/:browser-switch:${new_version}'/" README.md
 
     # change most recent version in v2_MIGRATION.md
-    sed -I '' -E "s/:[0-9]+\.[0-9]+\.[0-9]+'/:${new_version}'/g" v2_MIGRATION.md
+    sed -i '' -E "s/:[0-9]+\.[0-9]+\.[0-9]+'/:${new_version}'/g" v2_MIGRATION.md
+
+    # change most recent version in CHANGELOG.md
+    sed -i "" -E "s/## unreleased/## ${new_version}/" CHANGELOG.md
     ;;
 esac
 
