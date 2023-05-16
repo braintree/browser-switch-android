@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-command_name="$1"
-
 function sed_inplace () {
   # Ref: https://stackoverflow.com/a/4247319
   if [[ $OSTYPE == 'darwin'* ]]; then
@@ -12,6 +10,7 @@ function sed_inplace () {
   fi
 }
 
+command_name="$1"
 
 case $command_name in
   lint)
