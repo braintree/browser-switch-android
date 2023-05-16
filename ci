@@ -36,6 +36,9 @@ case $command_name in
     
     # set release version in build.gradle
     sed -i '' -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_snapshot_version}'/" build.gradle
+
+    # update SNAPSHOT version in README.md
+    sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT'/:browser-switch:${new_snapshot_version}'/" README.md
     ;;
 esac
 
