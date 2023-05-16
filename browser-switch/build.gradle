@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'de.marcphilipp.nexus-publish'
+    id 'maven-publish'
     id 'signing'
 }
 
@@ -75,53 +75,44 @@ signing {
     sign publishing.publications
 }
 
-nexusPublishing {
-    // give nexus sonatype more time to initialize the staging repository
-    clientTimeout = Duration.ofMinutes(3)
-    repositories {
-        sonatype()
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
+publishing {
+    publications {
+        release(MavenPublication) {
+            afterEvaluate {
                 from components.release
+            }
 
-                artifact sourcesJar
-                artifact javadocsJar
+            groupId = 'com.braintreepayments.api'
+            artifactId = 'browser-switch'
+            version = rootProject.versionName
 
-                groupId = 'com.braintreepayments.api'
-                artifactId = 'browser-switch'
-                version = rootProject.versionName
+            artifact sourcesJar
+            artifact javadocsJar
 
-                pom {
-                    name = 'browser-switch'
-                    packaging = 'aar'
-                    description = 'Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page.'
-                    url = 'https://github.com/braintree/browser-switch-android'
+            pom {
+                name = 'browser-switch'
+                packaging = 'aar'
+                description = 'Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page.'
+                url = 'https://github.com/braintree/browser-switch-android'
 
-                    scm {
-                        url = 'scm:git@github.com:braintree/browser-switch-android.git'
-                        connection = 'scm:git@github.com:braintree/browser-switch-android.git'
-                        developerConnection = 'scm:git@github.com:braintree/browser-switch-android.git'
+                scm {
+                    url = 'scm:git@github.com:braintree/browser-switch-android.git'
+                    connection = 'scm:git@github.com:braintree/browser-switch-android.git'
+                    developerConnection = 'scm:git@github.com:braintree/browser-switch-android.git'
+                }
+
+                developers {
+                    developer {
+                        id = 'devs'
+                        name = 'Braintree Payments'
                     }
+                }
 
-                    developers {
-                        developer {
-                            id = 'devs'
-                            name = 'Braintree Payments'
-                        }
-                    }
-
-                    licenses {
-                        license {
-                            name = 'MIT'
-                            url = 'http://opensource.org/licenses/MIT'
-                            distribution = 'repo'
-                        }
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'http://opensource.org/licenses/MIT'
+                        distribution = 'repo'
                     }
                 }
             }
