@@ -20,43 +20,21 @@ case $command_name in
     ./gradlew --continue clean testRelease
     ;;
   set_new_version)
+    # guard against version updates when CHANGELOG doesn't contain an unreleased section
+    grep "## unreleased" CHANGELOG.md || (echo "::error::No unreleased section found in CHANGELOG"; exit 1)
+
     new_version="$2"
-
-    # set release version in build.gradle
-    sed_inplace -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_version}'/" build.gradle
-
-    # set most recent version in README.md
-    sed_inplace -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+'/:browser-switch:${new_version}'/" README.md
-
-    # set most recent version in v2_MIGRATION.md
-    sed_inplace -E "s/:[0-9]+\.[0-9]+\.[0-9]+'/:${new_version}'/g" v2_MIGRATION.md
-
-    # set most recent version in CHANGELOG.md
-    sed_inplace -E "s/## unreleased/## ${new_version}/" CHANGELOG.md
+    ./gradlew -PversionParam="${new_version}" changeGradleReleaseVersion
+    ./gradlew -PversionParam="${new_version}" changeREADMEVersion
+    ./gradlew -PversionParam="${new_version}" changeMigrationGuideVersion
+    ./gradlew -PversionParam="${new_version}" updateCHANGELOGVersion
     ;;
   increment_snapshot_version)
     new_version="$2"
-
-    major=$(echo $new_version | cut -d '.' -f 1)
-    minor=$(echo $new_version | cut -d '.' -f 2)
-    patch=$(echo $new_version | cut -d '.' -f 3)
-
-    incremented_patch=$((patch + 1))
-    new_snapshot_version="${major}.${minor}.${incremented_patch}-SNAPSHOT"
-    
-    # set release version in build.gradle
-    sed_inplace -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_snapshot_version}'/" build.gradle
-
-    # update SNAPSHOT version in README.md
-    sed_inplace -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT'/:browser-switch:${new_snapshot_version}'/" README.md
+    ./gradlew -PversionParam="${new_version}" incrementSNAPSHOTVersion
     ;;
   increment_demo_app_version_code)
-    # extract version code from build.gradle; pipe into xargs command to trim whitespace
-    current_version_code=$(grep -E 'versionCode = [0-9]+' build.gradle | cut -d '=' -f 2 | xargs)
-    new_version_code=$(($current_version_code+1))
-
-    # set updated version code in build.gradle
-    sed_inplace -E "s/versionCode = [0-9]+/versionCode = ${new_version_code}/" build.gradle
+    ./gradlew incrementVersionCode
     ;;
 esac
 
