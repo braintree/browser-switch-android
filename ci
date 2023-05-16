@@ -40,5 +40,13 @@ case $command_name in
     # update SNAPSHOT version in README.md
     sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT'/:browser-switch:${new_snapshot_version}'/" README.md
     ;;
+  increment_demo_app_version_code)
+    # extract version code from build.gradle; pipe into xargs command to trim whitespace
+    current_version_code=$(grep -E 'versionCode = [0-9]+' build.gradle | cut -d '=' -f 2 | xargs)
+    new_version_code=$(($current_version_code+1))
+
+    # set updated version code in build.gradle
+    sed -i "" -E "s/versionCode = [0-9]+/versionCode = ${new_version_code}/" build.gradle
+    ;;
 esac
 
