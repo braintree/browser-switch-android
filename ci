@@ -19,6 +19,12 @@ case $command_name in
   unit_tests)
     ./gradlew --stacktrace testRelease
     ;;
+  integration_tests)
+    ./gradlew --continue connectedAndroidTest
+    ;;
+  publish_to_maven_local)
+    ./gradlew clean publishToMavenLocal
+    ;;
   update_version)
     # guard against version updates when CHANGELOG doesn't contain an unreleased section
     grep "## unreleased" CHANGELOG.md || (echo "::error::No unreleased section found in CHANGELOG" && exit 1)
