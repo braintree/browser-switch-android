@@ -51,12 +51,12 @@ case $command_name in
     ./gradlew --stacktrace closeAndReleaseRepository
     ;;
   decode_signing_key)
-    signing_key="$2"
-    signing_key_output="$3"
-
+    [ -n "${SIGNING_KEY}" ]      || (echo "::error:: SIGNING_KEY env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_FILE}" ] || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
+    
     # write signing key to a temporary file
-    echo "${signing_key}" > ~/secretKey.gpg.b64
-    base64 -d ~/secretKey.gpg.b64 > "${signing_key_output}"
+    echo "${SIGNING_KEY}" > ~/secretKey.gpg.b64
+    base64 -d ~/secretKey.gpg.b64 > "${SIGNING_KEY_FILE}"
     ;;
   set_github_user_to_braintreeps)
     git config user.name braintreeps

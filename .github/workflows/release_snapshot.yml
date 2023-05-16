@@ -5,7 +5,7 @@ on:
     branches:
       - master
 env:
-  SIGNING_KEY_FILE_PATH: /home/runner/secretKey.gpg
+  SIGNING_KEY_FILE: /home/runner/secretKey.gpg
 jobs:
   build_aar:
     name: Build
@@ -16,10 +16,9 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Decode Signing Key
-        uses: .github/actions/decode_signing_key
-        with:
-          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
-          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci decode_signing_key
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       - name: Assemble
         run: ./gradlew --stacktrace assemble
         env:
@@ -37,7 +36,7 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Run Unit Tests
-        run: ./gradlew --stacktrace testRelease
+        run: ./ci unit_tests
 
   # Publish SNAPSHOT after successful build and unit tests
   publish_snapshot_to_sonatype:
@@ -50,18 +49,16 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Decode Signing Key
-        uses: .github/actions/decode_signing_key
-        with:
-          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
-          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci decode_signing_key
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       - name: Publish SNAPSHOT to Sonatype
-        uses: .github/actions/publish_to_sonatype
-        with:
-          sonatype_usr: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          sonatype_pwd: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          signing_key_id: ${{ secrets.SIGNING_KEY_ID }}
-          signing_key_pwd: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          signing_key_file: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci publish_to_sonatype
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
   release_finished:
     needs: [ publish_snapshot_to_sonatype ]
