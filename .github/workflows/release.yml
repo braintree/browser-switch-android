@@ -94,17 +94,14 @@ jobs:
         uses: ./.github/actions/set_github_user
       - name: Update Version
         run: |
-          ./gradlew -PversionParam=${{ github.event.inputs.version }} changeGradleReleaseVersion
-          ./gradlew -PversionParam=${{ github.event.inputs.version }} changeREADMEVersion
-          ./gradlew -PversionParam=${{ github.event.inputs.version }} changeMigrationGuideVersion
-          ./gradlew -PversionParam=${{ github.event.inputs.version }} updateCHANGELOGVersion
-          ./gradlew dokkaHtmlMultiModule
+          ./ci set_new_version ${{ github.event.inputs.version }}
           git add -A
           git commit -am 'Release ${{ github.event.inputs.version }}'
           git tag ${{ github.event.inputs.version }} -a -m 'Release ${{ github.event.inputs.version }}'
 
-          ./gradlew -PversionParam=${{ github.event.inputs.version }} incrementSNAPSHOTVersion
-          ./gradlew incrementVersionCode
+          ./ci increment_snapshot_version ${{ github.event.inputs.version }}
+          ./ci increment_demo_app_version_code
+
           git commit -am 'Prepare for development'
           git push origin master ${{ github.event.inputs.version }}
 
