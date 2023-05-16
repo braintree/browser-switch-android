@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 
-function sed_inplace () {
-  # Ref: https://stackoverflow.com/a/4247319
-  if [[ $OSTYPE == 'darwin'* ]]; then
-    # macOS
-    sed -i '' "$@"
-  else
-    sed -i'' "$@"
-  fi
-}
+# Ref: https://stackoverflow.com/a/19622569
+set -e
 
 command_name="$1"
-
 case $command_name in
+  build)
+    [ -n "${SIGNING_KEY_ID}" ]       || (echo "::error:: SIGNING_KEY_ID env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_PASSWORD}" ] || (echo "::error:: SIGNING_KEY_PASSWORD env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_FILE}" ]     || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
+
+    # assemble build
+    run: ./gradlew --stacktrace assemble
+    ;;
   lint)
     ./gradlew clean lint
     ;;
   unit_tests)
-    ./gradlew --continue clean testRelease
+    ./gradlew --stacktrace testRelease
     ;;
-  set_new_version)
+  update_version)
     # guard against version updates when CHANGELOG doesn't contain an unreleased section
-    grep "## unreleased" CHANGELOG.md || (echo "::error::No unreleased section found in CHANGELOG"; exit 1)
+    grep "## unreleased" CHANGELOG.md || (echo "::error::No unreleased section found in CHANGELOG" && exit 1)
 
     new_version="$2"
     ./gradlew -PversionParam="${new_version}" changeGradleReleaseVersion
@@ -35,6 +35,41 @@ case $command_name in
     ;;
   increment_demo_app_version_code)
     ./gradlew incrementVersionCode
+    ;;
+  publish_to_sonatype)
+    # Ref: https://nickjanetakis.com/blog/prevent-unset-variables-in-your-shell-bash-scripts-with-set-nounset
+    [ -n "${SONATYPE_USERNAME}" ]    || (echo "::error:: SONATYPE_USERNAME env variable not set" && exit 1)
+    [ -n "${SONATYPE_PASSWORD}" ]    || (echo "::error:: SONATYPE_PASSWORD env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_ID}" ]       || (echo "::error:: SIGNING_KEY_ID env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_PASSWORD}" ] || (echo "::error:: SIGNING_KEY_PASSWORD env variable not set" && exit 1)
+    [ -n "${SIGNING_KEY_FILE}" ]     || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
+
+    # publish to sonatype
+    ./gradlew clean :browser-switch:publishToSonatype
+    ;;
+  close_and_release_repository)
+    ./gradlew --stacktrace closeAndReleaseRepository
+    ;;
+  decode_signing_key)
+    signing_key="$2"
+    signing_key_output="$3"
+
+    # write signing key to a temporary file
+    echo "${signing_key}" > ~/secretKey.gpg.b64
+    base64 -d ~/secretKey.gpg.b64 > "${signing_key_output}"
+    ;;
+  set_github_user_to_braintreeps)
+    git config user.name braintreeps
+    git config user.email code@getbraintree.com
+    ;;
+  commit_and_tag_release)
+    new_version="$2"
+    git add -A
+    git commit -am "Release ${new_version}"
+    git tag "${new_version}" -a -m "Release ${new_version}"
+    ;;
+  get_latest_changelog_entries)
+    sed -e '1,/##/d' -e '/##/,$d' CHANGELOG.md
     ;;
 esac
 
