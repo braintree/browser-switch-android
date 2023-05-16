@@ -12,17 +12,30 @@ case $command_name in
   set_new_version)
     new_version="$2"
 
-    # change release version in build.gradle
+    # set release version in build.gradle
     sed -i '' -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_version}'/" build.gradle
 
-    # change most recent version in README.md
+    # set most recent version in README.md
     sed -i '' -E "s/:browser-switch:[0-9]+\.[0-9]+\.[0-9]+'/:browser-switch:${new_version}'/" README.md
 
-    # change most recent version in v2_MIGRATION.md
+    # set most recent version in v2_MIGRATION.md
     sed -i '' -E "s/:[0-9]+\.[0-9]+\.[0-9]+'/:${new_version}'/g" v2_MIGRATION.md
 
-    # change most recent version in CHANGELOG.md
+    # set most recent version in CHANGELOG.md
     sed -i "" -E "s/## unreleased/## ${new_version}/" CHANGELOG.md
+    ;;
+  increment_snapshot_version)
+    new_version="$2"
+
+    major=$(echo $new_version | cut -d '.' -f 1)
+    minor=$(echo $new_version | cut -d '.' -f 2)
+    patch=$(echo $new_version | cut -d '.' -f 3)
+
+    incremented_patch=$((patch + 1))
+    new_snapshot_version="${major}.${minor}.${incremented_patch}-SNAPSHOT"
+    
+    # set release version in build.gradle
+    sed -i '' -E "s/version = '[0-9]+\.[0-9]+\.[0-9]+(-[A-Z]+)?'/version = '${new_snapshot_version}'/" build.gradle
     ;;
 esac
 
