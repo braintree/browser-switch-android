@@ -17,12 +17,9 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Decode Signing Key
-        uses: .github/actions/decode_signing_key
-        with:
-          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
-          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci decode_signing_key ${{ secrets.SIGNING_KEY_FILE }} ${{ env.SIGNING_KEY_FILE_PATH }}
       - name: Assemble
-        run: ./gradlew --stacktrace assemble
+        run: ./ci build
         env:
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -38,7 +35,7 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Run Unit Tests
-        run: ./gradlew --stacktrace testRelease
+        run: ./ci unit_tests
 
   # Publish after successful build and unit tests
   publish_to_sonatype:
@@ -51,30 +48,25 @@ jobs:
       - name: Setup Java
         uses: .github/actions/setup_java
       - name: Decode Signing Key
-        uses: .github/actions/decode_signing_key
-        with:
-          signing_key_file: ${{ secrets.SIGNING_KEY_FILE }}
-          signing_file_path: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci decode_signing_key ${{ secrets.SIGNING_KEY_FILE }} ${{ env.SIGNING_KEY_FILE_PATH }}
       - name: Update Versions
-        uses: ./.github/actions/update_versions
-        with:
-          version: ${{ github.event.inputs.version }}
+        run: ./ci update_version ${{ github.event.inputs.version }}
       - name: Publish Browser Switch
-        uses: .github/actions/publish_to_sonatype
-        with:
-          sonatype_usr: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          sonatype_pwd: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          signing_key_id: ${{ secrets.SIGNING_KEY_ID }}
-          signing_key_pwd: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          signing_key_file: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci publish_to_sonatype
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_KEY_FILE: ${{ env.SIGNING_KEY_FILE_PATH }}
       - name: Close and Release Repository
-        uses: ./.github/actions/close_and_release_repository
-        with:
-          sonatype_usr: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          sonatype_pwd: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          signing_key_id: ${{ secrets.SIGNING_KEY_ID }}
-          signing_key_pwd: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          signing_key_file: ${{ env.SIGNING_KEY_FILE_PATH }}
+        run: ./ci close_and_release_repository
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_KEY_FILE: ${{ env.SIGNING_KEY_FILE_PATH }}
 
   release_finished:
     needs: [ publish_to_sonatype ]
@@ -91,13 +83,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Set GitHub User
-        uses: ./.github/actions/set_github_user
+        run: ./ci set_github_user_to_braintreeps
       - name: Update Version
         run: |
-          ./ci set_new_version ${{ github.event.inputs.version }}
-          git add -A
-          git commit -am 'Release ${{ github.event.inputs.version }}'
-          git tag ${{ github.event.inputs.version }} -a -m 'Release ${{ github.event.inputs.version }}'
+          ./ci update_version ${{ github.event.inputs.version }}
+          ./ci commit_and_tag_release ${{ github.event.inputs.version }}
 
           ./ci increment_snapshot_version ${{ github.event.inputs.version }}
           ./ci increment_demo_app_version_code
@@ -113,8 +103,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Save changelog entries to a file
-        run: |
-          sed -e '1,/##/d' -e '/##/,$d' CHANGELOG.md > changelog_entries.md
+        run: ./ci get_latest_changelog_entries > changelog_entries.md
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
