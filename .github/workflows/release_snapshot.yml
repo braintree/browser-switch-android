@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-
 env:
   SIGNING_KEY_FILE: /home/runner/secretKey.gpg
 jobs:
