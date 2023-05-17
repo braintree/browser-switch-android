@@ -4,3 +4,7 @@ build
 local.properties
 *.iml
 .DS_Store
+
+# vim
+*.swp
+

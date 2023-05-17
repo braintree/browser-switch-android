@@ -1,0 +1,118 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+env:
+  SIGNING_KEY_FILE: /home/runner/secretKey.gpg
+jobs:
+  build_aar:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Decode Signing Key
+        run: ./ci decode_signing_key
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      - name: Assemble
+        run: ./ci build
+        env:
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+  # Run unit tests after a successful build
+  unit_test_browser_switch:
+    name: Unit Test Browser Switch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Run Unit Tests
+        run: ./ci unit_tests
+
+  # Publish after successful build and unit tests
+  publish_to_sonatype:
+    needs: [ build_aar, unit_test_browser_switch ]
+    name: Publish To Sonatype
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: .github/actions/setup_java
+      - name: Decode Signing Key
+        run: ./ci decode_signing_key
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      - name: Update Version
+        run: ./ci update_version ${{ github.event.inputs.version }}
+      - name: Publish Browser Switch
+        run: ./ci publish_to_sonatype
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+      - name: Close and Release Repository
+        run: ./ci close_and_release_repository
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+  release_finished:
+    needs: [ publish_to_sonatype ]
+    name: Release Finished
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Release finished"
+
+  bump_version:
+    needs: [ release_finished ]
+    name: Bump Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set GitHub User
+        run: ./ci set_github_user_to_braintreeps
+      - name: Update Version
+        run: |
+          ./ci update_version ${{ github.event.inputs.version }}
+          ./ci commit_and_tag_release ${{ github.event.inputs.version }}
+
+          ./ci increment_snapshot_version ${{ github.event.inputs.version }}
+          ./ci increment_demo_app_version_code
+
+          git commit -am 'Prepare for development'
+          git push origin master ${{ github.event.inputs.version }}
+
+  create_github_release:
+    needs: [ bump_version ]
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Save changelog entries to a file
+        run: ./ci get_latest_changelog_entries > changelog_entries.md
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: ${{ github.event.inputs.version }}
+          body_path: changelog_entries.md
+          draft: false
+          prerelease: false

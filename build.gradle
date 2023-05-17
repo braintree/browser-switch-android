@@ -8,16 +8,15 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath 'de.marcphilipp.gradle:nexus-publish-plugin:0.4.0'
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2'
     }
 }
 
 plugins {
-    id 'io.codearte.nexus-staging' version '0.21.2'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
-version '2.3.3-SNAPSHOT'
+version = '2.3.3-SNAPSHOT'
+group = "com.braintreepayments"
 ext {
     compileSdkVersion = 33
     minSdkVersion = 21
@@ -33,10 +32,75 @@ allprojects {
     }
 }
 
-nexusStaging {
-    packageGroup = "com.braintreepayments"
-    // give nexus sonatype more time to close the staging repository
-    delayBetweenRetriesInMillis = 20000
-    username = System.env['SONATYPE_USERNAME']
-    password = System.env['SONATYPE_PASSWORD']
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = System.getenv('SONATYPE_USERNAME')
+            password = System.getenv('SONATYPE_PASSWORD')
+        }
+    }
+    transitionCheckOptions {
+        // give nexus sonatype more time to close the staging repository
+        delayBetween.set(Duration.ofSeconds(20))
+    }
+}
+
+task changeGradleReleaseVersion {
+    doLast {
+        def gradleFile = new File('build.gradle')
+        def gradleFileText = gradleFile.text.replaceFirst("\\nversion = '\\d+\\.\\d+\\.\\d+(-.*)?'", "\nversion = '" + versionParam + "'")
+        gradleFile.write(gradleFileText)
+    }
+}
+
+task changeREADMEVersion {
+    doLast {
+
+        def readmeFile = new File('README.md')
+        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+'", ":browser-switch:" + versionParam + "'")
+        readmeFile.write(readmeFileText)
+    }
+}
+
+task changeMigrationGuideVersion {
+    doLast {
+        def migrationGuideFile = new File('v2_MIGRATION.md')
+        def migrationGuideFileText = migrationGuideFile.text.replaceAll(":\\d+\\.\\d+\\.\\d+(-.*)?'", ":" + versionParam + "'")
+        migrationGuideFile.write(migrationGuideFileText)
+    }
+}
+
+task updateCHANGELOGVersion {
+    doLast {
+        def changelogFile = new File('CHANGELOG.md')
+        def changelogFileText = changelogFile.text.replaceFirst("## unreleased", "## " + versionParam)
+        changelogFile.write(changelogFileText)
+    }
+}
+
+task incrementSNAPSHOTVersion {
+    doLast {
+        def gradleFile = new File('build.gradle')
+        def (major, minor, patch) = versionParam.tokenize('.')
+        def patchInteger = patch.toInteger()
+        def newVersion = "$major.$minor.${patchInteger + 1}-SNAPSHOT"
+        def gradleFileText = gradleFile.text.replaceFirst("\\nversion = '\\d+\\.\\d+\\.\\d+(-.*)?'", "\nversion = '" + newVersion + "'")
+        gradleFile.write(gradleFileText)
+
+        // update README snapshot version
+        def readmeFile = new File('README.md')
+        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+-SNAPSHOT'", ":browser-switch:" + newVersion + "'")
+        readmeFile.write(readmeFileText)
+    }
+}
+
+task incrementVersionCode {
+    doLast {
+        def gradleFile = new File('build.gradle')
+        def versionText = gradleFile.text.find("versionCode = \\d+")
+        def params = versionText.split("=")
+        def newVersionCode = params[1].trim().toInteger() + 1
+        def gradleFileText = gradleFile.text.replaceFirst("versionCode = \\d+", "versionCode = " + newVersionCode)
+        gradleFile.write(gradleFileText)
+    }
 }
