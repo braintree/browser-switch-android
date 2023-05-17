@@ -11,7 +11,7 @@ case $command_name in
     [ -n "${SIGNING_KEY_FILE}" ]     || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
 
     # assemble build
-    run: ./gradlew --stacktrace assemble
+    ./gradlew --stacktrace assemble
     ;;
   lint)
     ./gradlew clean lint
