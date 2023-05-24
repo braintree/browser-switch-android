@@ -20,7 +20,7 @@ To preview the latest work in progress builds, add the following SNAPSHOT depend
 
 ```groovy
 dependencies {
-  implementation 'com.braintreepayments.api:browser-switch:2.3.3-SNAPSHOT'
+  implementation 'com.braintreepayments.api:browser-switch:2.4.1-SNAPSHOT'
 }
 ```
 
