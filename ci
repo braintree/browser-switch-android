@@ -54,7 +54,7 @@ case $command_name in
     ./gradlew clean :browser-switch:publishToSonatype
     ;;
   close_and_release_repository)
-    ./gradlew --stacktrace closeAndReleaseRepository
+    ./gradlew --stacktrace closeAndReleaseSonatypeStagingRepository
     ;;
   decode_signing_key)
     [ -n "${SIGNING_KEY}" ]      || (echo "::error:: SIGNING_KEY env variable not set" && exit 1)
