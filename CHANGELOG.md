@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.4.0
 
 * Remove Jetifier now that AndroidX is fully supported
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 33
