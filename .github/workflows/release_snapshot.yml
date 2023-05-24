@@ -37,8 +37,7 @@ jobs:
       - name: Run Unit Tests
         run: ./ci unit_tests
 
-  # Publish SNAPSHOT after successful build and unit tests
-  publish_snapshot_to_sonatype:
+  publish_browser_switch_snapshot:
     needs: [ build_aar, unit_test_browser_switch ]
     name: Publish SNAPSHOT
     runs-on: ubuntu-latest
@@ -52,7 +51,7 @@ jobs:
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       - name: Publish SNAPSHOT to Sonatype
-        run: ./ci publish_to_sonatype
+        run: ./ci publish snapshot
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
@@ -60,7 +59,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
   release_finished:
-    needs: [ publish_snapshot_to_sonatype ]
+    needs: [ publish_browser_switch_snapshot ]
     name: Release Finished
     runs-on: ubuntu-latest
     steps:

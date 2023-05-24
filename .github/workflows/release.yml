@@ -39,7 +39,7 @@ jobs:
         run: ./ci unit_tests
 
   # Publish after successful build and unit tests
-  publish_to_sonatype:
+  publish_browser_switch:
     needs: [ build_aar, unit_test_browser_switch ]
     name: Publish To Sonatype
     runs-on: ubuntu-latest
@@ -55,14 +55,7 @@ jobs:
       - name: Update Version
         run: ./ci update_version ${{ github.event.inputs.version }}
       - name: Publish Browser Switch
-        run: ./ci publish_to_sonatype
-        env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-      - name: Close and Release Repository
-        run: ./ci close_and_release_repository
+        run: ./ci publish release
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
@@ -70,7 +63,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
   release_finished:
-    needs: [ publish_to_sonatype ]
+    needs: [ publish_browser_switch ]
     name: Release Finished
     runs-on: ubuntu-latest
     steps:

@@ -42,7 +42,7 @@ case $command_name in
   increment_demo_app_version_code)
     ./gradlew incrementVersionCode
     ;;
-  publish_to_sonatype)
+  publish)
     # Ref: https://nickjanetakis.com/blog/prevent-unset-variables-in-your-shell-bash-scripts-with-set-nounset
     [ -n "${SONATYPE_USERNAME}" ]    || (echo "::error:: SONATYPE_USERNAME env variable not set" && exit 1)
     [ -n "${SONATYPE_PASSWORD}" ]    || (echo "::error:: SONATYPE_PASSWORD env variable not set" && exit 1)
@@ -50,11 +50,14 @@ case $command_name in
     [ -n "${SIGNING_KEY_PASSWORD}" ] || (echo "::error:: SIGNING_KEY_PASSWORD env variable not set" && exit 1)
     [ -n "${SIGNING_KEY_FILE}" ]     || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
 
-    # publish to sonatype
-    ./gradlew clean :browser-switch:publishToSonatype
-    ;;
-  close_and_release_repository)
-    ./gradlew --stacktrace closeAndReleaseSonatypeStagingRepository
+    release_type="$2"
+    if [ "${release_type}" == "release" ]; then
+      # publish release
+      ./gradlew --stacktrace clean :browser-switch:publishToSonatype closeAndReleaseSonatypeStagingRepository
+    else
+      # publish SNAPSHOT
+      ./gradlew --stacktrace clean :browser-switch:publishToSonatype
+    fi
     ;;
   decode_signing_key)
     [ -n "${SIGNING_KEY}" ]      || (echo "::error:: SIGNING_KEY env variable not set" && exit 1)
