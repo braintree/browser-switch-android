@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Revert `androidx.annotation:annotation` dependency to version `1.2.0`
+* Revert `androidx.appcompat:appcompat` dependency to version `1.3.1`
+
 ## 2.4.0
 
 * Remove Jetifier now that AndroidX is fully supported
