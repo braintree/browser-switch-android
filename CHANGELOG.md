@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 2.5.0
 
 * Revert `androidx.annotation:annotation` dependency to version `1.2.0`
 * Revert `androidx.appcompat:appcompat` dependency to version `1.3.1`
