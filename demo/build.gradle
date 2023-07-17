@@ -23,9 +23,9 @@ android {
 
 dependencies {
     implementation project(':browser-switch')
-    implementation "androidx.annotation:annotation:1.6.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.fragment:fragment:1.5.7"
+    implementation "androidx.annotation:annotation:1.3.0"
+    implementation "androidx.appcompat:appcompat:1.3.1"
+    implementation "androidx.fragment:fragment:1.3.6"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
