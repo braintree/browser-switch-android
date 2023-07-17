@@ -28,13 +28,13 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
-version = '2.5.0'
+version = '2.5.1-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 33
     minSdkVersion = 21
     targetSdkVersion = 33
-    versionCode = 65
+    versionCode = 66
     versionName = version
 }
 
