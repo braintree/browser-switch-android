@@ -1,5 +1,10 @@
 package com.braintreepayments.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import android.net.Uri;
 
 import org.json.JSONException;
@@ -8,11 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchRequestUnitTest {
@@ -110,5 +110,34 @@ public class BrowserSwitchRequestUnitTest {
 
         assertTrue(restored.matchesDeepLinkUrlScheme(Uri.parse("my-return-url-scheme://test")));
         assertFalse(restored.matchesDeepLinkUrlScheme(Uri.parse("another-return-url-scheme://test")));
+    }
+
+    @Test
+    public void matchesDeepLinkUrlScheme_whenSameSchemeDifferentCase_returnsTrue() throws JSONException {
+        String json = "{\n" +
+                "  \"requestCode\": 123,\n" +
+                "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": false,\n" +
+                "  \"metadata\": {\n" +
+                "    \"testKey\": \"testValue\"" +
+                "  }" +
+                "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertTrue(request.matchesDeepLinkUrlScheme(Uri.parse("My-Return-Url-Scheme://example.com")));
+    }
+    @Test
+    public void matchesDeepLinkUrlScheme_whenDifferentScheme_returnsFalse() throws JSONException {
+        String json = "{\n" +
+                "  \"requestCode\": 123,\n" +
+                "  \"url\": \"https://example.com\",\n" +
+                "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+                "  \"shouldNotify\": false,\n" +
+                "  \"metadata\": {\n" +
+                "    \"testKey\": \"testValue\"" +
+                "  }" +
+                "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertFalse(request.matchesDeepLinkUrlScheme(Uri.parse("not-my-return-url-scheme://example.com")));
     }
 }

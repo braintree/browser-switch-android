@@ -1,5 +1,8 @@
 # browser-switch-android Release Notes
 
+## unreleased
+* Fix issue where URL scheme matching is case sensitive
+
 ## 2.5.0
 
 * Revert `androidx.annotation:annotation` dependency to version `1.2.0`
