@@ -1,29 +1,23 @@
 package com.braintreepayments.api;
 
+import static com.braintreepayments.api.BrowserSwitchPersistentStore.REQUEST_KEY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
-import static com.braintreepayments.api.BrowserSwitchPersistentStore.REQUEST_KEY;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ PersistentStore.class, BrowserSwitchRequest.class, Log.class })
+@RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchPersistentStoreUnitTest {
 
     private Context context;
@@ -31,23 +25,28 @@ public class BrowserSwitchPersistentStoreUnitTest {
 
     @Before
     public void beforeEach() {
-        mockStatic(Log.class);
-        mockStatic(PersistentStore.class);
-        mockStatic(BrowserSwitchRequest.class);
-
-        context = mock(Context.class);
+        context = RuntimeEnvironment.getApplication().getApplicationContext();
         browserSwitchRequest = mock(BrowserSwitchRequest.class);
     }
 
     @Test
     public void getActiveRequest_whenPersistentStoreContainsRequest_parsesAndReturnsActiveRequest() throws JSONException {
-        String activeRequestJson = "{\"active\":\"request\"}";
-        when(PersistentStore.get(REQUEST_KEY, context)).thenReturn(activeRequestJson);
-        when(BrowserSwitchRequest.fromJson(activeRequestJson)).thenReturn(browserSwitchRequest);
+        JSONObject jsonRequest = new JSONObject();
+        jsonRequest.put("requestCode", "1");
+        jsonRequest.put("url", "http://");
+        jsonRequest.put("returnUrlScheme", "my-scheme");
+        jsonRequest.put("shouldNotify", "false");
+        String activeRequestJson = jsonRequest.toString();
+
+        BrowserSwitchRequest browserSwitchRequest = BrowserSwitchRequest.fromJson(activeRequestJson);
+        PersistentStore.put(REQUEST_KEY, activeRequestJson, context);
 
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         BrowserSwitchRequest result = sut.getActiveRequest(context);
-        assertSame(result, browserSwitchRequest);
+        assertEquals(result.getMetadata(), browserSwitchRequest.getMetadata());
+        assertEquals(result.getRequestCode(), browserSwitchRequest.getRequestCode());
+        assertEquals(result.getUrl(), browserSwitchRequest.getUrl());
+        assertEquals(result.getShouldNotifyCancellation(), browserSwitchRequest.getShouldNotifyCancellation());
     }
 
     @Test
@@ -60,8 +59,11 @@ public class BrowserSwitchPersistentStoreUnitTest {
 
     @Test
     public void getActiveRequest_whenPersistentStoreContainsInvalidRequestJson_returnsNull() throws JSONException {
-        when(PersistentStore.get(REQUEST_KEY, context)).thenReturn("invalid json");
-        when(BrowserSwitchRequest.fromJson("invalid json")).thenThrow(new JSONException("json invalid"));
+        JSONObject jsonRequest = new JSONObject();
+        jsonRequest.put("not-browser-switch-field", "1");
+        String activeRequestJson = jsonRequest.toString();
+
+        PersistentStore.put(REQUEST_KEY, activeRequestJson, context);
 
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         BrowserSwitchRequest result = sut.getActiveRequest(context);
@@ -76,8 +78,7 @@ public class BrowserSwitchPersistentStoreUnitTest {
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         sut.putActiveRequest(browserSwitchRequest, context);
 
-        verifyStatic(PersistentStore.class);
-        PersistentStore.put(REQUEST_KEY, requestJson, context);
+        assertEquals(requestJson, PersistentStore.get(REQUEST_KEY, context));
     }
 
     @Test
@@ -87,8 +88,7 @@ public class BrowserSwitchPersistentStoreUnitTest {
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         sut.putActiveRequest(browserSwitchRequest, context);
 
-        verifyStatic(PersistentStore.class, never());
-        PersistentStore.put(anyString(), anyString(), any(Context.class));
+        assertNull(PersistentStore.get(REQUEST_KEY, context));
     }
 
     @Test
@@ -96,8 +96,7 @@ public class BrowserSwitchPersistentStoreUnitTest {
         BrowserSwitchPersistentStore sut = BrowserSwitchPersistentStore.getInstance();
         sut.clearActiveRequest(context);
 
-        verifyStatic(PersistentStore.class);
-        PersistentStore.remove(REQUEST_KEY, context);
+        assertNull(PersistentStore.get(REQUEST_KEY, context));
     }
 
     @Test

@@ -14,7 +14,7 @@ buildscript {
 
         // test dependencies
         'junit'       : 'junit:junit:4.13.2',
-        'mockitoCore' : 'org.mockito:mockito-core:3.3.3',
+        'mockitoCore' : 'org.mockito:mockito-core:3.4.0',
         'jsonassert'  : 'org.skyscreamer:jsonassert:1.5.1',
         'robolectric' : 'org.robolectric:robolectric:4.7.3'
     ]
@@ -31,9 +31,9 @@ plugins {
 version = '2.5.2-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
-    compileSdkVersion = 33
+    compileSdkVersion = 34
     minSdkVersion = 21
-    targetSdkVersion = 33
+    targetSdkVersion = 34
     versionCode = 67
     versionName = version
 }

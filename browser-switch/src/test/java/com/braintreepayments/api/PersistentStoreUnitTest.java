@@ -8,8 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.robolectric.RobolectricTestRunner;
 
 import static com.braintreepayments.api.PersistentStore.PREFERENCES_KEY;
 import static org.junit.Assert.assertEquals;
@@ -17,8 +16,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SharedPreferences.class })
+@RunWith(RobolectricTestRunner.class)
 public class PersistentStoreUnitTest {
 
     private Context context;

@@ -1,6 +1,11 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Upgrade `compileSdkVersion` and `targetSdkVersion` to API 34
+
 ## 2.5.1
+
 * Fix issue where URL scheme matching is case sensitive
 
 ## 2.5.0

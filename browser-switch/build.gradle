@@ -36,12 +36,6 @@ dependencies {
     testImplementation deps.mockitoCore
     testImplementation deps.jsonassert
     testImplementation deps.robolectric
-
-    // TODO: remove powermock
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
-    testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.9'
-    testImplementation 'org.powermock:powermock-classloading-xstream:2.0.9'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 }
 
 // region signing and publishing
