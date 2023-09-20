@@ -1,7 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'maven-publish'
-    id 'signing'
 }
 
 android {
@@ -56,57 +54,11 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-signing {
-    required {
-        !version.endsWith("SNAPSHOT")
-    }
-    sign publishing.publications
-}
+project.ext.name = "browser-switch"
+project.ext.pom_name = "browser-switch"
+project.ext.pom_desc = "Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page."
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            afterEvaluate {
-                from components.release
-            }
-
-            groupId = 'com.braintreepayments.api'
-            artifactId = 'browser-switch'
-            version = rootProject.versionName
-
-            artifact sourcesJar
-            artifact javadocsJar
-
-            pom {
-                name = 'browser-switch'
-                packaging = 'aar'
-                description = 'Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page.'
-                url = 'https://github.com/braintree/browser-switch-android'
-
-                scm {
-                    url = 'scm:git@github.com:braintree/browser-switch-android.git'
-                    connection = 'scm:git@github.com:braintree/browser-switch-android.git'
-                    developerConnection = 'scm:git@github.com:braintree/browser-switch-android.git'
-                }
-
-                developers {
-                    developer {
-                        id = 'devs'
-                        name = 'Braintree Payments'
-                    }
-                }
-
-                licenses {
-                    license {
-                        name = 'MIT'
-                        url = 'http://opensource.org/licenses/MIT'
-                        distribution = 'repo'
-                    }
-                }
-            }
-        }
-    }
-}
+apply from: rootProject.file("gradle/gradle-publish.gradle")
 
 // endregion
 
