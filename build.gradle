@@ -29,7 +29,7 @@ plugins {
 }
 
 version = '2.6.1-SNAPSHOT'
-group = "com.braintreepayments"
+group = "com.braintreepayments.api"
 ext {
     compileSdkVersion = 34
     minSdkVersion = 21
