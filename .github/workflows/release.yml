@@ -62,50 +62,50 @@ jobs:
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
-#  release_finished:
-#    needs: [ publish_browser_switch ]
-#    name: Release Finished
-#    runs-on: ubuntu-latest
-#    steps:
-#      - run: echo "Release finished"
-#
-#  bump_version:
-#    needs: [ release_finished ]
-#    name: Bump Version
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v2
-#      - name: Set GitHub User
-#        run: ./ci set_github_user_to_braintreeps
-#      - name: Update Version
-#        run: |
-#          ./ci update_version ${{ github.event.inputs.version }}
-#          ./ci commit_and_tag_release ${{ github.event.inputs.version }}
-#
-#          ./ci increment_snapshot_version ${{ github.event.inputs.version }}
-#          ./ci increment_demo_app_version_code
-#
-#          git commit -am 'Prepare for development'
-#          git push origin master ${{ github.event.inputs.version }}
-#
-#  create_github_release:
-#    needs: [ bump_version ]
-#    name: Create GitHub Release
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v2
-#      - name: Save changelog entries to a file
-#        run: ./ci get_latest_changelog_entries > changelog_entries.md
-#      - name: Create GitHub Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ github.event.inputs.version }}
-#          release_name: ${{ github.event.inputs.version }}
-#          body_path: changelog_entries.md
-#          draft: false
-#          prerelease: false
+  release_finished:
+    needs: [ publish_browser_switch ]
+    name: Release Finished
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Release finished"
+
+  bump_version:
+    needs: [ release_finished ]
+    name: Bump Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set GitHub User
+        run: ./ci set_github_user_to_braintreeps
+      - name: Update Version
+        run: |
+          ./ci update_version ${{ github.event.inputs.version }}
+          ./ci commit_and_tag_release ${{ github.event.inputs.version }}
+
+          ./ci increment_snapshot_version ${{ github.event.inputs.version }}
+          ./ci increment_demo_app_version_code
+
+          git commit -am 'Prepare for development'
+          git push origin master ${{ github.event.inputs.version }}
+
+  create_github_release:
+    needs: [ bump_version ]
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Save changelog entries to a file
+        run: ./ci get_latest_changelog_entries > changelog_entries.md
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: ${{ github.event.inputs.version }}
+          body_path: changelog_entries.md
+          draft: false
+          prerelease: false
