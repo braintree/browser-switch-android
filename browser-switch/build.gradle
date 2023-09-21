@@ -56,7 +56,6 @@ task sourcesJar(type: Jar) {
 
 project.ext.name = "browser-switch"
 project.ext.pom_name = "browser-switch"
-project.ext.group_name = "com.braintreepayments.api"
 project.ext.pom_desc = "Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page."
 
 apply from: rootProject.file("gradle/gradle-publish.gradle")

@@ -10,7 +10,7 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                groupId project.ext.group_name
+                groupId group
                 version project.version
                 artifactId project.ext.name
                 from components.release
