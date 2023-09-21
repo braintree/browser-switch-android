@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Update publish plugin
+
 ## 2.6.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 34
