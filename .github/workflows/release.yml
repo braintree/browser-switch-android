@@ -27,16 +27,16 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
   # Run unit tests after a successful build
-#  unit_test_browser_switch:
-#    name: Unit Test Browser Switch
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v2
-#      - name: Setup Java
-#        uses: ./.github/actions/setup_java
-#      - name: Run Unit Tests
-#        run: ./ci unit_tests
+  unit_test_browser_switch:
+    name: Unit Test Browser Switch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: ./.github/actions/setup_java
+      - name: Run Unit Tests
+        run: ./ci unit_tests
 
   # Publish after successful build and unit tests
   publish_browser_switch:
