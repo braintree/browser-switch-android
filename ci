@@ -53,7 +53,7 @@ case $command_name in
     release_type="$2"
     if [ "${release_type}" == "release" ]; then
       # publish release
-      ./gradlew --stacktrace clean :browser-switch:publishToSonatype closeAndReleaseSonatypeStagingRepository
+      ./gradlew --stacktrace clean :browser-switch:publishToSonatype
     else
       # publish SNAPSHOT
       ./gradlew --stacktrace clean :browser-switch:publishToSonatype

@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Internal fixes
+
 ## 2.6.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 34
