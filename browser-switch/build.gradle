@@ -38,22 +38,6 @@ dependencies {
 
 // region signing and publishing
 
-task javadocs(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    failOnError false
-}
-
-task javadocsJar(type: Jar, dependsOn: javadocs) {
-    archiveClassifier.set('javadoc')
-    from javadocs.destinationDir
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
-}
-
 project.ext.name = "browser-switch"
 project.ext.pom_name = "browser-switch"
 project.ext.pom_desc = "Android Browser Switch makes it easy to open a url in a browser or Chrome Custom Tab and receive a response as the result of user interaction, either cancel or response data from the web page."
