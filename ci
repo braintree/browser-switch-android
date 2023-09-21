@@ -44,8 +44,8 @@ case $command_name in
     ;;
   publish)
     # Ref: https://nickjanetakis.com/blog/prevent-unset-variables-in-your-shell-bash-scripts-with-set-nounset
-    [ -n "${SONATYPE_USERNAME}" ]    || (echo "::error:: SONATYPE_USERNAME env variable not set" && exit 1)
-    [ -n "${SONATYPE_PASSWORD}" ]    || (echo "::error:: SONATYPE_PASSWORD env variable not set" && exit 1)
+    [ -n "${SONATYPE_NEXUS_USERNAME}" ]    || (echo "::error:: SONATYPE_NEXUS_USERNAME env variable not set" && exit 1)
+    [ -n "${SONATYPE_NEXUS_PASSWORD}" ]    || (echo "::error:: SONATYPE_NEXUS_PASSWORD env variable not set" && exit 1)
     [ -n "${SIGNING_KEY_ID}" ]       || (echo "::error:: SIGNING_KEY_ID env variable not set" && exit 1)
     [ -n "${SIGNING_KEY_PASSWORD}" ] || (echo "::error:: SIGNING_KEY_PASSWORD env variable not set" && exit 1)
     [ -n "${SIGNING_KEY_FILE}" ]     || (echo "::error:: SIGNING_KEY_FILE env variable not set" && exit 1)
