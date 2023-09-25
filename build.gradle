@@ -11,6 +11,7 @@ buildscript {
         'annotation'  : 'androidx.annotation:annotation:1.2.0',
         'appcompat'   : 'androidx.appcompat:appcompat:1.3.1',
         'browser'     : 'androidx.browser:browser:1.5.0',
+        'kotlin'      : 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10',
 
         // test dependencies
         'junit'       : 'junit:junit:4.13.2',
@@ -21,11 +22,14 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.7.20'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10'
     }
 }
 
 plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
+    id 'org.jetbrains.dokka' version '1.7.10'
 }
 
 version = '2.6.1-SNAPSHOT'
@@ -56,6 +60,11 @@ nexusPublishing {
         // give nexus sonatype more time to close the staging repository
         delayBetween.set(Duration.ofSeconds(20))
     }
+}
+
+dokkaHtmlMultiModule.configure {
+    // redirect dokka output to GitHub pages root directory
+    outputDirectory.set(project.file("docs"))
 }
 
 task changeGradleReleaseVersion {
