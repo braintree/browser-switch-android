@@ -80,9 +80,9 @@ jobs:
         run: ./ci set_github_user_to_braintreeps
       - name: Update Version
         run: |
+          ./ci publish_dokka_docs
           ./ci update_version ${{ github.event.inputs.version }}
           ./ci commit_and_tag_release ${{ github.event.inputs.version }}
-          ./ci publish_dokka_docs
           ./ci increment_snapshot_version ${{ github.event.inputs.version }}
           ./ci increment_demo_app_version_code
 
