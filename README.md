@@ -111,6 +111,12 @@ This SDK abides by our Client SDK Deprecation Policy. For more information on th
 | 2.x.x | Active | February 2021 | TBA | TBA |
 | 1.x.x | Inactive | June 2020 | April 2022 | April 2023 |
 
+## Help
+
+* [Check out the reference docs](https://braintree.github.io/browser-switch-android/index.html)
+* Find a bug? [Open an issue](https://github.com/braintree/browser-switch-android/issues)
+* Want to contribute? [Check out contributing guidelines](CONTRIBUTING.md) and [submit a pull request](https://help.github.com/articles/creating-a-pull-request).
+
 ## License
 
 Android Browser Switch is open source and available under the MIT license. See the
