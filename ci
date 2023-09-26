@@ -80,5 +80,9 @@ case $command_name in
   get_latest_changelog_entries)
     sed -e '1,/##/d' -e '/##/,$d' CHANGELOG.md
     ;;
+  publish_dokka_docs)
+    ./gradlew dokkaHtmlMultiModule
+    ;;
+
 esac
 
