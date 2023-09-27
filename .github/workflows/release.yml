@@ -87,7 +87,7 @@ jobs:
           ./ci increment_demo_app_version_code
 
           git commit -am 'Prepare for development'
-          git push origin master ${{ github.event.inputs.version }}
+          git push origin main ${{ github.event.inputs.version }}
 
   create_github_release:
     needs: [ bump_version ]
