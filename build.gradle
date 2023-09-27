@@ -28,7 +28,6 @@ buildscript {
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "${detektVersion}"
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
     id 'org.jetbrains.dokka' version '1.7.10'
 }
@@ -47,31 +46,6 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-    }
-}
-
-dependencies {
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}"
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-rules-libraries:${detektVersion}"
-}
-
-detekt {
-    toolVersion = detektVersion
-    config = files("detekt/detekt-config.yml")
-    input = files(
-            "CorePayments/src",
-            "CardPayments/src",
-            "PayPalWebPayments/src",
-            "PayPalNativePayments/src",
-            "FraudProtection/src",
-            "Demo/src"
-    )
-    autoCorrect = project.hasProperty('detektAutoCorrect')
-    reports {
-        html {
-            enabled = true
-            destination = file("build/reports/detekt_report.html")
-        }
     }
 }
 

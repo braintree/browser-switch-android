@@ -83,9 +83,6 @@ case $command_name in
   publish_dokka_docs)
     ./gradlew dokkaHtmlMultiModule
     ;;
-  detekt)
-    ./gradlew detekt
-    ;;
   android_lint)
     ./gradlew lint
     ;;

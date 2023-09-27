@@ -4,20 +4,6 @@ concurrency:
   group: static-analysis-${{ github.event.number }}
   cancel-in-progress: true
 jobs:
-  detekt:
-    name: Detekt
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Set up Java 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'microsoft'
-      - name: Run Detekt
-        run: ./ci detekt
-
   android_lint:
     name: Android Lint
     runs-on: ubuntu-latest
