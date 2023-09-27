@@ -16,7 +16,7 @@ jobs:
           java-version: '11'
           distribution: 'microsoft'
       - name: Run Detekt
-        run: ./gradlew detekt
+        run: ./ci detekt
 
   android_lint:
     name: Android Lint
@@ -30,4 +30,4 @@ jobs:
           java-version: '11'
           distribution: 'microsoft'
       - name: Lint
-        run: ./gradlew lint
+        run: ./ci android_lint
