@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup Java
         uses: ./.github/actions/setup_java
-      - name: Run Unit Tests
+      - name: Run Static Analysis
         uses: ./.github/actions/static_analysis
 
   # Run unit tests after a successful build
