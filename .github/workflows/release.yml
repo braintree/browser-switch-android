@@ -26,6 +26,18 @@ jobs:
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
+  # Run static analysis after successful build
+  static_analysis:
+    name: Static Analysis Browser Switch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: ./.github/actions/setup_java
+      - name: Run Static Analysis
+        uses: ./.github/actions/static_analysis
+
   # Run unit tests after a successful build
   unit_test_browser_switch:
     name: Unit Test Browser Switch
@@ -40,7 +52,7 @@ jobs:
 
   # Publish after successful build and unit tests
   publish_browser_switch:
-    needs: [ build_aar, unit_test_browser_switch ]
+    needs: [ build_aar, unit_test_browser_switch, static_analysis ]
     name: Publish To Sonatype
     runs-on: ubuntu-latest
     steps:
@@ -87,7 +99,7 @@ jobs:
           ./ci increment_demo_app_version_code
 
           git commit -am 'Prepare for development'
-          git push origin master ${{ github.event.inputs.version }}
+          git push origin main ${{ github.event.inputs.version }}
 
   create_github_release:
     needs: [ bump_version ]
