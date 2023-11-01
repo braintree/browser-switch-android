@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * The status of a {@link BrowserSwitchResult}.
  */
 @Retention(RetentionPolicy.SOURCE)
-@IntDef({BrowserSwitchStatus.SUCCESS, BrowserSwitchStatus.CANCELED})
+@IntDef({BrowserSwitchStatus.SUCCESS, BrowserSwitchStatus.INCOMPLETE})
 public @interface BrowserSwitchStatus {
 
     /**
@@ -18,7 +18,10 @@ public @interface BrowserSwitchStatus {
     int SUCCESS = 1;
 
     /**
-     * Browser switch is considered canceled when a user re-enters the app without deep link.
+     * Browser switch is considered incomplete when a user re-enters the app without deep link. This
+     * may happen if the user closes the Chrome Custom Tab or navigates away from the browser and
+     * back into the launching app. If the user returns to the browser and completes the flow, this
+     * result may become SUCCESS.
      */
-    int CANCELED = 2;
+    int INCOMPLETE = 2;
 }

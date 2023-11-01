@@ -116,7 +116,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                     selectedColorText = String.format("Selected color: %s", color);
                 }
                 break;
-            case BrowserSwitchStatus.CANCELED:
+            case BrowserSwitchStatus.INCOMPLETE:
                 resultText = "Browser Switch Cancelled by User";
                 break;
         }

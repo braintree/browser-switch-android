@@ -121,7 +121,7 @@ public class BrowserSwitchClient {
                         // ensure that success result is delivered exactly once
                         persistentStore.clearActiveRequest(appContext);
                         break;
-                    case BrowserSwitchStatus.CANCELED:
+                    case BrowserSwitchStatus.INCOMPLETE:
                         // ensure that cancellation result is delivered exactly once, but allow for
                         // a cancellation result to remain in shared storage in case it
                         // later becomes successful
@@ -161,7 +161,7 @@ public class BrowserSwitchClient {
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
         } else if (request.getShouldNotifyCancellation()) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+            result = new BrowserSwitchResult(BrowserSwitchStatus.INCOMPLETE, request);
         }
 
         return result;
@@ -182,14 +182,19 @@ public class BrowserSwitchClient {
     @Nullable
     public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
-        if (intent != null && intent.getData() != null) {
+        if (intent != null) {
             BrowserSwitchRequest request =
                     persistentStore.getActiveRequest(context.getApplicationContext());
-            if (request != null && request.getRequestCode() == requestCode) {
+            if (intent.getData() != null && request != null && request.getRequestCode() == requestCode) {
                 Uri deepLinkUrl = intent.getData();
                 if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
                     result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                    persistentStore.clearActiveRequest(context);
                 }
+            } else if (request != null && request.getShouldNotifyCancellation()) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.INCOMPLETE, request);
+                request.setShouldNotifyCancellation(false);
+                persistentStore.putActiveRequest(request, context);
             }
         }
         return result;

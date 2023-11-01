@@ -255,7 +255,7 @@ public class BrowserSwitchClientUnitTest {
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
         assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
-        assertEquals(result.getStatus(), BrowserSwitchStatus.CANCELED);
+        assertEquals(result.getStatus(), BrowserSwitchStatus.INCOMPLETE);
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
@@ -302,7 +302,7 @@ public class BrowserSwitchClientUnitTest {
         assertNotNull(result);
         assertEquals(123, result.getRequestCode());
         assertSame(browserSwitchDestinationUrl, result.getRequestUrl());
-        assertEquals(result.getStatus(), BrowserSwitchStatus.CANCELED);
+        assertEquals(result.getStatus(), BrowserSwitchStatus.INCOMPLETE);
         assertSame(result.getRequestMetadata(), requestMetadata);
         assertNull(result.getDeepLinkUrl());
 
