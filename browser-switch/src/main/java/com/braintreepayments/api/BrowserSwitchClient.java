@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.fragment.app.FragmentActivity;
 
 import com.braintreepayments.api.browserswitch.R;
 
@@ -44,7 +44,7 @@ public class BrowserSwitchClient {
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
      */
-    public void start(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    public void start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
 
         Context appContext = activity.getApplicationContext();
@@ -71,7 +71,7 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    void assertCanPerformBrowserSwitch(ComponentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -107,7 +107,7 @@ public class BrowserSwitchClient {
      *
      * @param activity the activity that received the deep link back into the app
      */
-    public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
+    public BrowserSwitchResult deliverResult(@NonNull ComponentActivity activity) {
         BrowserSwitchResult result = null;
         Context appContext = activity.getApplicationContext();
         BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
@@ -140,12 +140,12 @@ public class BrowserSwitchClient {
      * We recommend you call this method in onResume to receive a browser switch result once your
      * app has re-entered the foreground.
      * <p>
-     * This can be used in place of {@link BrowserSwitchClient#deliverResult(FragmentActivity)} when
+     * This can be used in place of {@link BrowserSwitchClient#deliverResult(ComponentActivity)} when
      * you want to know the contents of a pending browser switch result before it is delivered.
      *
      * @param activity the activity that received the deep link back into the app
      */
-    public BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
+    public BrowserSwitchResult getResult(@NonNull ComponentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
 
@@ -172,7 +172,7 @@ public class BrowserSwitchClient {
      *
      * Parse result has no restriction to deliver a browser switch result only once. After a parsed
      * result has been consumed, call {@link #clearActiveRequests(Context)} to enforce the same
-     * "deliver once" behavior provided by {@link #deliverResult(FragmentActivity)}.
+     * "deliver once" behavior provided by {@link #deliverResult(ComponentActivity)}.
      *
      * @param context     The context used to check for pending browser switch requests
      * @param requestCode The request code for the matching pending request
@@ -241,7 +241,7 @@ public class BrowserSwitchClient {
      *
      * @param activity the activity that received the deep link back into the app
      */
-    public void captureResult(@NonNull FragmentActivity activity) {
+    public void captureResult(@NonNull ComponentActivity activity) {
         Intent intent = activity.getIntent();
         Context appContext = activity.getApplicationContext();
 
