@@ -2,16 +2,14 @@ package com.braintreepayments.api;
 
 import android.net.Uri;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.fragment.app.FragmentActivity;
+import androidx.activity.ComponentActivity;
 
 import org.json.JSONObject;
 
 /**
  * Object that contains a set of browser switch parameters for use with
- * {@link BrowserSwitchClient#start(FragmentActivity, BrowserSwitchOptions)}.
+ * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}.
  */
 public class BrowserSwitchOptions {
 
