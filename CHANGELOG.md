@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Breaking Changes
+  * Change all `FragmentActivity` method parameters to `ComponentActivity`
+
 ## 2.6.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 34
