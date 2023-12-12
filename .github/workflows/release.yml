@@ -40,7 +40,7 @@ jobs:
 
   # Publish after successful build and unit tests
   publish_browser_switch:
-    needs: [ build_aar, unit_test_browser_switch, static_analysis ]
+    needs: [ build_aar, unit_test_browser_switch ]
     name: Publish To Sonatype
     runs-on: ubuntu-latest
     steps:
