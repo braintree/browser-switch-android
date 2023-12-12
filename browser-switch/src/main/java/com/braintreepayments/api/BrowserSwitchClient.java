@@ -71,7 +71,7 @@ public class BrowserSwitchClient {
             try {
                 activity.startActivity(launchUrlInBrowser);
             } catch (ActivityNotFoundException e) {
-                throw new BrowserSwitchException("A web browser is required.");
+                throw new BrowserSwitchException("Unable to start browser switch without a web browser.");
             }
         }
     }
