@@ -1,5 +1,6 @@
 package com.braintreepayments.api;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -67,7 +68,11 @@ public class BrowserSwitchClient {
             customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
         } else {
             Intent launchUrlInBrowser = new Intent(Intent.ACTION_VIEW, browserSwitchUrl);
-            activity.startActivity(launchUrlInBrowser);
+            try {
+                activity.startActivity(launchUrlInBrowser);
+            } catch (ActivityNotFoundException e) {
+                throw new BrowserSwitchException("A web browser is required.");
+            }
         }
     }
 
