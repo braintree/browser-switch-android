@@ -9,12 +9,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -152,6 +154,29 @@ public class BrowserSwitchClientUnitTest {
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
         assertSame(browserSwitchRequest.getMetadata(), metadata);
         assertTrue(browserSwitchRequest.getShouldNotifyCancellation());
+    }
+
+    @Test
+    public void start_whenChromeCustomTabsNotSupported_whenActivityNotFound_throwsBrowserSwitchException() {
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
+        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(false);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        doThrow(new ActivityNotFoundException("No browser")).when(activity).startActivity(any(Intent.class));
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+
+        try {
+            sut.start(activity, options);
+            fail("should fail");
+        } catch (BrowserSwitchException e) {
+            assertEquals(e.getMessage(), "Unable to start browser switch without a web browser.");
+        }
     }
 
     @Test

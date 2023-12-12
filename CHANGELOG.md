@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Throw `BrowserSwitchException` when a browser is not found to start browser switch
+
 ## 2.6.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 34
