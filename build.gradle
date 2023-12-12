@@ -32,7 +32,7 @@ plugins {
     id 'org.jetbrains.dokka' version '1.7.10'
 }
 
-version = '2.6.1-SNAPSHOT'
+version = '2.6.1'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 34
