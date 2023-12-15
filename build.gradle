@@ -5,6 +5,7 @@ buildscript {
         maven {
             url = "https://plugins.gradle.org/m2/"
         }
+        mavenLocal()
     }
 
     ext.deps = [

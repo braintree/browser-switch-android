@@ -1,5 +1,6 @@
 package com.braintreepayments.api;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,7 +18,6 @@ public class BrowserSwitchActivityResultContract extends
         ActivityResultContract<BrowserSwitchOptions, BrowserSwitchResult> {
 
     private BrowserSwitchRequest request;
-    private Context context;
 
     @NonNull
     @Override
@@ -25,7 +25,6 @@ public class BrowserSwitchActivityResultContract extends
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
-        this.context = context;
         JSONObject metadata = browserSwitchOptions.getMetadata();
         request =
                 new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);

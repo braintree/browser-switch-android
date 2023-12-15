@@ -1,5 +1,6 @@
 package com.braintreepayments.api;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import androidx.activity.result.ActivityResultRegistry;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 
 public class BrowserSwitchLauncher {
@@ -24,6 +26,12 @@ public class BrowserSwitchLauncher {
         this(activity.getActivityResultRegistry(), activity, callback);
     }
 
+    public BrowserSwitchLauncher(@NonNull Fragment fragment,
+                                 @NonNull BrowserSwitchLauncherCallback callback) {
+        this(fragment.getActivity().getActivityResultRegistry(), fragment.getViewLifecycleOwner(),
+                callback);
+    }
+
     @VisibleForTesting
     BrowserSwitchLauncher(ActivityResultRegistry registry, LifecycleOwner lifecycleOwner,
                       BrowserSwitchLauncherCallback callback) {
@@ -31,8 +39,12 @@ public class BrowserSwitchLauncher {
                 new BrowserSwitchActivityResultContract(), callback::onResult);
     }
 
-    public void launch(BrowserSwitchOptions browserSwitchOptions) {
-        activityLauncher.launch(browserSwitchOptions);
+    public void launch(BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+        try {
+            activityLauncher.launch(browserSwitchOptions);
+        } catch (ActivityNotFoundException e) {
+            throw new BrowserSwitchException(e.getMessage());
+        }
     }
 
     public void clearActiveRequests(@NonNull Context context) {
