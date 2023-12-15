@@ -51,7 +51,10 @@ public class BrowserSwitchResult {
      */
     @Nullable
     public JSONObject getRequestMetadata() {
-        return request.getMetadata();
+        if (request != null) {
+            return request.getMetadata();
+        }
+        return null;
     }
 
     /**

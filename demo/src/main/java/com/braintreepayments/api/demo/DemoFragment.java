@@ -2,6 +2,7 @@ package com.braintreepayments.api.demo;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.api.BrowserSwitchException;
+import com.braintreepayments.api.BrowserSwitchLauncher;
+import com.braintreepayments.api.BrowserSwitchLauncherCallback;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 import com.braintreepayments.api.BrowserSwitchStatus;
@@ -29,6 +32,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
     private TextView mMetadataTextView;
+    private BrowserSwitchLauncher launcher;
 
     @Nullable
     @Override
@@ -45,6 +49,15 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mBrowserSwitchStatusTextView = view.findViewById(R.id.result);
         mSelectedColorTextView = view.findViewById(R.id.return_url);
         mMetadataTextView = view.findViewById(R.id.metadata);
+        launcher = new BrowserSwitchLauncher(requireActivity(), new BrowserSwitchLauncherCallback() {
+            @Override
+            public void onResult(BrowserSwitchResult browserSwitchResult) {
+                if (browserSwitchResult != null) {
+                    onBrowserSwitchResult(browserSwitchResult);
+                    launcher.clearActiveRequests(requireContext());
+                }
+            }
+        });
 
         return view;
     }
@@ -53,13 +66,22 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         @IdRes int viewId = v.getId();
         if (viewId == R.id.browser_switch) {
-            startBrowserSwitch(null);
+            startBrowserLaunch();
+//            startBrowserSwitch(null);
         } else if (viewId == R.id.browser_switch_with_metadata) {
             JSONObject metadata = buildMetadataObject();
             startBrowserSwitch(metadata);
         }
     }
 
+    private void startBrowserLaunch() {
+        Uri url = buildBrowserSwitchUrl();
+        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
+                .requestCode(1)
+                .url(url)
+                .returnUrlScheme(getReturnUrlScheme());
+        launcher.launch(browserSwitchOptions);
+    }
     private void startBrowserSwitch(@Nullable JSONObject metadata) {
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()

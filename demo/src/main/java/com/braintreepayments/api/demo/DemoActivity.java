@@ -38,12 +38,13 @@ public class DemoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        BrowserSwitchResult result = browserSwitchClient.deliverResult(this);
+        BrowserSwitchResult result = browserSwitchClient.getResult(this);
         if (result != null) {
             DemoFragment demoFragment = getDemoFragment();
             if (demoFragment != null) {
                 demoFragment.onBrowserSwitchResult(result);
             }
+            browserSwitchClient.clearActiveRequests(this);
         }
     }
 
