@@ -38,4 +38,20 @@ public class BrowserSwitchLauncher {
     public void clearActiveRequests(@NonNull Context context) {
         BrowserSwitchPersistentStore.getInstance().clearActiveRequest(context.getApplicationContext());
     }
+
+    @Nullable
+    public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
+        BrowserSwitchResult result = null;
+        if (intent != null && intent.getData() != null) {
+            BrowserSwitchRequest request =
+                    BrowserSwitchPersistentStore.getInstance().getActiveRequest(context.getApplicationContext());
+            if (request != null && request.getRequestCode() == requestCode) {
+                Uri deepLinkUrl = intent.getData();
+                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                }
+            }
+        }
+        return result;
+    }
 }

@@ -32,7 +32,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
     private TextView mMetadataTextView;
-    private BrowserSwitchLauncher launcher;
 
     @Nullable
     @Override
@@ -49,15 +48,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mBrowserSwitchStatusTextView = view.findViewById(R.id.result);
         mSelectedColorTextView = view.findViewById(R.id.return_url);
         mMetadataTextView = view.findViewById(R.id.metadata);
-        launcher = new BrowserSwitchLauncher(requireActivity(), new BrowserSwitchLauncherCallback() {
-            @Override
-            public void onResult(BrowserSwitchResult browserSwitchResult) {
-                if (browserSwitchResult != null) {
-                    onBrowserSwitchResult(browserSwitchResult);
-                    launcher.clearActiveRequests(requireContext());
-                }
-            }
-        });
 
         return view;
     }
@@ -66,22 +56,13 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         @IdRes int viewId = v.getId();
         if (viewId == R.id.browser_switch) {
-            startBrowserLaunch();
-//            startBrowserSwitch(null);
+            startBrowserSwitch(null);
         } else if (viewId == R.id.browser_switch_with_metadata) {
             JSONObject metadata = buildMetadataObject();
             startBrowserSwitch(metadata);
         }
     }
 
-    private void startBrowserLaunch() {
-        Uri url = buildBrowserSwitchUrl();
-        BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-                .requestCode(1)
-                .url(url)
-                .returnUrlScheme(getReturnUrlScheme());
-        launcher.launch(browserSwitchOptions);
-    }
     private void startBrowserSwitch(@Nullable JSONObject metadata) {
         Uri url = buildBrowserSwitchUrl();
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()

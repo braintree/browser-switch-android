@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button singleTopButton = findViewById(R.id.single_top_button);
         singleTopButton.setOnClickListener(this::launchSingleTopBrowserSwitch);
+
+        Button launcherButton = findViewById(R.id.launcher_button);
+        launcherButton.setOnClickListener(this::launchBrowserSwitchLauncher);
     }
 
     public void launchStandardBrowserSwitch(View view) {
@@ -28,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchSingleTopBrowserSwitch(View view) {
         Intent intent = new Intent(this, DemoActivitySingleTop.class);
+        startActivity(intent);
+    }
+
+    public void launchBrowserSwitchLauncher(View view) {
+        Intent intent = new Intent(this, LauncherActivity.class);
         startActivity(intent);
     }
 }
