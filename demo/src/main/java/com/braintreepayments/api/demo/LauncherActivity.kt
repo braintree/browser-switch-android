@@ -2,29 +2,25 @@ package com.braintreepayments.api.demo
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.braintreepayments.api.BrowserSwitchLauncher
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchResult
 import com.braintreepayments.api.BrowserSwitchStatus
+import com.braintreepayments.api.PublicBrowserSwitchLauncher
 import org.json.JSONException
 import org.json.JSONObject
 
 class LauncherActivity : AppCompatActivity() {
 
-    private lateinit var launcher: BrowserSwitchLauncher
+    private lateinit var launcher: PublicBrowserSwitchLauncher
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
 
-        launcher = BrowserSwitchLauncher(this) { browserSwitchResult ->
-            if (browserSwitchResult != null) {
-                onBrowserSwitchResult(browserSwitchResult)
-                launcher.clearActiveRequests(this)
-            }
+        launcher = PublicBrowserSwitchLauncher(this) { browserSwitchResult ->
+            onBrowserSwitchResult(browserSwitchResult)
         }
         val launchButton = findViewById<Button>(R.id.browser_switch_launcher)
         launchButton.setOnClickListener { launchBrowserSwitch() }
@@ -32,15 +28,12 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val result = launcher.parseResult(this, 1, intent)
-        result?.let {
-            onBrowserSwitchResult(it)
-            launcher.clearActiveRequests(this)
-        }
+        launcher.handleReturnToAppFromBrowser(this, 1, intent)
     }
     private fun launchBrowserSwitch() {
         val metadata: JSONObject? = buildMetadataObject()
         val url: Uri = buildBrowserSwitchUrl()
+
         val browserSwitchOptions = BrowserSwitchOptions()
             .requestCode(1)
             .metadata(metadata)

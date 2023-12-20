@@ -15,8 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.api.BrowserSwitchException;
-import com.braintreepayments.api.BrowserSwitchLauncher;
-import com.braintreepayments.api.BrowserSwitchLauncherCallback;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
 import com.braintreepayments.api.BrowserSwitchStatus;

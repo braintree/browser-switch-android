@@ -1,12 +1,9 @@
 package com.braintreepayments.api;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.Browser;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +34,8 @@ public class BrowserSwitchActivityResultContract extends
 
     @Override
     public BrowserSwitchResult parseResult(int resultCode, @Nullable Intent intent) {
+        // A successful result will be returned via deep link back to the app, so the only result
+        // that will be delivered via activity result is a cancel (ex: the user closed the browser)
         return new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
     }
 }

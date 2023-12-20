@@ -12,34 +12,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 
-public class BrowserSwitchLauncher {
+import java.util.UUID;
+
+class BrowserSwitchLauncher {
 
     private static final String BROWSER_SWITCH_RESULT = "com.braintreepayments.api.BrowserSwitch.RESULT";
 
-    @VisibleForTesting
     ActivityResultLauncher<BrowserSwitchOptions> activityLauncher;
 
-    public BrowserSwitchLauncher(@NonNull ComponentActivity activity,
+    BrowserSwitchLauncher(@NonNull ComponentActivity activity,
                              @NonNull BrowserSwitchLauncherCallback callback) {
         this(activity.getActivityResultRegistry(), activity, callback);
     }
 
-    public BrowserSwitchLauncher(@NonNull Fragment fragment,
+    BrowserSwitchLauncher(@NonNull Fragment fragment,
                                  @NonNull BrowserSwitchLauncherCallback callback) {
         this(fragment.getActivity().getActivityResultRegistry(), fragment.getViewLifecycleOwner(),
                 callback);
     }
 
-    @VisibleForTesting
     BrowserSwitchLauncher(ActivityResultRegistry registry, LifecycleOwner lifecycleOwner,
                       BrowserSwitchLauncherCallback callback) {
         activityLauncher = registry.register(BROWSER_SWITCH_RESULT, lifecycleOwner,
                 new BrowserSwitchActivityResultContract(), callback::onResult);
     }
 
-    public void launch(BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    void launch(BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         try {
             activityLauncher.launch(browserSwitchOptions);
         } catch (ActivityNotFoundException e) {
@@ -47,7 +48,7 @@ public class BrowserSwitchLauncher {
         }
     }
 
-    public void clearActiveRequests(@NonNull Context context) {
+    void clearActiveRequests(@NonNull Context context) {
         BrowserSwitchPersistentStore.getInstance().clearActiveRequest(context.getApplicationContext());
     }
 
