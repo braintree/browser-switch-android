@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button launcherButton = findViewById(R.id.launcher_button);
         launcherButton.setOnClickListener(this::launchBrowserSwitchLauncher);
+
+        Button launcherWithoutButton = findViewById(R.id.launcher_without_button);
+        launcherWithoutButton.setOnClickListener(this::launchBrowserSwitchLauncherWithoutButton);
     }
 
     public void launchStandardBrowserSwitch(View view) {
@@ -36,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchBrowserSwitchLauncher(View view) {
         Intent intent = new Intent(this, LauncherActivity.class);
+        startActivity(intent);
+    }
+
+    public void launchBrowserSwitchLauncherWithoutButton(View view) {
+        Intent intent = new Intent(this, LauncherActivityNoButton.class);
         startActivity(intent);
     }
 }

@@ -39,4 +39,11 @@
         android:text="Browser Switch Launcher"
         />
 
+    <Button
+        android:id="@+id/launcher_without_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Browser Switch Launcher No Button"
+        />
+
 </LinearLayout>

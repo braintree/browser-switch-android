@@ -1,10 +1,10 @@
 package com.braintreepayments.api.demo
 
+import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Toast
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchResult
 import com.braintreepayments.api.BrowserSwitchStatus
@@ -12,24 +12,35 @@ import com.braintreepayments.api.BrowserSwitchLauncher
 import org.json.JSONException
 import org.json.JSONObject
 
-class LauncherActivity : AppCompatActivity() {
+class LauncherActivityNoButton : AppCompatActivity() {
 
     private lateinit var launcher: BrowserSwitchLauncher
+    private var browserSwitchHandled = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_launcher)
-
+        setContentView(R.layout.activity_launcher_no_button)
         launcher =
             BrowserSwitchLauncher(this) { browserSwitchResult ->
                 onBrowserSwitchResult(browserSwitchResult)
+                browserSwitchHandled = true
             }
-        val launchButton = findViewById<Button>(R.id.browser_switch_launcher)
-        launchButton.setOnClickListener { launchBrowserSwitch() }
+        launcher.handleReturnToAppFromBrowser(this, 1, intent)
+
+        if (!browserSwitchHandled) {
+            launchBrowserSwitch()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         launcher.handleReturnToAppFromBrowser(this, 1, intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            setIntent(intent)
+        }
     }
     private fun launchBrowserSwitch() {
         val metadata: JSONObject? = buildMetadataObject()
@@ -39,7 +50,7 @@ class LauncherActivity : AppCompatActivity() {
             .requestCode(1)
             .metadata(metadata)
             .url(url)
-            .returnUrlScheme("launcher-activity")
+            .returnUrlScheme("launcher-activity-no-button")
         launcher.launch(browserSwitchOptions)
     }
 
@@ -83,7 +94,7 @@ class LauncherActivity : AppCompatActivity() {
     private fun buildBrowserSwitchUrl(): Uri {
         val url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                "launcher-activity" + "://"
+                "launcher-activity-no-button" + "://"
         return Uri.parse(url)
     }
 }
