@@ -38,7 +38,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        BrowserSwitchResult result = browserSwitchClient.getResult(this);
+        BrowserSwitchResult result = browserSwitchClient.parseResult(this, 1, getIntent());
         if (result != null) {
             DemoFragment demoFragment = getDemoFragment();
             if (demoFragment != null) {
