@@ -57,7 +57,7 @@ class LauncherActivity : AppCompatActivity() {
                 }
             }
 
-            BrowserSwitchStatus.CANCELED -> resultText = "Browser Switch Cancelled by User"
+            BrowserSwitchStatus.INCOMPLETE -> resultText = "Browser Switch Cancelled by User"
         }
         var metadataOutput: String? = null
         val requestMetadata = result.requestMetadata

@@ -2,7 +2,6 @@ package com.braintreepayments.api.demo;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +116,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                     selectedColorText = String.format("Selected color: %s", color);
                 }
                 break;
-            case BrowserSwitchStatus.CANCELED:
+            case BrowserSwitchStatus.INCOMPLETE:
                 resultText = "Browser Switch Cancelled by User";
                 break;
         }

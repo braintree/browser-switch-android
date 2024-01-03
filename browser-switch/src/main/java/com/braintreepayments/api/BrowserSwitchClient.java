@@ -126,7 +126,7 @@ public class BrowserSwitchClient {
                         // ensure that success result is delivered exactly once
                         persistentStore.clearActiveRequest(appContext);
                         break;
-                    case BrowserSwitchStatus.CANCELED:
+                    case BrowserSwitchStatus.INCOMPLETE:
                         // ensure that cancellation result is delivered exactly once, but allow for
                         // a cancellation result to remain in shared storage in case it
                         // later becomes successful
@@ -166,7 +166,7 @@ public class BrowserSwitchClient {
         if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
         } else if (request.getShouldNotifyCancellation()) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+            result = new BrowserSwitchResult(BrowserSwitchStatus.INCOMPLETE, request);
         }
 
         return result;

@@ -36,6 +36,6 @@ public class BrowserSwitchActivityResultContract extends
     public BrowserSwitchResult parseResult(int resultCode, @Nullable Intent intent) {
         // A successful result will be returned via deep link back to the app, so the only result
         // that will be delivered via activity result is a cancel (ex: the user closed the browser)
-        return new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
+        return new BrowserSwitchResult(BrowserSwitchStatus.INCOMPLETE, request);
     }
 }
