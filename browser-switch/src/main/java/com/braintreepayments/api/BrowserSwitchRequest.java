@@ -69,4 +69,8 @@ class BrowserSwitchRequest {
     boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
         return url.getScheme() != null && url.getScheme().equalsIgnoreCase(returnUrlScheme);
     }
+
+    boolean matchesAppLinkHost(@NonNull Uri url) {
+        return url.getHost() != null && url.getHost().equalsIgnoreCase(Uri.parse(returnUrlScheme).getHost());
+    }
 }

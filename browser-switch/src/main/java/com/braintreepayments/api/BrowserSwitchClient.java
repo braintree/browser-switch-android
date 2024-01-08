@@ -192,7 +192,7 @@ public class BrowserSwitchClient {
                     persistentStore.getActiveRequest(context.getApplicationContext());
             if (request != null && request.getRequestCode() == requestCode) {
                 Uri deepLinkUrl = intent.getData();
-                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                if (request.matchesDeepLinkUrlScheme(deepLinkUrl) || request.matchesAppLinkHost(deepLinkUrl)) {
                     result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
                 }
             }
