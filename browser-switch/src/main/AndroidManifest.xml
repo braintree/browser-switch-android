@@ -1,14 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.braintreepayments.api.browserswitch">
 
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
+
             <category android:name="android.intent.category.BROWSABLE" />
+
             <data android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
+
+    <application>
+        <activity
+            android:name="com.braintreepayments.api.BrowserSwitchActivity"
+            android:exported="false" />
+    </application>
+
 </manifest>

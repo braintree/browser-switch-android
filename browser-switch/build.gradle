@@ -31,6 +31,8 @@ dependencies {
     implementation deps.annotation
     implementation deps.appcompat
     implementation deps.browser
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     testImplementation deps.junit
     testImplementation deps.mockitoCore
