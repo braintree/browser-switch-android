@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -76,7 +77,31 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    @Nullable
+    public BrowserSwitchRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+        assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
+
+        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
+        int requestCode = browserSwitchOptions.getRequestCode();
+        String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
+
+        JSONObject metadata = browserSwitchOptions.getMetadata();
+        BrowserSwitchRequest request;
+
+        if (activity.isFinishing()) {
+            String activityFinishingMessage =
+                    "Unable to start browser switch while host Activity is finishing.";
+            throw new BrowserSwitchException(activityFinishingMessage);
+        } else  {
+            boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
+            request =
+                    new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+            customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+        }
+        return request;
+    }
+
+    void assertCanPerformBrowserSwitch(ComponentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -195,6 +220,18 @@ public class BrowserSwitchClient {
                 if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
                     result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
                 }
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public BrowserSwitchResult parseResult(@NonNull BrowserSwitchRequest request, @Nullable Intent intent) {
+        BrowserSwitchResult result = null;
+        if (intent != null && intent.getData() != null && request != null) {
+            Uri deepLinkUrl = intent.getData();
+            if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
             }
         }
         return result;
