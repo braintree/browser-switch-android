@@ -18,6 +18,7 @@ import org.json.JSONObject;
 /**
  * Client that manages the logic for browser switching.
  */
+// NEXT_MAJOR_VERSION remove all methods except start with ComponentActivity and parseResult with BrowserSwitchRequest
 public class BrowserSwitchClient {
 
     private final BrowserSwitchInspector browserSwitchInspector;
