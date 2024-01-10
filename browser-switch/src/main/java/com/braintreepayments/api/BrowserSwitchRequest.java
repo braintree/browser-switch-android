@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class BrowserSwitchRequest {
+public class BrowserSwitchRequest {
 
 
     private final Uri url;

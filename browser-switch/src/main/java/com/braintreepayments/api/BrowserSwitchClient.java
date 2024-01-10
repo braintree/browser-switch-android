@@ -77,6 +77,17 @@ public class BrowserSwitchClient {
         }
     }
 
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     * @return a pending {@link BrowserSwitchRequest} that should be stored and passed to
+     * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app.
+     * Returns null if an exception is thrown.
+     * @throws BrowserSwitchException when a browser is unable to be launched for browser switching
+     */
     @Nullable
     public BrowserSwitchRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
@@ -225,10 +236,19 @@ public class BrowserSwitchClient {
         return result;
     }
 
+    /**
+     * Parses and returns a browser switch result if a match is found for the given {@link BrowserSwitchRequest}
+     * @param request the pending {@link BrowserSwitchRequest} returned from
+     * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
+     * @param intent the intent to return to your application containing a deep link result from the
+     *               browser flow
+     * @return a {@link BrowserSwitchResult} if the browser switch was successfully completed, or
+     * null if the user returned to the app without completing the browser switch
+     */
     @Nullable
     public BrowserSwitchResult parseResult(@NonNull BrowserSwitchRequest request, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
-        if (intent != null && intent.getData() != null && request != null) {
+        if (intent != null && intent.getData() != null) {
             Uri deepLinkUrl = intent.getData();
             if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
                 result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
