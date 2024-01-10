@@ -97,19 +97,23 @@ public class BrowserSwitchClient {
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
-        BrowserSwitchRequest request;
 
+        BrowserSwitchRequest request;
         if (activity.isFinishing()) {
             String activityFinishingMessage =
                     "Unable to start browser switch while host Activity is finishing.";
             throw new BrowserSwitchException(activityFinishingMessage);
         } else  {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
-            request =
-                    new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
-            customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+            try {
+                 request =
+                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+            } catch (ActivityNotFoundException e) {
+                throw new BrowserSwitchException("Unable to start browser switch without a web browser.");
+            }
+            return request;
         }
-        return request;
     }
 
     void assertCanPerformBrowserSwitch(ComponentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {

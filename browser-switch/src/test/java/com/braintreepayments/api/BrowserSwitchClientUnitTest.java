@@ -8,6 +8,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -21,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.ComponentActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
@@ -51,6 +53,8 @@ public class BrowserSwitchClientUnitTest {
     private ActivityController<FragmentActivity> activityController;
     private FragmentActivity activity;
 
+    private ActivityController<ComponentActivity> componentActivityController;
+    private ComponentActivity componentActivity;
     @Before
     public void beforeEach() {
         persistentStore = mock(BrowserSwitchPersistentStore.class);
@@ -63,16 +67,17 @@ public class BrowserSwitchClientUnitTest {
         activityController = Robolectric.buildActivity(FragmentActivity.class).setup();
         activity = spy(activityController.get());
 
+        componentActivityController = Robolectric.buildActivity(ComponentActivity.class).setup();
+        componentActivity = spy(componentActivityController.get());
+
         applicationContext = activity.getApplicationContext();
     }
 
     @Test
     public void start_whenActivityIsFinishing_throwsException() {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(true);
 
-        when(activity.isFinishing()).thenReturn(true);
+        when(componentActivity.isFinishing()).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
@@ -84,7 +89,8 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
 
         try {
-            sut.start(activity, options);
+            BrowserSwitchRequest request = sut.start(componentActivity, options);
+            assertNull(request);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals(e.getMessage(), "Unable to start browser switch while host Activity is finishing.");
@@ -92,10 +98,9 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenChromeCustomTabsSupported_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
+    public void start_whenSuccessful_returnsBrowserSwitchRequest()
+            throws BrowserSwitchException {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
@@ -105,16 +110,11 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
-        sut.start(activity, options);
+        BrowserSwitchRequest browserSwitchRequest = sut.start(componentActivity, options);
 
-        verify(customTabsInternalClient).launchUrl(activity, browserSwitchDestinationUrl, false);
-        verify(activity, never()).startActivity(any(Intent.class));
+        verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, false);
 
-        ArgumentCaptor<BrowserSwitchRequest> captor =
-                ArgumentCaptor.forClass(BrowserSwitchRequest.class);
-        verify(persistentStore).putActiveRequest(captor.capture(), same(applicationContext));
-
-        BrowserSwitchRequest browserSwitchRequest = captor.getValue();
+        assertNotNull(browserSwitchRequest);
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
         assertSame(browserSwitchRequest.getMetadata(), metadata);
@@ -122,10 +122,9 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenChromeCustomTabsNotSupported_createsBrowserSwitchIntentAndInitiatesBrowserSwitch() throws BrowserSwitchException {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
+    public void start_whenNoBrowserAvailable_throwsError() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(false);
+        doThrow(new ActivityNotFoundException()).when(customTabsInternalClient).launchUrl(any(Context.class), any(Uri.class), eq(false));
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
@@ -135,53 +134,16 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
-        sut.start(activity, options);
-
-        verify(customTabsInternalClient, never()).launchUrl(activity, browserSwitchDestinationUrl, false);
-
-        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-        verify(activity).startActivity(intentCaptor.capture());
-
-        Intent intent = intentCaptor.getValue();
-        assertEquals(intent.getData(), browserSwitchDestinationUrl);
-
-        ArgumentCaptor<BrowserSwitchRequest> captor =
-                ArgumentCaptor.forClass(BrowserSwitchRequest.class);
-        verify(persistentStore).putActiveRequest(captor.capture(), same(applicationContext));
-
-        BrowserSwitchRequest browserSwitchRequest = captor.getValue();
-        assertEquals(browserSwitchRequest.getRequestCode(), 123);
-        assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
-        assertSame(browserSwitchRequest.getMetadata(), metadata);
-        assertTrue(browserSwitchRequest.getShouldNotifyCancellation());
-    }
-
-    @Test
-    public void start_whenChromeCustomTabsNotSupported_whenActivityNotFound_throwsBrowserSwitchException() {
-        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        when(browserSwitchInspector.deviceHasChromeCustomTabs(applicationContext)).thenReturn(false);
-
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
-        doThrow(new ActivityNotFoundException("No browser")).when(activity).startActivity(any(Intent.class));
-
-        JSONObject metadata = new JSONObject();
-        BrowserSwitchOptions options = new BrowserSwitchOptions()
-                .requestCode(123)
-                .url(browserSwitchDestinationUrl)
-                .returnUrlScheme("return-url-scheme")
-                .metadata(metadata);
-
         try {
-            sut.start(activity, options);
+            BrowserSwitchRequest request = sut.start(componentActivity, options);
+            assertNull(request);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals(e.getMessage(), "Unable to start browser switch without a web browser.");
         }
     }
-
     @Test
     public void start_whenRequestCodeIsIntegerMinValue_throwsError() {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -193,7 +155,8 @@ public class BrowserSwitchClientUnitTest {
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
         try {
-            sut.start(activity, options);
+            BrowserSwitchRequest request = sut.start(componentActivity, options);
+            assertNull(request);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals(e.getMessage(), "Request code cannot be Integer.MIN_VALUE");
@@ -202,7 +165,6 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenDeviceIsNotConfiguredForDeepLinking_throwsError() {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(false);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -215,7 +177,8 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
 
         try {
-            sut.start(activity, options);
+            BrowserSwitchRequest request = sut.start(componentActivity, options);
+            assertNull(request);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
@@ -227,7 +190,6 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void start_whenNoReturnUrlSchemeSet_throwsError() {
-        when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
@@ -239,7 +201,8 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .metadata(metadata);
         try {
-            sut.start(activity, options);
+            BrowserSwitchRequest request = sut.start(componentActivity, options);
+            assertNull(request);
             fail("should fail");
         } catch (BrowserSwitchException e) {
             assertEquals("A returnUrlScheme is required.", e.getMessage());

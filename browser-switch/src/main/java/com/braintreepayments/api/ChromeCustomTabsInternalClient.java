@@ -1,5 +1,6 @@
 package com.braintreepayments.api;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,7 +21,7 @@ class ChromeCustomTabsInternalClient {
         this.customTabsIntentBuilder = builder;
     }
 
-    void launchUrl(Context context, Uri url, boolean launchAsNewTask) {
+    void launchUrl(Context context, Uri url, boolean launchAsNewTask) throws ActivityNotFoundException{
         CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
         if (launchAsNewTask) {
             customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
