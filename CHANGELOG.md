@@ -1,5 +1,11 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Breaking Changes
+  * Change `BrowserSwitchClient#start` parameters and return type
+  * Change `BrowserSwitchClient#parseResult` parameters 
+
 ## 2.6.1
 
 * Throw `BrowserSwitchException` when a browser is not found to start browser switch
