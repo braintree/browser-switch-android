@@ -90,8 +90,12 @@ public class BrowserSwitchClient {
      * @throws BrowserSwitchException when a browser is unable to be launched for browser switching
      */
     @Nullable
-    public BrowserSwitchRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
-        assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
+    public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+        try {
+            assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
+        } catch (BrowserSwitchException e) {
+            return new BrowserSwitchPendingRequest.Failure(e);
+        }
 
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -99,21 +103,21 @@ public class BrowserSwitchClient {
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
 
-        BrowserSwitchRequest request;
         if (activity.isFinishing()) {
             String activityFinishingMessage =
                     "Unable to start browser switch while host Activity is finishing.";
-            throw new BrowserSwitchException(activityFinishingMessage);
+            return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException(activityFinishingMessage));
         } else  {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
+            BrowserSwitchRequest request;
             try {
                  request =
                         new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
                 customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
             } catch (ActivityNotFoundException e) {
-                throw new BrowserSwitchException("Unable to start browser switch without a web browser.");
+                return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser."));
             }
-            return request;
+            return new BrowserSwitchPendingRequest.Started(request);
         }
     }
 
