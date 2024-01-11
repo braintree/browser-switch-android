@@ -5,7 +5,7 @@
 * Breaking Changes
   * Change `BrowserSwitchClient#start` parameters and return type
   * Change `BrowserSwitchClient#parseResult` parameters 
-  * Add `BrowserSwitchRequest`
+  * Add `BrowserSwitchRequest` and `BrowserSwitchPendingRequest`
 
 ## 2.6.1
 
