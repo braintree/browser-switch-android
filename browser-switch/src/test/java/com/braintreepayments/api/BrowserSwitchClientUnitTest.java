@@ -384,17 +384,16 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void parseResult_whenActiveRequestMatchesRequestCodeAndDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
+    public void parseResult_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
             new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
-        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
         assertNotNull(browserSwitchResult);
         assertEquals(BrowserSwitchStatus.SUCCESS, browserSwitchResult.getStatus());
@@ -402,45 +401,16 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void parseResult_whenActiveRequestMatchesRequestCodeAndDeepLinkResultURLSchemeDoesntMatch_returnsNull() {
+    public void parseResult_whenDeepLinkResultURLSchemeDoesntMatch_returnsNull() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
-        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
-
-        assertNull(browserSwitchResult);
-    }
-
-    @Test
-    public void parseResult_whenActiveRequestDoesntMatchRequestCode_returnsNull() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
-
-        JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request =
-                new BrowserSwitchRequest(456, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
-        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(request);
-
-        Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
-        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
-
-        assertNull(browserSwitchResult);
-    }
-
-    @Test
-    public void parseResult_whenNoActiveRequestExists_returnsNull() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
-        when(persistentStore.getActiveRequest(same(applicationContext))).thenReturn(null);
-
-        Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
-        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
         assertNull(browserSwitchResult);
     }
@@ -449,7 +419,11 @@ public class BrowserSwitchClientUnitTest {
     public void parseResult_whenIntentIsNull_returnsNull() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(applicationContext, 123, null);
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request =
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), null);
         assertNull(browserSwitchResult);
     }
 

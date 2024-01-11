@@ -84,10 +84,9 @@ public class BrowserSwitchClient {
      *
      * @param activity the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
-     * @return a pending {@link BrowserSwitchRequest} that should be stored and passed to
-     * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app.
-     * Returns null if an exception is thrown.
-     * @throws BrowserSwitchException when a browser is unable to be launched for browser switching
+     * @return a {@link BrowserSwitchPendingRequest.Started} that should be stored and passed to
+     * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app,
+     * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
      */
     @Nullable
     public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
@@ -247,7 +246,7 @@ public class BrowserSwitchClient {
 
     /**
      * Parses and returns a browser switch result if a match is found for the given {@link BrowserSwitchRequest}
-     * @param request the pending {@link BrowserSwitchRequest} returned from
+     * @param pendingRequest the {@link BrowserSwitchPendingRequest.Started} returned from
      * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
      * @param intent the intent to return to your application containing a deep link result from the
      *               browser flow
@@ -255,12 +254,12 @@ public class BrowserSwitchClient {
      * null if the user returned to the app without completing the browser switch
      */
     @Nullable
-    public BrowserSwitchResult parseResult(@NonNull BrowserSwitchRequest request, @Nullable Intent intent) {
+    public BrowserSwitchResult parseResult(@NonNull BrowserSwitchPendingRequest.Started pendingRequest, @Nullable Intent intent) {
         BrowserSwitchResult result = null;
         if (intent != null && intent.getData() != null) {
             Uri deepLinkUrl = intent.getData();
-            if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+            if (pendingRequest.getBrowserSwitchRequest().matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, pendingRequest.getBrowserSwitchRequest(), deepLinkUrl);
             }
         }
         return result;
