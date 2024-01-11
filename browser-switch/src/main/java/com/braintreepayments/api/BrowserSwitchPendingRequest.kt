@@ -13,7 +13,7 @@ sealed class BrowserSwitchPendingRequest {
     class Started(val browserSwitchRequest: BrowserSwitchRequest) : BrowserSwitchPendingRequest()
 
     /**
-     * An [error] occurred launching the browser
+     * An error with [cause] occurred launching the browser
      */
-    class Failure(val error: Exception) : BrowserSwitchPendingRequest()
+    class Failure(val cause: Exception) : BrowserSwitchPendingRequest()
 }

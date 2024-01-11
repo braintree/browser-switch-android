@@ -90,7 +90,7 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getError().getMessage(), "Unable to start browser switch while host Activity is finishing.");
+        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Unable to start browser switch while host Activity is finishing.");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getError().getMessage(), "Unable to start browser switch without a web browser.");
+        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Unable to start browser switch without a web browser.");
     }
     @Test
     public void start_whenRequestCodeIsIntegerMinValue_returnsFailure() {
@@ -150,7 +150,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getError().getMessage(), "Request code cannot be Integer.MIN_VALUE");
+        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Request code cannot be Integer.MIN_VALUE");
     }
 
     @Test
@@ -171,7 +171,7 @@ public class BrowserSwitchClientUnitTest {
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
-                "setting up a return url scheme.", ((BrowserSwitchPendingRequest.Failure) request).getError().getMessage());
+                "setting up a return url scheme.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
     }
 
     @Test
@@ -188,7 +188,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getError().getMessage());
+        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
     }
 
     @Test
