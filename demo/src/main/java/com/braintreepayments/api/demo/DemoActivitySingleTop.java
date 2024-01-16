@@ -70,7 +70,7 @@ public class DemoActivitySingleTop extends AppCompatActivity {
             PendingRequestUtil.Companion.putPendingRequest(this,
                     (BrowserSwitchPendingRequest.Started) pendingRequest);
         } else if (pendingRequest instanceof BrowserSwitchPendingRequest.Failure) {
-            getDemoFragment().onBrowserSwitchError(((BrowserSwitchPendingRequest.Failure) pendingRequest).getCause());
+            Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchPendingRequest.Failure) pendingRequest).getCause());
         }
     }
 
