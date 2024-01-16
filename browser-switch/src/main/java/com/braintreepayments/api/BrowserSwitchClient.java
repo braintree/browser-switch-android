@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 /**
  * Client that manages the logic for browser switching.
  */
+// NEXT_MAJOR_VERSION remove all methods except start with ComponentActivity and parseResult with BrowserSwitchRequest
 public class BrowserSwitchClient {
 
     private final BrowserSwitchInspector browserSwitchInspector;
@@ -76,7 +78,49 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    /**
+     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
+     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     *
+     * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     * @return a {@link BrowserSwitchPendingRequest.Started} that should be stored and passed to
+     * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app,
+     * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
+     */
+    @Nullable
+    public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+        try {
+            assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
+        } catch (BrowserSwitchException e) {
+            return new BrowserSwitchPendingRequest.Failure(e);
+        }
+
+        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
+        int requestCode = browserSwitchOptions.getRequestCode();
+        String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
+
+        JSONObject metadata = browserSwitchOptions.getMetadata();
+
+        if (activity.isFinishing()) {
+            String activityFinishingMessage =
+                    "Unable to start browser switch while host Activity is finishing.";
+            return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException(activityFinishingMessage));
+        } else  {
+            boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
+            BrowserSwitchRequest request;
+            try {
+                 request =
+                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+            } catch (ActivityNotFoundException e) {
+                return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser."));
+            }
+            return new BrowserSwitchPendingRequest.Started(request);
+        }
+    }
+
+    void assertCanPerformBrowserSwitch(ComponentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -195,6 +239,27 @@ public class BrowserSwitchClient {
                 if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
                     result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
                 }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Parses and returns a browser switch result if a match is found for the given {@link BrowserSwitchRequest}
+     * @param pendingRequest the {@link BrowserSwitchPendingRequest.Started} returned from
+     * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
+     * @param intent the intent to return to your application containing a deep link result from the
+     *               browser flow
+     * @return a {@link BrowserSwitchResult} if the browser switch was successfully completed, or
+     * null if the user returned to the app without completing the browser switch
+     */
+    @Nullable
+    public BrowserSwitchResult parseResult(@NonNull BrowserSwitchPendingRequest.Started pendingRequest, @Nullable Intent intent) {
+        BrowserSwitchResult result = null;
+        if (intent != null && intent.getData() != null) {
+            Uri deepLinkUrl = intent.getData();
+            if (pendingRequest.getBrowserSwitchRequest().matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, pendingRequest.getBrowserSwitchRequest(), deepLinkUrl);
             }
         }
         return result;
