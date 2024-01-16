@@ -32,20 +32,8 @@
         </activity>
         <activity
             android:name=".DemoActivity"
+            android:launchMode="singleTop"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-
-<!--                <data android:scheme="my-custom-url-scheme-standard" />-->
-
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-<!--            </intent-filter>-->
-        </activity>
-        <activity
-            android:name=".DemoActivitySingleTop"
-            android:exported="true"
-            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

@@ -66,7 +66,7 @@ class ComposeActivity : ComponentActivity() {
             .metadata(buildMetadataObject())
             .requestCode(1)
             .url(url)
-            .launchAsNewTask(true)
+            .launchAsNewTask(false)
             .returnUrlScheme(Companion.RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started -> { PendingRequestUtil.putPendingRequest(this, pendingRequest) }
