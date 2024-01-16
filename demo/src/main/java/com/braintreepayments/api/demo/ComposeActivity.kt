@@ -83,12 +83,7 @@ class ComposeActivity : ComponentActivity() {
     }
 
     private fun buildMetadataObject(): JSONObject? {
-        try {
-            return JSONObject().put("test_key","test_value")
-        } catch (ignore: JSONException) {
-            // do nothing
-        }
-        return null
+        return JSONObject().put("test_key","test_value")
     }
 }
 
@@ -98,7 +93,7 @@ fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
     uiState.browserSwitchResult?.let {
         BrowserSwitchSuccess(result = it)
     }
-    uiState.browserSwitchError?.let {  }
+    uiState.browserSwitchError?.let { BrowserSwitchError(exception = it) }
 
 }
 
@@ -123,11 +118,19 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
         }
         Column(modifier = Modifier.padding(10.dp)) {
             Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Successful")
-            Text(text = selectedColorString, color = Color.White,)
+            Text(text = selectedColorString, color = Color.White)
             metadataOutput?.let {
-                Text(text = it, color = Color.White,)
+                Text(text = it, color = Color.White)
             }
         }
+    }
+}
+
+@Composable
+fun BrowserSwitchError(exception: Exception) {
+    Column(modifier = Modifier.padding(10.dp)) {
+        Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Error")
+        exception.message?.let { Text(text = it, color = Color.White) }
     }
 }
 
