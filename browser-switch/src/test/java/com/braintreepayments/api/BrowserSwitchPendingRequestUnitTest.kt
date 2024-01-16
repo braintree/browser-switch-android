@@ -1,6 +1,7 @@
 package com.braintreepayments.api
 
 import android.net.Uri
+import org.json.JSONException
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -35,6 +36,11 @@ class BrowserSwitchPendingRequestUnitTest {
             sut.browserSwitchRequest.shouldNotifyCancellation
         )
         assertEquals(browserSwitchRequest.returnUrlScheme, sut.browserSwitchRequest.returnUrlScheme)
+    }
+
+    @Test(expected = JSONException::class)
+    fun startedConstructor_fromString_whenInvalidString_throwsJSONException() {
+        val sut = BrowserSwitchPendingRequest.Started("{}")
     }
 
     @Test
