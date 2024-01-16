@@ -14,7 +14,6 @@ class BrowserSwitchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-
     var browserSwitchResult : BrowserSwitchResult?
         get() = _uiState.value.browserSwitchResult
         set(value) {
@@ -28,8 +27,4 @@ class BrowserSwitchViewModel : ViewModel() {
             _uiState.update { it.copy(browserSwitchError = value) }
             _uiState.update { it.copy(browserSwitchResult = null) }
         }
-
-    fun startBrowserSwitch() {
-
-    }
 }

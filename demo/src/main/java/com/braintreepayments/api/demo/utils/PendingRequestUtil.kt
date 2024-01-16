@@ -42,7 +42,7 @@ class PendingRequestUtil {
             return sharedPreferences.getString(key, null)
         }
 
-        fun clear(context: Context, key: String) {
+        private fun clear(context: Context, key: String) {
             val sharedPreferences: SharedPreferences = context.getSharedPreferences(
                 SHARED_PREFS_KEY,
                 Context.MODE_PRIVATE

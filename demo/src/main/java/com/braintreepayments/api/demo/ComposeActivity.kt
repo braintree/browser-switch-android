@@ -30,8 +30,6 @@ import java.lang.Exception
 
 class ComposeActivity : ComponentActivity() {
 
-    private val RETURN_URL_SCHEME = "my-custom-url-scheme-standard"
-
     private val viewModel by viewModels<BrowserSwitchViewModel>()
 
     private lateinit var browserSwitchClient: BrowserSwitchClient
@@ -69,7 +67,7 @@ class ComposeActivity : ComponentActivity() {
             .requestCode(1)
             .url(url)
             .launchAsNewTask(true)
-            .returnUrlScheme(RETURN_URL_SCHEME)
+            .returnUrlScheme(Companion.RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started -> { PendingRequestUtil.putPendingRequest(this, pendingRequest) }
             is BrowserSwitchPendingRequest.Failure -> { viewModel.browserSwitchError = pendingRequest.cause }
@@ -84,6 +82,10 @@ class ComposeActivity : ComponentActivity() {
 
     private fun buildMetadataObject(): JSONObject? {
         return JSONObject().put("test_key","test_value")
+    }
+
+    companion object {
+        private const val RETURN_URL_SCHEME = "my-custom-url-scheme-standard"
     }
 }
 
