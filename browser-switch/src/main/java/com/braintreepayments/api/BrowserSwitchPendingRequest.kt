@@ -27,7 +27,6 @@ sealed class BrowserSwitchPendingRequest {
         }
     }
 
-
     /**
      * An error with [cause] occurred launching the browser
      */
