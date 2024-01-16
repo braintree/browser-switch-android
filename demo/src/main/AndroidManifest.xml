@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DemoActivity"
+            android:name=".DemoActivitySingleTop"
             android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>

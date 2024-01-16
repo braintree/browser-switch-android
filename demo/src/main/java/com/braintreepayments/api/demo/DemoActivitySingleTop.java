@@ -18,7 +18,7 @@ import com.braintreepayments.api.demo.utils.PendingRequestUtil;
 
 import java.util.Objects;
 
-public class DemoActivity extends AppCompatActivity {
+public class DemoActivitySingleTop extends AppCompatActivity {
 
     private static final String FRAGMENT_TAG = DemoFragment.class.getSimpleName();
     private static final String RETURN_URL_SCHEME = "my-custom-url-scheme-single-top";

@@ -140,8 +140,8 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mBrowserSwitchStatusTextView.setText(statusText);
     }
 
-    private DemoActivity getDemoActivity() {
-        return (DemoActivity) getActivity();
+    private DemoActivitySingleTop getDemoActivity() {
+        return (DemoActivitySingleTop) getActivity();
     }
 
     private String getReturnUrlScheme() {

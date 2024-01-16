@@ -67,7 +67,7 @@ class ComposeActivity : ComponentActivity() {
             .requestCode(1)
             .url(url)
             .launchAsNewTask(false)
-            .returnUrlScheme(Companion.RETURN_URL_SCHEME)
+            .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started -> { PendingRequestUtil.putPendingRequest(this, pendingRequest) }
             is BrowserSwitchPendingRequest.Failure -> { viewModel.browserSwitchError = pendingRequest.cause }
@@ -122,7 +122,7 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
             Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Successful")
             Text(text = selectedColorString, color = Color.White)
             metadataOutput?.let {
-                Text(text = it, color = Color.White)
+                Text(text = "Metadata: $it", color = Color.White)
             }
         }
     }

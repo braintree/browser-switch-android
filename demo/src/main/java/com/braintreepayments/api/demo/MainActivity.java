@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchSingleTopBrowserSwitch(View view) {
-        Intent intent = new Intent(this, DemoActivity.class);
+        Intent intent = new Intent(this, DemoActivitySingleTop.class);
         startActivity(intent);
     }
 }
