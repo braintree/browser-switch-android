@@ -20,7 +20,6 @@ class BrowserSwitchPendingRequestUnitTest {
 
     @Test
     fun startedConstructor_fromString_createsBrowserSwitchRequest() {
-
         val pendingRequest = BrowserSwitchPendingRequest.Started(browserSwitchRequest)
         val storedRequest = pendingRequest.toJsonString()
 
