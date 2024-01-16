@@ -88,7 +88,6 @@ public class BrowserSwitchClient {
      * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app,
      * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
      */
-    @Nullable
     public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
