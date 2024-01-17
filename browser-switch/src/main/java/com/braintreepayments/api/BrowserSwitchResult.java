@@ -25,7 +25,8 @@ public class BrowserSwitchResult {
         int status = jsonObject.getInt(KEY_STATUS);
         String deepLinkUrl = jsonObject.getString(KEY_DEEP_LINK_URL);
         String browserSwitchRequest = jsonObject.getString(KEY_BROWSER_SWITCH_REQUEST);
-        return new BrowserSwitchResult(status, BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
+        return new BrowserSwitchResult(status, BrowserSwitchRequest.Companion.fromJson(
+                browserSwitchRequest), Uri.parse(deepLinkUrl));
     }
 
     BrowserSwitchResult(@BrowserSwitchStatus int status, BrowserSwitchRequest request) {

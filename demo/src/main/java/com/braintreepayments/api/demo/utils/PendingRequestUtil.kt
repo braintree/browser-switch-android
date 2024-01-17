@@ -3,6 +3,8 @@ package com.braintreepayments.api.demo.utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.braintreepayments.api.BrowserSwitchPendingRequest
+import com.google.gson.Gson
+import java.io.Serializable
 
 class PendingRequestUtil {
 
@@ -10,14 +12,16 @@ class PendingRequestUtil {
 
         private const val SHARED_PREFS_KEY = "PENDING_REQUESTS"
         private const val PENDING_REQUEST_KEY = "BROWSER_SWITCH_REQUEST"
+        var gson: Gson = Gson()
+
 
         fun putPendingRequest(context: Context, pendingRequest: BrowserSwitchPendingRequest.Started) {
-            put(context, PENDING_REQUEST_KEY, pendingRequest.toJsonString())
+            put(context, PENDING_REQUEST_KEY, gson.toJson(pendingRequest))
         }
 
         fun getPendingRequest(context: Context) : BrowserSwitchPendingRequest.Started? {
             get(context, PENDING_REQUEST_KEY)?.let {
-                return BrowserSwitchPendingRequest.Started(it)
+                return gson.fromJson(it, BrowserSwitchPendingRequest.Started::class.java)
             }
             return null
         }

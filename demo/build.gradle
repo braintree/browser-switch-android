@@ -30,7 +30,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.3'
+        kotlinCompilerExtensionVersion '1.5.0'
     }
     packagingOptions {
         resources {
@@ -41,6 +41,7 @@ android {
 
 dependencies {
     implementation project(':browser-switch')
+    implementation 'com.google.code.gson:gson:2.10'
     implementation "androidx.annotation:annotation:1.3.0"
     implementation "androidx.appcompat:appcompat:1.3.1"
     implementation "androidx.fragment:fragment:1.3.6"

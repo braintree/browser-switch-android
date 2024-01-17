@@ -33,7 +33,7 @@ class BrowserSwitchPersistentStore {
         String activeRequestJson = PersistentStore.get(REQUEST_KEY, context);
         if (activeRequestJson != null) {
             try {
-                request = BrowserSwitchRequest.fromJson(activeRequestJson);
+                request = BrowserSwitchRequest.Companion.fromJson(activeRequestJson);
             } catch (JSONException e) {
                 // NEXT_MAJOR_VERSION: Add explicit error handling instead of ignoring exception
                 Log.d(TAG, e.getMessage());
