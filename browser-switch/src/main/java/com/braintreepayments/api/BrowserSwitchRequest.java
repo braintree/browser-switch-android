@@ -3,6 +3,7 @@ package com.braintreepayments.api;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +14,8 @@ public class BrowserSwitchRequest {
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
-    private final String returnUrlScheme;
+    @VisibleForTesting
+    final String returnUrlScheme;
     private boolean shouldNotifyCancellation;
 
     static BrowserSwitchRequest fromJson(String json) throws JSONException {
