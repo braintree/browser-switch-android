@@ -1,5 +1,7 @@
 package com.braintreepayments.api
 
+import org.json.JSONException
+
 /**
  * A pending request for browser switching. This pending request should be stored locally within the app or
  * on-device and used to deliver a result of the browser flow in [BrowserSwitchClient.parseResult]
@@ -14,9 +16,13 @@ sealed class BrowserSwitchPendingRequest {
 
         /**
          * Convenience constructor to create a [BrowserSwitchPendingRequest.Started] from your stored
-         * [String] from [BrowserSwitchPendingRequest.Started.toJsonString]
+         * [String] from [BrowserSwitchPendingRequest.Started.toJsonString].
+         * @throws [JSONException] if the [jsonString] is invalid.
          */
-        constructor(jsonString: String) : this(BrowserSwitchRequest.fromJson(jsonString))
+        @Throws(JSONException::class)
+        constructor(jsonString: String) : this(
+            BrowserSwitchRequest.fromJson(jsonString)
+        )
 
         /**
          * Convenience method to return [BrowserSwitchPendingRequest.Started] in [String] format to be
