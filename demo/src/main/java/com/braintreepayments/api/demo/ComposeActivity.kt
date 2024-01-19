@@ -112,7 +112,7 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
     val returnUrl = result.deepLinkUrl
     returnUrl?.let {
         val color = returnUrl.getQueryParameter("color")
-        val selectedColorString = String.format("Selected color: %s", color)
+        val selectedColorString = "Selected color: $color"
         var metadataOutput: String? = null
         result.requestMetadata?.let {
             val metadataValue = result.requestMetadata!!.getString("test_key")
