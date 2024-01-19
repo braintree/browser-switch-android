@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,9 +21,8 @@ import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
 import com.braintreepayments.api.BrowserSwitchResult
-import com.braintreepayments.api.demo.utils.PendingRequestUtil
+import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
-import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
 
@@ -49,14 +47,14 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        PendingRequestUtil.getPendingRequest(this)?.let { startedRequest ->
+        PendingRequestStore.get(this)?.let { startedRequest ->
             val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)
             browserSwitchResult?.let { result ->
                 viewModel.browserSwitchResult = result
             } ?: run {
                 viewModel.browserSwitchError = Exception("User did not complete browser switch")
             }
-            PendingRequestUtil.clearPendingRequest(this)
+            PendingRequestStore.clear(this)
         }
     }
 
@@ -69,7 +67,7 @@ class ComposeActivity : ComponentActivity() {
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchPendingRequest.Started -> { PendingRequestUtil.putPendingRequest(this, pendingRequest) }
+            is BrowserSwitchPendingRequest.Started -> { PendingRequestStore.put(this, pendingRequest) }
             is BrowserSwitchPendingRequest.Failure -> { viewModel.browserSwitchError = pendingRequest.cause }
         }
     }

@@ -14,7 +14,7 @@ import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchPendingRequest;
 import com.braintreepayments.api.BrowserSwitchResult;
-import com.braintreepayments.api.demo.utils.PendingRequestUtil;
+import com.braintreepayments.api.demo.utils.PendingRequestStore;
 
 import java.util.Objects;
 
@@ -43,13 +43,13 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestUtil.Companion.getPendingRequest(this);
+        BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestStore.Companion.get(this);
         if (pendingRequest != null) {
             BrowserSwitchResult result = browserSwitchClient.parseResult(pendingRequest, intent);
             if (result != null) {
                 Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(result);
             }
-            PendingRequestUtil.Companion.clearPendingRequest(this);
+            PendingRequestStore.Companion.clear(this);
         }
     }
 
@@ -57,17 +57,17 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestUtil.Companion.getPendingRequest(this);
+        BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestStore.Companion.get(this);
         if (pendingRequest != null) {
             Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(new Exception("User did not complete browser switch"));
-            PendingRequestUtil.Companion.clearPendingRequest(this);
+            PendingRequestStore.Companion.clear(this);
         }
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         BrowserSwitchPendingRequest pendingRequest = browserSwitchClient.start(this, options);
         if (pendingRequest instanceof BrowserSwitchPendingRequest.Started) {
-            PendingRequestUtil.Companion.putPendingRequest(this,
+            PendingRequestStore.Companion.put(this,
                     (BrowserSwitchPendingRequest.Started) pendingRequest);
         } else if (pendingRequest instanceof BrowserSwitchPendingRequest.Failure) {
             Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchPendingRequest.Failure) pendingRequest).getCause());
