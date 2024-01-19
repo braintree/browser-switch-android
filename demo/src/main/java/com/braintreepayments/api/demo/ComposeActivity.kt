@@ -111,11 +111,7 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
     returnUrl?.let {
         val color = returnUrl.getQueryParameter("color")
         val selectedColorString = "Selected color: $color"
-        var metadataOutput: String? = null
-        result.requestMetadata?.let {
-            val metadataValue = result.requestMetadata!!.getString("test_key")
-            metadataOutput = "test_key=$metadataValue"
-        }
+        val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
         Column(modifier = Modifier.padding(10.dp)) {
             Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Successful")
             Text(text = selectedColorString, color = Color.White)
