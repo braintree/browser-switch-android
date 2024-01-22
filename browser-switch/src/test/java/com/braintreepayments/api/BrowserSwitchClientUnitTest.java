@@ -19,13 +19,10 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -34,9 +31,6 @@ import org.robolectric.android.controller.ActivityController;
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchClientUnitTest {
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     private BrowserSwitchInspector browserSwitchInspector;
 
     private ChromeCustomTabsInternalClient customTabsInternalClient;
@@ -44,11 +38,8 @@ public class BrowserSwitchClientUnitTest {
     private Uri browserSwitchDestinationUrl;
     private Context applicationContext;
 
-    private ActivityController<FragmentActivity> activityController;
-    private FragmentActivity activity;
-
-    private ActivityController<ComponentActivity> componentActivityController;
     private ComponentActivity componentActivity;
+
     @Before
     public void beforeEach() {
         browserSwitchInspector = mock(BrowserSwitchInspector.class);
@@ -56,13 +47,11 @@ public class BrowserSwitchClientUnitTest {
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
 
-        activityController = Robolectric.buildActivity(FragmentActivity.class).setup();
-        activity = spy(activityController.get());
-
-        componentActivityController = Robolectric.buildActivity(ComponentActivity.class).setup();
+        ActivityController<ComponentActivity> componentActivityController =
+                Robolectric.buildActivity(ComponentActivity.class).setup();
         componentActivity = spy(componentActivityController.get());
 
-        applicationContext = activity.getApplicationContext();
+        applicationContext = componentActivity.getApplicationContext();
     }
 
     @Test
