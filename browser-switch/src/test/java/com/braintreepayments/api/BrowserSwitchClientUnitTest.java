@@ -79,7 +79,8 @@ public class BrowserSwitchClientUnitTest {
 
         when(componentActivity.isFinishing()).thenReturn(true);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -97,7 +98,8 @@ public class BrowserSwitchClientUnitTest {
     public void start_whenSuccessful_returnsBrowserSwitchRequest() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -124,7 +126,8 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
         doThrow(new ActivityNotFoundException()).when(customTabsInternalClient).launchUrl(any(Context.class), any(Uri.class), eq(false));
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -140,7 +143,8 @@ public class BrowserSwitchClientUnitTest {
     public void start_whenRequestCodeIsIntegerMinValue_returnsFailure() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -157,7 +161,8 @@ public class BrowserSwitchClientUnitTest {
     public void start_whenDeviceIsNotConfiguredForDeepLinking_returnsFailure() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(false);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -178,7 +183,8 @@ public class BrowserSwitchClientUnitTest {
     public void start_whenNoReturnUrlSchemeSet_throwsFailure() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -201,7 +207,8 @@ public class BrowserSwitchClientUnitTest {
 
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNull(result);
@@ -219,7 +226,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNotNull(result);
@@ -249,7 +257,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNull(result);
@@ -266,7 +275,8 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", true);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNotNull(result);
@@ -294,7 +304,8 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNull(result);
@@ -306,7 +317,8 @@ public class BrowserSwitchClientUnitTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult result = sut.deliverResult(activity);
 
         assertNull(result);
@@ -325,7 +337,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         sut.captureResult(activity);
 
         ArgumentCaptor<BrowserSwitchResult> captor =
@@ -346,7 +359,8 @@ public class BrowserSwitchClientUnitTest {
         when(activity.getApplicationContext()).thenReturn(applicationContext);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(null);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         sut.captureResult(activity);
 
         verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
@@ -361,7 +375,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request = new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "return-url-scheme", false);
         when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         sut.captureResult(activity);
 
         verify(persistentStore, never()).putActiveResult(any(BrowserSwitchResult.class), any(Context.class));
@@ -376,7 +391,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchResult cachedResult = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, Uri.parse("example://success/url"));
         when(persistentStore.getActiveResult(same(applicationContext))).thenReturn(cachedResult);
 
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
         BrowserSwitchResult actualResult = sut.deliverResultFromCache(activity);
 
         assertSame(cachedResult, actualResult);
@@ -385,7 +401,8 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void parseResult_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -402,7 +419,8 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void parseResult_whenDeepLinkResultURLSchemeDoesntMatch_returnsNull() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -417,7 +435,8 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void parseResult_whenIntentIsNull_returnsNull() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
@@ -429,7 +448,8 @@ public class BrowserSwitchClientUnitTest {
 
     @Test
     public void clearActiveRequests_forwardsInvocationToPersistantStore() {
-        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                customTabsInternalClient);
 
         sut.clearActiveRequests(applicationContext);
         verify(persistentStore).clearActiveRequest(applicationContext);

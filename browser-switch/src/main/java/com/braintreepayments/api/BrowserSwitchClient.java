@@ -9,7 +9,6 @@ import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.fragment.app.FragmentActivity;
 
 import com.braintreepayments.api.browserswitch.R;
 
@@ -18,11 +17,9 @@ import org.json.JSONObject;
 /**
  * Client that manages the logic for browser switching.
  */
-// NEXT_MAJOR_VERSION remove all methods except start with ComponentActivity and parseResult with BrowserSwitchRequest
 public class BrowserSwitchClient {
 
     private final BrowserSwitchInspector browserSwitchInspector;
-    private final BrowserSwitchPersistentStore persistentStore;
 
     private final ChromeCustomTabsInternalClient customTabsInternalClient;
 
@@ -30,13 +27,13 @@ public class BrowserSwitchClient {
      * Construct a client that manages the logic for browser switching.
      */
     public BrowserSwitchClient() {
-        this(new BrowserSwitchInspector(), BrowserSwitchPersistentStore.getInstance(), new ChromeCustomTabsInternalClient());
+        this(new BrowserSwitchInspector(), new ChromeCustomTabsInternalClient());
     }
 
     @VisibleForTesting
-    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector, BrowserSwitchPersistentStore persistentStore, ChromeCustomTabsInternalClient customTabsInternalClient) {
+    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
+                        ChromeCustomTabsInternalClient customTabsInternalClient) {
         this.browserSwitchInspector = browserSwitchInspector;
-        this.persistentStore = persistentStore;
         this.customTabsInternalClient = customTabsInternalClient;
     }
 
@@ -108,105 +105,6 @@ public class BrowserSwitchClient {
     }
 
     /**
-     * Deliver a pending browser switch result to an Android activity.
-     * <p>
-     * We recommend you call this method in onResume to receive a browser switch result once your
-     * app has re-entered the foreground.
-     * <p>
-     * Cancel and Success results will be delivered only once. If there are no pending
-     * browser switch results, this method does nothing.
-     *
-     * @param activity the activity that received the deep link back into the app
-     */
-    public BrowserSwitchResult deliverResult(@NonNull FragmentActivity activity) {
-        BrowserSwitchResult result = null;
-        Context appContext = activity.getApplicationContext();
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-
-        if (request != null) {
-            result = getResult(activity);
-            if (result != null) {
-                @BrowserSwitchStatus int status = result.getStatus();
-                switch (status) {
-                    case BrowserSwitchStatus.SUCCESS:
-                        // ensure that success result is delivered exactly once
-                        persistentStore.clearActiveRequest(appContext);
-                        break;
-                    case BrowserSwitchStatus.CANCELED:
-                        // ensure that cancellation result is delivered exactly once, but allow for
-                        // a cancellation result to remain in shared storage in case it
-                        // later becomes successful
-                        request.setShouldNotifyCancellation(false);
-                        persistentStore.putActiveRequest(request, activity);
-                        break;
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Peek at a pending browser switch result to an Android activity.
-     * <p>
-     * We recommend you call this method in onResume to receive a browser switch result once your
-     * app has re-entered the foreground.
-     * <p>
-     * This can be used in place of {@link BrowserSwitchClient#deliverResult(FragmentActivity)} when
-     * you want to know the contents of a pending browser switch result before it is delivered.
-     *
-     * @param activity the activity that received the deep link back into the app
-     */
-    public BrowserSwitchResult getResult(@NonNull FragmentActivity activity) {
-        Intent intent = activity.getIntent();
-        Context appContext = activity.getApplicationContext();
-
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request == null || intent == null) {
-            // no pending browser switch request found
-            return null;
-        }
-
-        BrowserSwitchResult result = null;
-
-        Uri deepLinkUrl = intent.getData();
-        if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-        } else if (request.getShouldNotifyCancellation()) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
-        }
-
-        return result;
-    }
-
-    /**
-     * Parses and returns a browser switch result if a match is found.
-     *
-     * Parse result has no restriction to deliver a browser switch result only once. After a parsed
-     * result has been consumed, call {@link #clearActiveRequests(Context)} to enforce the same
-     * "deliver once" behavior provided by {@link #deliverResult(FragmentActivity)}.
-     *
-     * @param context     The context used to check for pending browser switch requests
-     * @param requestCode The request code for the matching pending request
-     * @param intent      Intent to evaluate for deep link result
-     * @return {@link BrowserSwitchResult} if one exists, null otherwise
-     */
-    @Nullable
-    public BrowserSwitchResult parseResult(@NonNull Context context, int requestCode, @Nullable Intent intent) {
-        BrowserSwitchResult result = null;
-        if (intent != null && intent.getData() != null) {
-            BrowserSwitchRequest request =
-                    persistentStore.getActiveRequest(context.getApplicationContext());
-            if (request != null && request.getRequestCode() == requestCode) {
-                Uri deepLinkUrl = intent.getData();
-                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
      * Parses and returns a browser switch result if a match is found for the given {@link BrowserSwitchRequest}
      * @param pendingRequest the {@link BrowserSwitchPendingRequest.Started} returned from
      * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
@@ -225,69 +123,5 @@ public class BrowserSwitchClient {
             }
         }
         return result;
-    }
-
-    /**
-     * Clear singleton storage holding single pending browser switch request. Should be called after
-     * a successful call to {@link #parseResult(Context, int, Intent)}
-     *
-     * @param context Context for storage to be cleared
-     */
-    public void clearActiveRequests(@NonNull Context context) {
-        persistentStore.clearActiveRequest(context.getApplicationContext());
-    }
-
-    /**
-     * Peek at a pending browser switch result that was previously captured by another Android activity.
-     * <p>
-     * This can be used in place of {@link #deliverResultFromCache(Context)} when
-     * you want to know the contents of a cached browser switch result before it is delivered.
-     *
-     * @param context the context used to access the cache
-     */
-    public BrowserSwitchResult getResultFromCache(@NonNull Context context) {
-        return persistentStore.getActiveResult(context.getApplicationContext());
-    }
-
-    /**
-     * Deliver a pending browser switch result that was previously captured by another Android activity.
-     * <p>
-     * Success results will be delivered only once. If there are no pending
-     * browser switch results in the cache, this method does nothing.
-     *
-     * @param context the context used to access the cache
-     * @return {@link BrowserSwitchResult}
-     */
-    public BrowserSwitchResult deliverResultFromCache(@NonNull Context context) {
-        BrowserSwitchResult result = getResultFromCache(context);
-        if (result != null) {
-            persistentStore.removeAll(context.getApplicationContext());
-        }
-        return result;
-    }
-
-    /**
-     * Capture a pending browser switch result for an Android activity into a persistent storage cache.
-     * <p>
-     * To obtain the result in a separate activity, call {@link #deliverResultFromCache(Context)}.
-     *
-     * @param activity the activity that received the deep link back into the app
-     */
-    public void captureResult(@NonNull FragmentActivity activity) {
-        Intent intent = activity.getIntent();
-        Context appContext = activity.getApplicationContext();
-
-        BrowserSwitchRequest request = persistentStore.getActiveRequest(appContext);
-        if (request == null || intent == null) {
-            // no pending browser switch request found
-            return;
-        }
-
-        Uri deepLinkUrl = intent.getData();
-        if (deepLinkUrl != null) {
-            BrowserSwitchResult result =
-                    new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
-            persistentStore.putActiveResult(result, activity.getApplicationContext());
-        }
     }
 }
