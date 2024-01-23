@@ -67,8 +67,8 @@ class ComposeActivity : ComponentActivity() {
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchPendingRequest.Started -> { PendingRequestStore.put(this, pendingRequest) }
-            is BrowserSwitchPendingRequest.Failure -> { viewModel.browserSwitchError = pendingRequest.cause }
+            is BrowserSwitchPendingRequest.Started -> PendingRequestStore.put(this, pendingRequest)
+            is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError = pendingRequest.cause
         }
     }
 
@@ -107,8 +107,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 
 @Composable
 fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
-    val returnUrl = result.deepLinkUrl
-    returnUrl?.let {
+    result.deepLinkUrl?.let { returnUrl ->
         val color = returnUrl.getQueryParameter("color")
         val selectedColorString = "Selected color: $color"
         val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
