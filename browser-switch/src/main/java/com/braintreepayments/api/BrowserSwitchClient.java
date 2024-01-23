@@ -44,51 +44,13 @@ public class BrowserSwitchClient {
      * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
      * with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
-     * @param activity             the activity used to start browser switch
-     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
-     */
-    public void start(@NonNull FragmentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
-        assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
-
-        Context appContext = activity.getApplicationContext();
-
-        Uri browserSwitchUrl = browserSwitchOptions.getUrl();
-        int requestCode = browserSwitchOptions.getRequestCode();
-        String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
-
-        JSONObject metadata = browserSwitchOptions.getMetadata();
-        BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
-        persistentStore.putActiveRequest(request, appContext);
-
-        if (activity.isFinishing()) {
-            String activityFinishingMessage =
-                    "Unable to start browser switch while host Activity is finishing.";
-            throw new BrowserSwitchException(activityFinishingMessage);
-        } else if (browserSwitchInspector.deviceHasChromeCustomTabs(appContext)) {
-            boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
-            customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
-        } else {
-            Intent launchUrlInBrowser = new Intent(Intent.ACTION_VIEW, browserSwitchUrl);
-            try {
-                activity.startActivity(launchUrlInBrowser);
-            } catch (ActivityNotFoundException e) {
-                throw new BrowserSwitchException("Unable to start browser switch without a web browser.");
-            }
-        }
-    }
-
-    /**
-     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
-     *
      * @param activity the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
      * @return a {@link BrowserSwitchPendingRequest.Started} that should be stored and passed to
-     * {@link BrowserSwitchClient#parseResult(BrowserSwitchRequest, Intent)} upon return to the app,
+     * {@link BrowserSwitchClient#parseResult(BrowserSwitchPendingRequest.Started, Intent)} upon return to the app,
      * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
      */
-    @Nullable
+    @NonNull
     public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);

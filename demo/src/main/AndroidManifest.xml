@@ -7,18 +7,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Browser Switch Demo"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".DemoActivity"
-            android:exported="true">
+        <activity
+            android:name=".ComposeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_compose"
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -28,7 +21,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name=".DemoActivitySingleTop"
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DemoActivitySingleTop"
             android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
