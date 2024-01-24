@@ -3,6 +3,10 @@
 ## unreleased
 
 * Breaking Changes
+  * Bump `minSdkVersion` to API 23
+  * Bump target Java version to Java 11
+  * Upgrade Kotlin version to 1.9.10
+  * Upgrade to Android Gradle Plugin 8
   * Change `BrowserSwitchClient#start` parameters and return type
   * Change `BrowserSwitchClient#parseResult` parameters 
   * Remove `deliverResult`, `getResult`, `captureResult`, `clearActiveRequests`, `getResultFromCache`, and `deliverResultFromCache` from `BrowserSwitchClient`
