@@ -44,7 +44,7 @@ version = '3.0.0-beta1-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 34
-    minSdkVersion = 21
+    minSdkVersion = 23
     targetSdkVersion = 34
     versionCode = 69
     versionName = version
