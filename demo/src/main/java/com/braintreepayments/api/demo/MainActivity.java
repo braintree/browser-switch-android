@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchStandardBrowserSwitch(View view) {
-        Intent intent = new Intent(this, DemoActivity.class);
+        Intent intent = new Intent(this, ComposeActivity.class);
         startActivity(intent);
     }
 

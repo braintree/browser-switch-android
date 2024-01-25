@@ -66,15 +66,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .metadata(metadata)
                 .requestCode(1)
                 .url(url)
-                .launchAsNewTask(true)
+                .launchAsNewTask(false)
                 .returnUrlScheme(getReturnUrlScheme());
 
         try {
             getDemoActivity().startBrowserSwitch(browserSwitchOptions);
             clearTextViews();
         } catch (BrowserSwitchException e) {
-            String statusText = "Browser Switch Error: " + e.getMessage();
-            mBrowserSwitchStatusTextView.setText(statusText);
+            onBrowserSwitchError(e);
             e.printStackTrace();
         }
     }
@@ -136,8 +135,13 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mMetadataTextView.setText(String.format("Metadata: %s", metadataOutput));
     }
 
-    private DemoActivity getDemoActivity() {
-        return (DemoActivity) getActivity();
+    void onBrowserSwitchError(Exception error) {
+        String statusText = "Browser Switch Error: " + error.getMessage();
+        mBrowserSwitchStatusTextView.setText(statusText);
+    }
+
+    private DemoActivitySingleTop getDemoActivity() {
+        return (DemoActivitySingleTop) getActivity();
     }
 
     private String getReturnUrlScheme() {
