@@ -8,6 +8,8 @@ _Documentation for v2 will be published to https://developers.braintreepayments.
 
 This version of `browser-switch` simplifies the API surface and allows for more flexibility with integration patterns by giving the integrating app control over storage and retrieval of the pending browser switch request. 
 
+The minimum Android API for v3 is 23. This version of the SDK uses Java 11 and Kotlin 1.9.10.
+
 ## Setup
 
 The setup of this library has not changed from v2 to v3.
@@ -95,5 +97,4 @@ class MySingleTopActivity : ComponentActivity() {
         handleReturnToAppFromBrowser(newIntent)
     }    
 }
-
 ```
