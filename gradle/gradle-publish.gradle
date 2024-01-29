@@ -54,8 +54,7 @@ afterEvaluate {
 }
 
 task javadocs(type: Javadoc) {
-    source = project.android.sourceSets.main.java.srcDirs
-//    classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+    source = android.sourceSets.main.java.srcDirs
     failOnError false
 }
 
