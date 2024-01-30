@@ -115,11 +115,11 @@ override fun onNewIntent(newIntent: Intent?) {
 
 This SDK abides by our Client SDK Deprecation Policy. For more information on the potential statuses of an SDK check our [developer docs](https://developer.paypal.com/braintree/docs/guides/client-sdk/deprecation-policy/android/v4).
 
-| Major version number | Status     | Released      | Deprecated | Unsupported |
-|----------------------|------------|---------------| ---------- | ----------- |
-| 3.x.x                | Active     | TBA           | TBA | TBA |
-| 2.x.x                | Deprecated | February 2021 | TBA | TBA |
-| 1.x.x                | Inactive   | June 2020     | April 2022 | April 2023 |
+| Major version number | Status   | Released      | Deprecated | Unsupported |
+|----------------------|----------|---------------| ---------- | ----------- |
+| 3.x.x                | Beta     | TBA           | TBA | TBA |
+| 2.x.x                | Active   | February 2021 | TBA | TBA |
+| 1.x.x                | Inactive | June 2020     | April 2022 | April 2023 |
 
 ## Help
 
