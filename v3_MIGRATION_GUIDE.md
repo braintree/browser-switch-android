@@ -82,7 +82,7 @@ class MyActivity : ComponentActivity() {
 
 ## Launch Modes
 
-If your deep link destination activity is configured in the `AndroidManifest.xml` with `android:launchMode="singleTop"`, `android:launchMode="singleTask"` or `android:launchMode="singleInstance"` handle the return to app from browser with the intent from `onNewIntent` rather than `onResume`
+If your deep link destination activity is configured in the `AndroidManifest.xml` with `android:launchMode="singleTop"`, `android:launchMode="singleTask"` or `android:launchMode="singleInstance"` handle the return to app from browser with the intent from `onNewIntent` rather than `onResume`.
 
 ```kotlin
 class MySingleTopActivity : ComponentActivity() {
