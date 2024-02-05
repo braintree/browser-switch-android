@@ -66,6 +66,7 @@ val browserSwitchOptions = BrowserSwitchOptions().apply {
     url = "https://site-to-load.com?callbackURL=my-custom-url-scheme%3A%2F%2Fsuccess"
     returnUrlScheme = "my-custom-url-scheme"
 }
+
 when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
     is BrowserSwitchPendingRequest.Started -> {
         // store pending request
