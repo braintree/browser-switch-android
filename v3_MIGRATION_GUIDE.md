@@ -66,7 +66,7 @@ class MyActivity : ComponentActivity() {
     
     fun handleReturnToAppFromBrowser(intent: Intent) {
         // fetch stored pending request
-        storedPendingRequest()?.let { startedRequest ->
+        fetchPendingRequestFromPersistentStorage()?.let { startedRequest ->
             val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)
             if (browserSwitchResult != null) {
                 // handle successful browser switch result
