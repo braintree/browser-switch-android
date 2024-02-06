@@ -2,7 +2,6 @@ package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -189,15 +188,14 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
-        assertNotNull(browserSwitchResult);
-        assertEquals(BrowserSwitchStatus.SUCCESS, browserSwitchResult.getStatus());
-        assertEquals(deepLinkUrl, browserSwitchResult.getDeepLinkUrl());
+        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
+        assertEquals(deepLinkUrl, ((BrowserSwitchResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
     }
 
     @Test
-    public void parseResult_whenDeepLinkResultURLSchemeDoesntMatch_returnsNull() {
+    public void parseResult_whenDeepLinkResultURLSchemeDoesntMatch_returnsNoResult() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 customTabsInternalClient);
 
@@ -207,13 +205,13 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
-        assertNull(browserSwitchResult);
+        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
     }
 
     @Test
-    public void parseResult_whenIntentIsNull_returnsNull() {
+    public void parseResult_whenIntentIsNull_returnsNoResult() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 customTabsInternalClient);
 
@@ -221,7 +219,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
 
-        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), null);
-        assertNull(browserSwitchResult);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), null);
+        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
     }
 }
