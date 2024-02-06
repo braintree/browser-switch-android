@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
+import com.braintreepayments.api.BrowserSwitchResult
 import com.braintreepayments.api.BrowserSwitchResultInfo
 import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
@@ -48,11 +49,13 @@ class ComposeActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         PendingRequestStore.get(this)?.let { startedRequest ->
-            val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)
-            browserSwitchResult?.let { result ->
-                viewModel.browserSwitchResult = result
-            } ?: run {
-                viewModel.browserSwitchError = Exception("User did not complete browser switch")
+            when (val browserSwitchResult =
+                browserSwitchClient.parseResult(startedRequest, intent)) {
+                is BrowserSwitchResult.Success -> viewModel.browserSwitchResult =
+                    browserSwitchResult.resultInfo
+
+                is BrowserSwitchResult.NoResult -> viewModel.browserSwitchError =
+                    Exception("User did not complete browser switch")
             }
             PendingRequestStore.clear(this)
         }
