@@ -12,38 +12,22 @@ import org.json.JSONObject;
  */
 public class BrowserSwitchResultInfo {
 
-    private static final String KEY_STATUS = "status";
     private static final String KEY_DEEP_LINK_URL = "deepLinkUrl";
     private static final String KEY_BROWSER_SWITCH_REQUEST = "browserSwitchRequest";
 
-    private final int status;
     private final Uri deepLinkUrl;
     private final BrowserSwitchRequest request;
 
     static BrowserSwitchResultInfo fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        int status = jsonObject.getInt(KEY_STATUS);
         String deepLinkUrl = jsonObject.getString(KEY_DEEP_LINK_URL);
         String browserSwitchRequest = jsonObject.getString(KEY_BROWSER_SWITCH_REQUEST);
-        return new BrowserSwitchResultInfo(status, BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
+        return new BrowserSwitchResultInfo(BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
     }
 
-    BrowserSwitchResultInfo(@BrowserSwitchStatus int status, BrowserSwitchRequest request) {
-        this(status, request, null);
-    }
-
-    BrowserSwitchResultInfo(@BrowserSwitchStatus int status, BrowserSwitchRequest request, Uri deepLinkUrl) {
-        this.status = status;
+    BrowserSwitchResultInfo(BrowserSwitchRequest request, Uri deepLinkUrl) {
         this.request = request;
         this.deepLinkUrl = deepLinkUrl;
-    }
-
-    /**
-     * @return The {@link BrowserSwitchStatus} of the browser switch
-     */
-    @BrowserSwitchStatus
-    public int getStatus() {
-        return status;
     }
 
     /**
@@ -79,7 +63,6 @@ public class BrowserSwitchResultInfo {
 
     public String toJson() throws JSONException {
         JSONObject result = new JSONObject();
-        result.put(KEY_STATUS, status);
         result.put(KEY_DEEP_LINK_URL, deepLinkUrl.toString());
         result.put(KEY_BROWSER_SWITCH_REQUEST, request.toJson());
         return result.toString();

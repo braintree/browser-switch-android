@@ -25,11 +25,10 @@ public class BrowserSwitchResultInfoUnitTest {
 
         Uri deepLinkUrl = Uri.parse("example.return.url.scheme://success/ok");
         BrowserSwitchResultInfo
-                sut = new BrowserSwitchResultInfo(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                sut = new BrowserSwitchResultInfo(request, deepLinkUrl);
 
         BrowserSwitchResultInfo sutSerialized = BrowserSwitchResultInfo.fromJson(sut.toJson());
 
-        assertEquals(BrowserSwitchStatus.SUCCESS, sutSerialized.getStatus());
         assertEquals(deepLinkUrl, sutSerialized.getDeepLinkUrl());
 
         assertEquals(123, sutSerialized.getRequestCode());
