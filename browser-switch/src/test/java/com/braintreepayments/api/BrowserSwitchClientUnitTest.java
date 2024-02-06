@@ -189,7 +189,7 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
         assertNotNull(browserSwitchResult);
         assertEquals(BrowserSwitchStatus.SUCCESS, browserSwitchResult.getStatus());
@@ -207,7 +207,7 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), intent);
 
         assertNull(browserSwitchResult);
     }
@@ -221,7 +221,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), null);
+        BrowserSwitchResultInfo browserSwitchResult = sut.parseResult(new BrowserSwitchPendingRequest.Started(request), null);
         assertNull(browserSwitchResult);
     }
 }

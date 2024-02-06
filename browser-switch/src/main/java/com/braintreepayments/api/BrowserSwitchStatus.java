@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * The status of a {@link BrowserSwitchResult}.
+ * The status of a {@link BrowserSwitchResultInfo}.
  */
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({BrowserSwitchStatus.SUCCESS, BrowserSwitchStatus.CANCELED})

@@ -12,7 +12,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 @RunWith(RobolectricTestRunner.class)
-public class BrowserSwitchResultUnitTest {
+public class BrowserSwitchResultInfoUnitTest {
 
     @Test
     public void toJSON_serializesResult() throws JSONException {
@@ -24,9 +24,10 @@ public class BrowserSwitchResultUnitTest {
             new BrowserSwitchRequest(123, requestUrl, requestMetadata, returnUrlScheme, true);
 
         Uri deepLinkUrl = Uri.parse("example.return.url.scheme://success/ok");
-        BrowserSwitchResult sut = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+        BrowserSwitchResultInfo
+                sut = new BrowserSwitchResultInfo(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
 
-        BrowserSwitchResult sutSerialized = BrowserSwitchResult.fromJson(sut.toJson());
+        BrowserSwitchResultInfo sutSerialized = BrowserSwitchResultInfo.fromJson(sut.toJson());
 
         assertEquals(BrowserSwitchStatus.SUCCESS, sutSerialized.getStatus());
         assertEquals(deepLinkUrl, sutSerialized.getDeepLinkUrl());

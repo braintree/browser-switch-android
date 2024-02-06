@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
-import com.braintreepayments.api.BrowserSwitchResult;
+import com.braintreepayments.api.BrowserSwitchResultInfo;
 import com.braintreepayments.api.BrowserSwitchStatus;
 
 import org.json.JSONException;
@@ -100,7 +100,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mMetadataTextView.setText("");
     }
 
-    public void onBrowserSwitchResult(BrowserSwitchResult result) {
+    public void onBrowserSwitchResult(BrowserSwitchResultInfo result) {
         String resultText = null;
         String selectedColorText = "";
 

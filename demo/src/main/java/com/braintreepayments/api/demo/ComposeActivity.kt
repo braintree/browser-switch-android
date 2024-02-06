@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
-import com.braintreepayments.api.BrowserSwitchResult
+import com.braintreepayments.api.BrowserSwitchResultInfo
 import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
@@ -106,7 +106,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
+fun BrowserSwitchSuccess(result: BrowserSwitchResultInfo) {
     result.deepLinkUrl?.let { returnUrl ->
         val color = returnUrl.getQueryParameter("color")
         val selectedColorString = "Selected color: $color"
