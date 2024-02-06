@@ -68,7 +68,7 @@ class MyActivity : ComponentActivity() {
         // fetch stored pending request
         fetchPendingRequestFromPersistentStorage()?.let { startedRequest ->
             when (val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)) {
-                is BrowsrSwitchResult.Success -> {
+                is BrowserSwitchResult.Success -> {
                     // handle successful browser switch result
                     // clear stored pending request
                 }
