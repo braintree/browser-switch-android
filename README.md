@@ -88,14 +88,16 @@ override fun onResume() {
 
 fun handleReturnToAppFromBrowser(intent: Intent) {
     // fetch stored pending request
-    storedPendingRequest()?.let { startedRequest ->
-        val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)
-        if (browserSwitchResult != null) {
-            // handle successful browser switch result
-            // clear stored pending request
-        } else {
-            // user did not complete browser switch
-            // allow user to complete browser switch, or clear stored pending request
+    fetchPendingRequestFromPersistentStorage()?.let { startedRequest ->
+        when (val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)) {
+            is BrowserSwitchResult.Success -> {
+                // handle successful browser switch result
+                // clear stored pending request
+            }
+            is BrowserSwitchResult.NoResult -> {
+                // user did not complete browser switch
+                // allow user to complete browser switch, or clear stored pending request
+            }
         }
     }
 }

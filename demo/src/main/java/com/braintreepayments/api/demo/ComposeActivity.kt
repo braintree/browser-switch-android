@@ -21,6 +21,7 @@ import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
 import com.braintreepayments.api.BrowserSwitchResult
+import com.braintreepayments.api.BrowserSwitchResultInfo
 import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
@@ -48,11 +49,13 @@ class ComposeActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         PendingRequestStore.get(this)?.let { startedRequest ->
-            val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)
-            browserSwitchResult?.let { result ->
-                viewModel.browserSwitchResult = result
-            } ?: run {
-                viewModel.browserSwitchError = Exception("User did not complete browser switch")
+            when (val browserSwitchResult =
+                browserSwitchClient.parseResult(startedRequest, intent)) {
+                is BrowserSwitchResult.Success -> viewModel.browserSwitchResult =
+                    browserSwitchResult.resultInfo
+
+                is BrowserSwitchResult.NoResult -> viewModel.browserSwitchError =
+                    Exception("User did not complete browser switch")
             }
             PendingRequestStore.clear(this)
         }
@@ -106,7 +109,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun BrowserSwitchSuccess(result: BrowserSwitchResult) {
+fun BrowserSwitchSuccess(result: BrowserSwitchResultInfo) {
     result.deepLinkUrl?.let { returnUrl ->
         val color = returnUrl.getQueryParameter("color")
         val selectedColorString = "Selected color: $color"

@@ -46,8 +46,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestStore.Companion.get(this);
         if (pendingRequest != null) {
             BrowserSwitchResult result = browserSwitchClient.parseResult(pendingRequest, intent);
-            if (result != null) {
-                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(result);
+            if (result instanceof BrowserSwitchResult.Success) {
+                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchResult.Success) result).getResultInfo());
             }
             PendingRequestStore.Companion.clear(this);
         }
