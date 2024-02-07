@@ -87,7 +87,7 @@ task changeREADMEVersion {
     doLast {
 
         def readmeFile = new File('README.md')
-        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+'", ":browser-switch:" + versionParam + "'")
+        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+(-.*)?'", ":browser-switch:" + versionParam + "'")
         readmeFile.write(readmeFileText)
     }
 }
