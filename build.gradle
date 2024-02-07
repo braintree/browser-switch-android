@@ -85,7 +85,6 @@ task changeGradleReleaseVersion {
 
 task changeREADMEVersion {
     doLast {
-
         def readmeFile = new File('README.md')
         def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+(-.*)?'", ":browser-switch:" + versionParam + "'")
         readmeFile.write(readmeFileText)
@@ -94,7 +93,7 @@ task changeREADMEVersion {
 
 task changeMigrationGuideVersion {
     doLast {
-        def migrationGuideFile = new File('v2_MIGRATION.md')
+        def migrationGuideFile = new File('v3_MIGRATION.md')
         def migrationGuideFileText = migrationGuideFile.text.replaceAll(":\\d+\\.\\d+\\.\\d+(-.*)?'", ":" + versionParam + "'")
         migrationGuideFile.write(migrationGuideFileText)
     }
@@ -112,8 +111,10 @@ task incrementSNAPSHOTVersion {
     doLast {
         def gradleFile = new File('build.gradle')
         def (major, minor, patch) = versionParam.tokenize('.')
-        def patchInteger = patch.toInteger()
-        def newVersion = "$major.$minor.${patchInteger + 1}-SNAPSHOT"
+        def patchInteger = patch[-1].toInteger()
+        patchInteger++
+        def newPatch = patch.substring(0,patch.length()-1) + patchInteger.toString()
+        def newVersion = "$major.$minor.$newPatch-SNAPSHOT"
         def gradleFileText = gradleFile.text.replaceFirst("\\nversion = '\\d+\\.\\d+\\.\\d+(-.*)?'", "\nversion = '" + newVersion + "'")
         gradleFile.write(gradleFileText)
 
