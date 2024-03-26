@@ -11,26 +11,25 @@ class PendingRequestStore {
         private const val SHARED_PREFS_KEY = "PENDING_REQUESTS"
         private const val PENDING_REQUEST_KEY = "BROWSER_SWITCH_REQUEST"
 
-        fun put(context: Context, pendingRequest: BrowserSwitchPendingRequest.Started) {
+        @JvmStatic
+        fun put(context: Context, pendingRequestToken: String) {
             val sharedPreferences: SharedPreferences = context.getSharedPreferences(
                 SHARED_PREFS_KEY,
                 Context.MODE_PRIVATE
             )
-            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequest.token).apply()
+            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequestToken).apply()
         }
 
-        fun get(context: Context) : BrowserSwitchPendingRequest.Started? {
+        @JvmStatic
+        fun get(context: Context): String? {
             val sharedPreferences: SharedPreferences = context.getSharedPreferences(
                 SHARED_PREFS_KEY,
                 Context.MODE_PRIVATE
             )
-            val pendingRequestString = sharedPreferences.getString(PENDING_REQUEST_KEY, null)
-            pendingRequestString?.let {
-                return BrowserSwitchPendingRequest.Started(it)
-            }
-            return null
+            return sharedPreferences.getString(PENDING_REQUEST_KEY, null)
         }
 
+        @JvmStatic
         fun clear(context: Context) {
             val sharedPreferences: SharedPreferences = context.getSharedPreferences(
                 SHARED_PREFS_KEY,

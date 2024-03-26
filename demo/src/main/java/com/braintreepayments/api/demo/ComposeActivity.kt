@@ -75,7 +75,9 @@ class ComposeActivity : ComponentActivity() {
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchPendingRequest.Started -> PendingRequestStore.put(this, pendingRequest)
+            is BrowserSwitchPendingRequest.Started ->
+                PendingRequestStore.put(this, pendingRequest.token)
+
             is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
                 pendingRequest.cause
         }
