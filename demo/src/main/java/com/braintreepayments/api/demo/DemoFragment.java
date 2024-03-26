@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
+import com.braintreepayments.api.BrowserSwitchResult;
 import com.braintreepayments.api.BrowserSwitchResultInfo;
 
 import org.json.JSONException;
@@ -99,16 +100,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mMetadataTextView.setText("");
     }
 
-    public void onBrowserSwitchResult(BrowserSwitchResultInfo result) {
+    public void onBrowserSwitchResult(BrowserSwitchResult.Success result) {
         String selectedColorText = "";
 
         String resultText = "Browser Switch Successful";
 
         Uri returnUrl = result.getDeepLinkUrl();
-        if (returnUrl != null) {
-            String color = returnUrl.getQueryParameter("color");
-            selectedColorText = String.format("Selected color: %s", color);
-        }
+        String color = returnUrl.getQueryParameter("color");
+        selectedColorText = String.format("Selected color: %s", color);
 
         mBrowserSwitchStatusTextView.setText(resultText);
         mSelectedColorTextView.setText(selectedColorText);

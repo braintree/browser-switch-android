@@ -22,7 +22,8 @@ public class BrowserSwitchResultInfo {
         JSONObject jsonObject = new JSONObject(json);
         String deepLinkUrl = jsonObject.getString(KEY_DEEP_LINK_URL);
         String browserSwitchRequest = jsonObject.getString(KEY_BROWSER_SWITCH_REQUEST);
-        return new BrowserSwitchResultInfo(BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
+        return null;
+//        return new BrowserSwitchResultInfo(BrowserSwitchRequest.fromJson(browserSwitchRequest), Uri.parse(deepLinkUrl));
     }
 
     BrowserSwitchResultInfo(BrowserSwitchRequest request, Uri deepLinkUrl) {
@@ -64,7 +65,7 @@ public class BrowserSwitchResultInfo {
     public String toJson() throws JSONException {
         JSONObject result = new JSONObject();
         result.put(KEY_DEEP_LINK_URL, deepLinkUrl.toString());
-        result.put(KEY_BROWSER_SWITCH_REQUEST, request.toJson());
+//        result.put(KEY_BROWSER_SWITCH_REQUEST, request.toJson());
         return result.toString();
     }
 }

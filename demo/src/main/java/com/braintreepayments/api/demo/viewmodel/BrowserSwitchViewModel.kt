@@ -1,6 +1,7 @@
 package com.braintreepayments.api.demo.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.braintreepayments.api.BrowserSwitchResult
 import com.braintreepayments.api.BrowserSwitchResultInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,7 @@ class BrowserSwitchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    var browserSwitchResult : BrowserSwitchResultInfo?
+    var browserSwitchResult : BrowserSwitchResult.Success?
         get() = _uiState.value.browserSwitchResult
         set(value) {
             _uiState.update { it.copy(browserSwitchResult = value) }

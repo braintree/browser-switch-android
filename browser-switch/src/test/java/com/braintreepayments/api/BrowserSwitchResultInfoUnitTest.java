@@ -21,7 +21,7 @@ public class BrowserSwitchResultInfoUnitTest {
         JSONObject requestMetadata = new JSONObject()
                 .put("sample", "value");
         BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, requestUrl, requestMetadata, returnUrlScheme, true);
+            new BrowserSwitchRequest(123, requestUrl, requestMetadata, returnUrlScheme);
 
         Uri deepLinkUrl = Uri.parse("example.return.url.scheme://success/ok");
         BrowserSwitchResultInfo

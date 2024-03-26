@@ -8,4 +8,8 @@ public class BrowserSwitchException extends Exception {
     BrowserSwitchException(String message) {
         super(message);
     }
+
+    BrowserSwitchException(String message, Exception reason) {
+        super(message, reason);
+    }
 }

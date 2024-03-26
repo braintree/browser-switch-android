@@ -1,5 +1,8 @@
 package com.braintreepayments.api
 
+import android.net.Uri
+import org.json.JSONObject
+
 /**
  * The result of a browser switch obtained from [BrowserSwitchClient.parseResult]
  */
@@ -8,7 +11,19 @@ sealed class BrowserSwitchResult {
     /**
      * The browser switch was successfully completed. See [resultInfo] for details.
      */
-    class Success(val resultInfo: BrowserSwitchResultInfo) : BrowserSwitchResult()
+    class Success(
+        val deepLinkUrl: Uri,
+        val requestCode: Int,
+        val requestUrl: Uri,
+        val requestMetadata: JSONObject?,
+    ) : BrowserSwitchResult() {
+        constructor(deepLinkUrl: Uri, originalRequest: BrowserSwitchRequest) : this(
+            deepLinkUrl,
+            originalRequest.requestCode,
+            originalRequest.url,
+            originalRequest.metadata
+        )
+    }
 
     /**
      * No browser switch result was found. This is the expected result when a user cancels the

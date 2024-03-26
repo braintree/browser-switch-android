@@ -15,8 +15,7 @@ class BrowserSwitchPendingRequestUnitTest {
         1,
         Uri.parse("http://"),
         JSONObject().put("test_key", "test_value"),
-        "return-url-scheme",
-        false
+        "return-url-scheme"
     )
 
     @Test
@@ -25,17 +24,17 @@ class BrowserSwitchPendingRequestUnitTest {
         val storedRequest = pendingRequest.toJsonString()
 
         val sut = BrowserSwitchPendingRequest.Started(storedRequest)
-        assertEquals(browserSwitchRequest.requestCode, sut.browserSwitchRequest.requestCode)
+        assertEquals(browserSwitchRequest.requestCode, sut.token.requestCode)
         assertEquals(
             browserSwitchRequest.metadata.getString("test_key"),
-            sut.browserSwitchRequest.metadata.getString("test_key")
+            sut.token.metadata.getString("test_key")
         )
-        assertEquals(browserSwitchRequest.url, sut.browserSwitchRequest.url)
+        assertEquals(browserSwitchRequest.url, sut.token.url)
         assertEquals(
             browserSwitchRequest.shouldNotifyCancellation,
-            sut.browserSwitchRequest.shouldNotifyCancellation
+            sut.token.shouldNotifyCancellation
         )
-        assertEquals(browserSwitchRequest.returnUrlScheme, sut.browserSwitchRequest.returnUrlScheme)
+        assertEquals(browserSwitchRequest.returnUrlScheme, sut.token.returnUrlScheme)
     }
 
     @Test(expected = JSONException::class)

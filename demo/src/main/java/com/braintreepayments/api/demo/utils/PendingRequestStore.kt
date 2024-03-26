@@ -16,7 +16,7 @@ class PendingRequestStore {
                 SHARED_PREFS_KEY,
                 Context.MODE_PRIVATE
             )
-            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequest.toJsonString()).apply()
+            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequest.token).apply()
         }
 
         fun get(context: Context) : BrowserSwitchPendingRequest.Started? {
