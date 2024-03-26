@@ -21,7 +21,6 @@ import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
 import com.braintreepayments.api.BrowserSwitchResult
-import com.braintreepayments.api.BrowserSwitchResultInfo
 import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject

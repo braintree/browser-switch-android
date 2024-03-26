@@ -14,6 +14,9 @@ import java.nio.charset.StandardCharsets;
 // Links
 // Base64 Encode a String in Android: https://stackoverflow.com/a/7360440
 
+// TODO: consider encryption
+// Ref: https://medium.com/fw-engineering/sharedpreferences-and-android-keystore-c4eac3373ac7
+
 public class BrowserSwitchRequest {
 
     private static final String KEY_REQUEST_CODE = "requestCode";
@@ -37,7 +40,7 @@ public class BrowserSwitchRequest {
             return new BrowserSwitchRequest(
                     tokenJSON.getInt(KEY_REQUEST_CODE),
                     Uri.parse(tokenJSON.getString(KEY_URL)),
-                    tokenJSON.getJSONObject(KEY_METADATA),
+                    tokenJSON.optJSONObject(KEY_METADATA),
                     tokenJSON.getString(KEY_RETURN_URL_SCHEME)
             );
         } catch (JSONException e) {

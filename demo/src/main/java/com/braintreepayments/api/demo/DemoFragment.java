@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchResult;
-import com.braintreepayments.api.BrowserSwitchResultInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
