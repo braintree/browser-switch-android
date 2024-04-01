@@ -31,4 +31,10 @@ sealed class BrowserSwitchResult {
      * without completing the browser switch flow.
      */
     object NoResult : BrowserSwitchResult()
+
+    /**
+     * The browser switch failed.
+     * @property [reason] Reason for the browser switch failure.
+     */
+    class Failure(val reason: BrowserSwitchException) : BrowserSwitchResult()
 }

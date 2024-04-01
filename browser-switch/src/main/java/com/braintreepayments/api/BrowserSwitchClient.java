@@ -126,8 +126,7 @@ public class BrowserSwitchClient {
                     return new BrowserSwitchResult.Success(deepLinkUrl, originalRequest);
                 }
             } catch (BrowserSwitchException e) {
-                // TODO: handle error
-                throw new RuntimeException(e);
+                return new BrowserSwitchResult.UnknownError(e);
             }
         }
         return BrowserSwitchResult.NoResult.INSTANCE;
