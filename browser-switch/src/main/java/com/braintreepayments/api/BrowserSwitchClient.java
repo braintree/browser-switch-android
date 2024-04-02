@@ -48,6 +48,7 @@ public class BrowserSwitchClient {
      */
     @NonNull
     public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+        // TODO: allow browser switching with application context
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
         } catch (BrowserSwitchException e) {

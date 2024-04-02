@@ -51,7 +51,6 @@ public class BrowserSwitchRequest {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
-        // TODO: make return url scheme accessor public
         this.returnUrlScheme = returnUrlScheme;
     }
 
