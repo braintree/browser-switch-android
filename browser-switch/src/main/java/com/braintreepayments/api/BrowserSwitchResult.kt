@@ -11,13 +11,13 @@ sealed class BrowserSwitchResult {
     /**
      * The browser switch was successfully completed. See [resultInfo] for details.
      */
-    class Success(
+    class Success internal constructor(
         val deepLinkUrl: Uri,
         val requestCode: Int,
         val requestUrl: Uri,
         val requestMetadata: JSONObject?,
     ) : BrowserSwitchResult() {
-        constructor(deepLinkUrl: Uri, originalRequest: BrowserSwitchRequest) : this(
+        internal constructor(deepLinkUrl: Uri, originalRequest: BrowserSwitchRequest) : this(
             deepLinkUrl,
             originalRequest.requestCode,
             originalRequest.url,
@@ -36,5 +36,5 @@ sealed class BrowserSwitchResult {
      * The browser switch failed.
      * @property [reason] Reason for the browser switch failure.
      */
-    class Failure(val reason: BrowserSwitchException) : BrowserSwitchResult()
+    class Failure internal constructor(val reason: BrowserSwitchException) : BrowserSwitchResult()
 }
