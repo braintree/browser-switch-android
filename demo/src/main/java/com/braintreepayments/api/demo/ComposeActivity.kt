@@ -29,13 +29,10 @@ import java.lang.Exception
 class ComposeActivity : ComponentActivity() {
 
     private val viewModel by viewModels<BrowserSwitchViewModel>()
-
-    private lateinit var browserSwitchClient: BrowserSwitchClient
+    private val browserSwitchClient = BrowserSwitchClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        browserSwitchClient = BrowserSwitchClient()
-
         setContent {
             Column(modifier = Modifier.padding(10.dp)) {
                 BrowserSwitchButton {
@@ -72,12 +69,12 @@ class ComposeActivity : ComponentActivity() {
             .url(url)
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
-        when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
+        when (val result = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchStartResult.Success ->
-                PendingRequestStore.put(this, pendingRequest.pendingRequestState)
+                PendingRequestStore.put(this, result.pendingRequestState)
 
             is BrowserSwitchStartResult.Failure -> viewModel.browserSwitchError =
-                pendingRequest.cause
+                result.error
         }
     }
 

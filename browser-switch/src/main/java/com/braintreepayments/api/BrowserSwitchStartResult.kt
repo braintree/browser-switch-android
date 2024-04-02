@@ -7,13 +7,13 @@ package com.braintreepayments.api
 sealed class BrowserSwitchStartResult {
 
     /**
-     * A browser switch was successfully started. This pending request should be store dnd passed to
-     * [BrowserSwitchClient.parseResult]
+     * Browser switch successfully started. Keep a reference to pending request state and pass it to
+     * [BrowserSwitchClient.parseResult] after a deep link back into the app has occurred.
      */
     class Success(val pendingRequestState: String) : BrowserSwitchStartResult()
 
     /**
-     * An error with [cause] occurred launching the browser
+     * Browser switch failed with an [error].
      */
-    class Failure(val cause: Exception) : BrowserSwitchStartResult()
+    class Failure(val error: Exception) : BrowserSwitchStartResult()
 }

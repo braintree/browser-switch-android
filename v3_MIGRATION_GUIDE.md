@@ -43,8 +43,10 @@ Then, add an `intent-filter` in the `AndroidManifest.xml` to your deep link dest
 class MyActivity : ComponentActivity() {
 
     val browserSwitchClient: BrowserSwitchClient = BrowserSwitchClient()
+    val pendingRequestState: String? = null
 
     override fun onResume() {
+        super.onResume()
         handleReturnToAppFromBrowser(intent)
     }
     
@@ -54,25 +56,33 @@ class MyActivity : ComponentActivity() {
             url = "https://example.com"
             returnUrlScheme = "my-custom-url-scheme"
         }
-        when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
+        when (val result = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started -> { 
                 // store pending request
+                pendingRequestState = result.pendingRequestState
             }
             is BrowserSwitchPendingRequest.Failure -> { 
                 // browser was unable to be launched, handle failure
+                Log.d("MyActivity", result.error)
             }
         }
     }
     
     fun handleReturnToAppFromBrowser(intent: Intent) {
-        // fetch stored pending request
-        fetchPendingRequestFromPersistentStorage()?.let { startedRequest ->
-            when (val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)) {
-                is BrowserSwitchResult.Success -> {
+        if (pendingRequestState != null) {
+            when (val result = browserSwitchClient.parseResult(intent, pendingRequestState)) {
+                is BrowserSwitchParseResult.Success -> {
                     // handle successful browser switch result
-                    // clear stored pending request
+                    // drop reference to pending request
+                    pendingRequestState = null
                 }
-                is BrowserSwitchResult.NoResult -> {
+                is BrowserSwitchParseResult.Failure -> {
+                    // browser switch parsing failed
+                    Log.d("MyActivity", result.error)
+                    // drop reference to pending request
+                    pendingRequestState = null
+                }
+                is BrowserSwitchParseResult.NoResult -> {
                     // user did not complete browser switch
                     // allow user to complete browser switch, or clear stored pending request
                 }
@@ -89,14 +99,28 @@ If your deep link destination activity is configured in the `AndroidManifest.xml
 ```kotlin
 class MySingleTopActivity : ComponentActivity() {
 
+    val pendingRequestState: String? = null
     val browserSwitchClient: BrowserSwitchClient = BrowserSwitchClient()
+    
+    override fun onCreate() {
+        super.onCreate()
+        /**
+         * TODO: initialize pendingRequestState from your app's preferred persistence store
+         * e.g. shared prefs, data store or saved instance state
+         */
+        pendingRequestState = ...
+    }
 
     override fun onResume() {
-        // do nothing
+        super.onResume()
+        
+        // handle browser switch when deep link triggers a cold start of the app
+        handleReturnToAppFromBrowser(intent, pendingRequestState)
     }
     
     override fun onNewIntent(newIntent: Intent) {
-        handleReturnToAppFromBrowser(newIntent)
+        // handle browser switch when deep link brings already running singleTop activity to the foreground
+        handleReturnToAppFromBrowser(newIntent, pendingRequestState)
     }    
 }
 ```

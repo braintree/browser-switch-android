@@ -72,7 +72,7 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Unable to start browser switch while host Activity is finishing.");
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Unable to start browser switch while host Activity is finishing.");
     }
 
     @Test
@@ -118,7 +118,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Unable to start browser switch without a web browser.");
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Unable to start browser switch without a web browser.");
     }
 
     @Test
@@ -136,7 +136,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Request code cannot be Integer.MIN_VALUE");
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Request code cannot be Integer.MIN_VALUE");
     }
 
     @Test
@@ -158,7 +158,7 @@ public class BrowserSwitchClientUnitTest {
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
-                "setting up a return url scheme.", ((BrowserSwitchStartResult.Failure) request).getCause().getMessage());
+                "setting up a return url scheme.", ((BrowserSwitchStartResult.Failure) request).getError().getMessage());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchStartResult.Failure) request).getCause().getMessage());
+        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchStartResult.Failure) request).getError().getMessage());
     }
 
     @Test
