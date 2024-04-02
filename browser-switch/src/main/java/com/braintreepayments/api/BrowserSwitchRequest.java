@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 // TODO: consider encryption
 // Ref: https://medium.com/fw-engineering/sharedpreferences-and-android-keystore-c4eac3373ac7
 
+// TODO: Rename to `BrowserSwitchStartRequest` and remove `BrowserSwitchOptions` in favor this class
 public class BrowserSwitchRequest {
 
     private static final String KEY_REQUEST_CODE = "requestCode";

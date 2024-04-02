@@ -10,9 +10,9 @@
   * Change `BrowserSwitchClient#start` parameters and return type
   * Change `BrowserSwitchClient#parseResult` parameters 
   * Remove `deliverResult`, `getResult`, `captureResult`, `clearActiveRequests`, `getResultFromCache`, and `deliverResultFromCache` from `BrowserSwitchClient`
-  * Add `BrowserSwitchRequest` and `BrowserSwitchPendingRequest`
-  * Convert `BrowserSwitchResult` to sealed class and add `BrowserSwitchResultInfo`
   * Remove `BrowserSwitchStatus`
+  * Add `BrowserSwitchRequest` and `BrowserSwitchStartResult`
+  * Rename `BrowserSwitchResult` to `BrowserSwitchParseResult` and convert it to a sealed class
 
 ## 2.6.1
 
