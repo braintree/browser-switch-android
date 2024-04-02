@@ -34,7 +34,7 @@ sealed class BrowserSwitchResult {
 
     /**
      * The browser switch failed.
-     * @property [reason] Reason for the browser switch failure.
+     * @property [error] Error detailing the reason for the browser switch failure.
      */
-    class Failure internal constructor(val reason: BrowserSwitchException) : BrowserSwitchResult()
+    class Failure internal constructor(val error: BrowserSwitchException) : BrowserSwitchResult()
 }

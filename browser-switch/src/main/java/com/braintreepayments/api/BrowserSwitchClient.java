@@ -114,6 +114,7 @@ public class BrowserSwitchClient {
      * {@link BrowserSwitchPendingRequest.Started}. A {@link BrowserSwitchResult.NoResult} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
+    @NonNull
     public BrowserSwitchResult parseResult(@NonNull Intent intent, @NonNull String pendingRequestState) {
         if (intent != null && intent.getData() != null) {
             Uri deepLinkUrl = intent.getData();

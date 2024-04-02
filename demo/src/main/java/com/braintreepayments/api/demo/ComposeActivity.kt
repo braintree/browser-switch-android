@@ -31,6 +31,7 @@ class ComposeActivity : ComponentActivity() {
     private val viewModel by viewModels<BrowserSwitchViewModel>()
 
     private lateinit var browserSwitchClient: BrowserSwitchClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         browserSwitchClient = BrowserSwitchClient()
@@ -47,22 +48,19 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val pendingRequestState = PendingRequestStore.get(this)
-        val browserSwitchResult = pendingRequestState?.let {
-            browserSwitchClient.parseResult(intent, pendingRequestState)
-        }
-        when (browserSwitchResult) {
-            is BrowserSwitchResult.Success -> {
-                viewModel.browserSwitchResult = browserSwitchResult
-                PendingRequestStore.clear(this)
+        PendingRequestStore.get(this)?.let { pendingRequestState ->
+            when (val result = browserSwitchClient.parseResult(intent, pendingRequestState)) {
+                is BrowserSwitchResult.Success -> {
+                    viewModel.browserSwitchResult = result
+                    PendingRequestStore.clear(this)
+                }
+
+                is BrowserSwitchResult.NoResult ->
+                    viewModel.browserSwitchError = Exception("User did not complete browser switch")
+
+                is BrowserSwitchResult.Failure ->
+                    viewModel.browserSwitchError = result.error
             }
-
-            is BrowserSwitchResult.NoResult ->
-                viewModel.browserSwitchError = Exception("User did not complete browser switch")
-
-            // ignore null case
-            // TODO: Make parse result @NonNull
-            else -> {}
         }
     }
 
@@ -76,7 +74,7 @@ class ComposeActivity : ComponentActivity() {
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started ->
-                PendingRequestStore.put(this, pendingRequest.pendingRequestState)
+                PendingRequestStore.put(this, pendingRequest.state)
 
             is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
                 pendingRequest.cause

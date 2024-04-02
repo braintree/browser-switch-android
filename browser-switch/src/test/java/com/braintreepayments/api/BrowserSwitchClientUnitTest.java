@@ -95,7 +95,7 @@ public class BrowserSwitchClientUnitTest {
         assertNotNull(browserSwitchPendingRequest);
         assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchPendingRequest.Started);
 
-        String pendingRequestState = ((BrowserSwitchPendingRequest.Started) browserSwitchPendingRequest).getPendingRequestState();
+        String pendingRequestState = ((BrowserSwitchPendingRequest.Started) browserSwitchPendingRequest).getState();
         BrowserSwitchRequest browserSwitchRequest = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequestState);
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
