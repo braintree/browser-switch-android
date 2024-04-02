@@ -42,17 +42,17 @@ public class BrowserSwitchClient {
      *
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
-     * @return a {@link BrowserSwitchPendingRequest.Started} that should be stored and passed to
+     * @return a {@link BrowserSwitchStartResult.Success} that should be stored and passed to
      * {@link BrowserSwitchClient#parseResult(Intent, String)} upon return to the app,
-     * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
+     * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
-    public BrowserSwitchPendingRequest start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
         // TODO: allow browser switching with application context
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
         } catch (BrowserSwitchException e) {
-            return new BrowserSwitchPendingRequest.Failure(e);
+            return new BrowserSwitchStartResult.Failure(e);
         }
 
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
@@ -64,16 +64,16 @@ public class BrowserSwitchClient {
         if (activity.isFinishing()) {
             String activityFinishingMessage =
                     "Unable to start browser switch while host Activity is finishing.";
-            return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException(activityFinishingMessage));
+            return new BrowserSwitchStartResult.Failure(new BrowserSwitchException(activityFinishingMessage));
         } else {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
             try {
                 BrowserSwitchRequest request =
                         new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme);
                 customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
-                return new BrowserSwitchPendingRequest.Started(request.toBase64EncodedJSON());
+                return new BrowserSwitchStartResult.Success(request.toBase64EncodedJSON());
             } catch (ActivityNotFoundException | BrowserSwitchException e) {
-                return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));
+                return new BrowserSwitchStartResult.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));
             }
         }
     }
@@ -108,27 +108,27 @@ public class BrowserSwitchClient {
      *
      * @param intent              the intent to return to your application containing a deep link result from the
      *                            browser flow
-     * @param pendingRequestState the {@link BrowserSwitchPendingRequest.Started} token returned from
+     * @param pendingRequestState the {@link BrowserSwitchStartResult.Success} token returned from
      *                            {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
-     * @return a {@link BrowserSwitchResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchResult.NoResult} if no result can be found for the given
-     * {@link BrowserSwitchPendingRequest.Started}. A {@link BrowserSwitchResult.NoResult} will be
+     * @return a {@link BrowserSwitchParseResult.Success} if the browser switch was successfully
+     * completed, or {@link BrowserSwitchParseResult.None} if no result can be found for the given
+     * {@link BrowserSwitchStartResult.Success}. A {@link BrowserSwitchParseResult.None} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
     @NonNull
-    public BrowserSwitchResult parseResult(@NonNull Intent intent, @NonNull String pendingRequestState) {
+    public BrowserSwitchParseResult parseResult(@NonNull Intent intent, @NonNull String pendingRequestState) {
         if (intent != null && intent.getData() != null) {
             Uri deepLinkUrl = intent.getData();
             try {
                 BrowserSwitchRequest pendingRequest =
                         BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequestState);
                 if (pendingRequest.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                    return new BrowserSwitchResult.Success(deepLinkUrl, pendingRequest);
+                    return new BrowserSwitchParseResult.Success(deepLinkUrl, pendingRequest);
                 }
             } catch (BrowserSwitchException e) {
-                return new BrowserSwitchResult.Failure(e);
+                return new BrowserSwitchParseResult.Failure(e);
             }
         }
-        return BrowserSwitchResult.NoResult.INSTANCE;
+        return BrowserSwitchParseResult.None.INSTANCE;
     }
 }

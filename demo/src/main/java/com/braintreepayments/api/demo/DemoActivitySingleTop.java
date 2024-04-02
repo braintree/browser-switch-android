@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentManager;
 import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
-import com.braintreepayments.api.BrowserSwitchPendingRequest;
-import com.braintreepayments.api.BrowserSwitchResult;
+import com.braintreepayments.api.BrowserSwitchStartResult;
+import com.braintreepayments.api.BrowserSwitchParseResult;
 import com.braintreepayments.api.demo.utils.PendingRequestStore;
 
 import java.util.Objects;
@@ -45,9 +45,9 @@ public class DemoActivitySingleTop extends AppCompatActivity {
 
         String pendingRequestState = PendingRequestStore.get(this);
         if (pendingRequestState != null) {
-            BrowserSwitchResult result = browserSwitchClient.parseResult(intent, pendingRequestState);
-            if (result instanceof BrowserSwitchResult.Success) {
-                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchResult.Success) result));
+            BrowserSwitchParseResult result = browserSwitchClient.parseResult(intent, pendingRequestState);
+            if (result instanceof BrowserSwitchParseResult.Success) {
+                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchParseResult.Success) result));
             }
             PendingRequestStore.clear(this);
         }
@@ -65,13 +65,13 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
-        BrowserSwitchPendingRequest pendingRequest = browserSwitchClient.start(this, options);
-        if (pendingRequest instanceof BrowserSwitchPendingRequest.Started) {
+        BrowserSwitchStartResult pendingRequest = browserSwitchClient.start(this, options);
+        if (pendingRequest instanceof BrowserSwitchStartResult.Success) {
             String pendingRequestState =
-                    ((BrowserSwitchPendingRequest.Started) pendingRequest).getState();
+                    ((BrowserSwitchStartResult.Success) pendingRequest).getPendingRequestState();
             PendingRequestStore.put(this, pendingRequestState);
-        } else if (pendingRequest instanceof BrowserSwitchPendingRequest.Failure) {
-            Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchPendingRequest.Failure) pendingRequest).getCause());
+        } else if (pendingRequest instanceof BrowserSwitchStartResult.Failure) {
+            Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchStartResult.Failure) pendingRequest).getCause());
         }
     }
 

@@ -70,9 +70,9 @@ public class BrowserSwitchClientUnitTest {
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
 
-        BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
-        assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Unable to start browser switch while host Activity is finishing.");
+        BrowserSwitchStartResult request = sut.start(componentActivity, options);
+        assertTrue(request instanceof BrowserSwitchStartResult.Failure);
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Unable to start browser switch while host Activity is finishing.");
     }
 
     @Test
@@ -88,14 +88,14 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
-        BrowserSwitchPendingRequest browserSwitchPendingRequest = sut.start(componentActivity, options);
+        BrowserSwitchStartResult browserSwitchStartResult = sut.start(componentActivity, options);
 
         verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, false);
 
-        assertNotNull(browserSwitchPendingRequest);
-        assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchPendingRequest.Started);
+        assertNotNull(browserSwitchStartResult);
+        assertTrue(browserSwitchStartResult instanceof BrowserSwitchStartResult.Success);
 
-        String pendingRequestState = ((BrowserSwitchPendingRequest.Started) browserSwitchPendingRequest).getState();
+        String pendingRequestState = ((BrowserSwitchStartResult.Success) browserSwitchStartResult).getPendingRequestState();
         BrowserSwitchRequest browserSwitchRequest = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequestState);
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
@@ -116,9 +116,9 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
-        BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
-        assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Unable to start browser switch without a web browser.");
+        BrowserSwitchStartResult request = sut.start(componentActivity, options);
+        assertTrue(request instanceof BrowserSwitchStartResult.Failure);
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Unable to start browser switch without a web browser.");
     }
 
     @Test
@@ -134,9 +134,9 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
-        BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
-        assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals(((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage(), "Request code cannot be Integer.MIN_VALUE");
+        BrowserSwitchStartResult request = sut.start(componentActivity, options);
+        assertTrue(request instanceof BrowserSwitchStartResult.Failure);
+        assertEquals(((BrowserSwitchStartResult.Failure) request).getCause().getMessage(), "Request code cannot be Integer.MIN_VALUE");
     }
 
     @Test
@@ -153,12 +153,12 @@ public class BrowserSwitchClientUnitTest {
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
 
-        BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
-        assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
+        BrowserSwitchStartResult request = sut.start(componentActivity, options);
+        assertTrue(request instanceof BrowserSwitchStartResult.Failure);
         assertEquals("The return url scheme was not set up, incorrectly set up, or more than one " +
                 "Activity on this device defines the same url scheme in it's Android Manifest. " +
                 "See https://github.com/braintree/browser-switch-android for more information on " +
-                "setting up a return url scheme.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
+                "setting up a return url scheme.", ((BrowserSwitchStartResult.Failure) request).getCause().getMessage());
     }
 
     @Test
@@ -174,9 +174,9 @@ public class BrowserSwitchClientUnitTest {
                 .returnUrlScheme(null)
                 .url(browserSwitchDestinationUrl)
                 .metadata(metadata);
-        BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
-        assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
+        BrowserSwitchStartResult request = sut.start(componentActivity, options);
+        assertTrue(request instanceof BrowserSwitchStartResult.Failure);
+        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchStartResult.Failure) request).getCause().getMessage());
     }
 
     @Test
@@ -191,10 +191,10 @@ public class BrowserSwitchClientUnitTest {
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(intent, request.toBase64EncodedJSON());
+        BrowserSwitchParseResult browserSwitchParseResult = sut.parseResult(intent, request.toBase64EncodedJSON());
 
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
-        assertEquals(deepLinkUrl, ((BrowserSwitchResult.Success) browserSwitchResult).getDeepLinkUrl());
+        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.Success);
+        assertEquals(deepLinkUrl, ((BrowserSwitchParseResult.Success) browserSwitchParseResult).getDeepLinkUrl());
     }
 
     @Test
@@ -208,9 +208,9 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(intent, request.toBase64EncodedJSON());
+        BrowserSwitchParseResult browserSwitchParseResult = sut.parseResult(intent, request.toBase64EncodedJSON());
 
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
+        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.None);
     }
 
     @Test
@@ -222,7 +222,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme");
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(null, request.toBase64EncodedJSON());
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
+        BrowserSwitchParseResult browserSwitchParseResult = sut.parseResult(null, request.toBase64EncodedJSON());
+        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.None);
     }
 }

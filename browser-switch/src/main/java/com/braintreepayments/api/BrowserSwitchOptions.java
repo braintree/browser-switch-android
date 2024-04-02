@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 /**
  * Object that contains a set of browser switch parameters for use with
- * {@link BrowserSwitchClient#start(FragmentActivity, BrowserSwitchOptions)}.
+ * {@link BrowserSwitchClient#start(androidx.activity.ComponentActivity, BrowserSwitchOptions)}.
  */
 public class BrowserSwitchOptions {
 
@@ -24,7 +24,7 @@ public class BrowserSwitchOptions {
      * Set browser switch metadata.
      *
      * @param metadata JSONObject containing metadata that will be persisted and returned in a
-     *                 {@link BrowserSwitchResult} when the app has re-entered the foreground
+     *                 {@link BrowserSwitchParseResult} when the app has re-entered the foreground
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions metadata(@Nullable JSONObject metadata) {

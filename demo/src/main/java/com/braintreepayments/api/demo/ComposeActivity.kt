@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchOptions
-import com.braintreepayments.api.BrowserSwitchPendingRequest
-import com.braintreepayments.api.BrowserSwitchResult
+import com.braintreepayments.api.BrowserSwitchStartResult
+import com.braintreepayments.api.BrowserSwitchParseResult
 import com.braintreepayments.api.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
@@ -50,15 +50,15 @@ class ComposeActivity : ComponentActivity() {
         super.onResume()
         PendingRequestStore.get(this)?.let { pendingRequestState ->
             when (val result = browserSwitchClient.parseResult(intent, pendingRequestState)) {
-                is BrowserSwitchResult.Success -> {
-                    viewModel.browserSwitchResult = result
+                is BrowserSwitchParseResult.Success -> {
+                    viewModel.browserSwitchParseResult = result
                     PendingRequestStore.clear(this)
                 }
 
-                is BrowserSwitchResult.NoResult ->
+                is BrowserSwitchParseResult.None ->
                     viewModel.browserSwitchError = Exception("User did not complete browser switch")
 
-                is BrowserSwitchResult.Failure ->
+                is BrowserSwitchParseResult.Failure ->
                     viewModel.browserSwitchError = result.error
             }
         }
@@ -73,10 +73,10 @@ class ComposeActivity : ComponentActivity() {
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchPendingRequest.Started ->
-                PendingRequestStore.put(this, pendingRequest.state)
+            is BrowserSwitchStartResult.Success ->
+                PendingRequestStore.put(this, pendingRequest.pendingRequestState)
 
-            is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
+            is BrowserSwitchStartResult.Failure -> viewModel.browserSwitchError =
                 pendingRequest.cause
         }
     }
@@ -99,7 +99,7 @@ class ComposeActivity : ComponentActivity() {
 @Composable
 fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
     val uiState = viewModel.uiState.collectAsState().value
-    uiState.browserSwitchResult?.let {
+    uiState.browserSwitchParseResult?.let {
         BrowserSwitchSuccess(result = it)
     }
     uiState.browserSwitchError?.let { BrowserSwitchError(exception = it) }
@@ -117,7 +117,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun BrowserSwitchSuccess(result: BrowserSwitchResult.Success) {
+fun BrowserSwitchSuccess(result: BrowserSwitchParseResult.Success) {
     val returnUrl = result.deepLinkUrl
 
     val color = returnUrl.getQueryParameter("color")
