@@ -95,8 +95,8 @@ public class BrowserSwitchClientUnitTest {
         assertNotNull(browserSwitchPendingRequest);
         assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchPendingRequest.Started);
 
-        String token = ((BrowserSwitchPendingRequest.Started) browserSwitchPendingRequest).getToken();
-        BrowserSwitchRequest browserSwitchRequest = BrowserSwitchRequest.fromToken(token);
+        String pendingRequestState = ((BrowserSwitchPendingRequest.Started) browserSwitchPendingRequest).getPendingRequestState();
+        BrowserSwitchRequest browserSwitchRequest = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequestState);
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
         JSONAssert.assertEquals(metadata, browserSwitchRequest.getMetadata(), false);
@@ -191,7 +191,7 @@ public class BrowserSwitchClientUnitTest {
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(request.tokenize(), intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(intent, request.toBase64EncodedJSON());
 
         assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
         assertEquals(deepLinkUrl, ((BrowserSwitchResult.Success) browserSwitchResult).getDeepLinkUrl());
@@ -208,7 +208,7 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(request.tokenize(), intent);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(intent, request.toBase64EncodedJSON());
 
         assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
     }
@@ -222,7 +222,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme");
 
-        BrowserSwitchResult browserSwitchResult = sut.parseResult(request.tokenize(), null);
+        BrowserSwitchResult browserSwitchResult = sut.parseResult(null, request.toBase64EncodedJSON());
         assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
     }
 }

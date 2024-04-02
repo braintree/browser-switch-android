@@ -10,7 +10,7 @@ sealed class BrowserSwitchPendingRequest {
      * A browser switch was successfully started. This pending request should be store dnd passed to
      * [BrowserSwitchClient.parseResult]
      */
-    class Started(val token: String) : BrowserSwitchPendingRequest()
+    class Started(val pendingRequestState: String) : BrowserSwitchPendingRequest()
 
     /**
      * An error with [cause] occurred launching the browser

@@ -19,8 +19,8 @@ class BrowserSwitchRequestUnitTest {
             "return-url-scheme"
         )
 
-        val token = browserSwitchRequest.tokenize()
-        val sut = BrowserSwitchRequest.fromToken(token)
+        val token = browserSwitchRequest.toBase64EncodedJSON()
+        val sut = BrowserSwitchRequest.fromBase64EncodedJSON(token)
         assertEquals(browserSwitchRequest.requestCode, sut.requestCode)
         assertEquals("test_value", sut.metadata.getString("test_key"))
         assertEquals(Uri.parse("http://"), sut.url)

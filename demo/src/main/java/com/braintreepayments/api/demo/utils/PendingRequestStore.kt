@@ -2,7 +2,6 @@ package com.braintreepayments.api.demo.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.braintreepayments.api.BrowserSwitchPendingRequest
 
 class PendingRequestStore {
 
@@ -12,12 +11,12 @@ class PendingRequestStore {
         private const val PENDING_REQUEST_KEY = "BROWSER_SWITCH_REQUEST"
 
         @JvmStatic
-        fun put(context: Context, pendingRequestToken: String) {
+        fun put(context: Context, pendingRequestState: String) {
             val sharedPreferences: SharedPreferences = context.getSharedPreferences(
                 SHARED_PREFS_KEY,
                 Context.MODE_PRIVATE
             )
-            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequestToken).apply()
+            sharedPreferences.edit().putString(PENDING_REQUEST_KEY, pendingRequestState).apply()
         }
 
         @JvmStatic

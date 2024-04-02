@@ -47,9 +47,9 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val pendingRequestToken = PendingRequestStore.get(this)
-        val browserSwitchResult = pendingRequestToken?.let {
-            browserSwitchClient.parseResult(pendingRequestToken, intent)
+        val pendingRequestState = PendingRequestStore.get(this)
+        val browserSwitchResult = pendingRequestState?.let {
+            browserSwitchClient.parseResult(intent, pendingRequestState)
         }
         when (browserSwitchResult) {
             is BrowserSwitchResult.Success -> {
@@ -76,7 +76,7 @@ class ComposeActivity : ComponentActivity() {
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started ->
-                PendingRequestStore.put(this, pendingRequest.token)
+                PendingRequestStore.put(this, pendingRequest.pendingRequestState)
 
             is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
                 pendingRequest.cause

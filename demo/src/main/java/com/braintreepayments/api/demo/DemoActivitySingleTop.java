@@ -43,9 +43,9 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        String pendingRequestToken = PendingRequestStore.get(this);
-        if (pendingRequestToken != null) {
-            BrowserSwitchResult result = browserSwitchClient.parseResult(pendingRequestToken, intent);
+        String pendingRequestState = PendingRequestStore.get(this);
+        if (pendingRequestState != null) {
+            BrowserSwitchResult result = browserSwitchClient.parseResult(intent, pendingRequestState);
             if (result instanceof BrowserSwitchResult.Success) {
                 Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchResult.Success) result));
             }
@@ -57,8 +57,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        String pendingRequestToken = PendingRequestStore.get(this);
-        if (pendingRequestToken != null) {
+        String pendingRequestState = PendingRequestStore.get(this);
+        if (pendingRequestState != null) {
             Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(new Exception("User did not complete browser switch"));
             PendingRequestStore.clear(this);
         }
@@ -67,9 +67,9 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         BrowserSwitchPendingRequest pendingRequest = browserSwitchClient.start(this, options);
         if (pendingRequest instanceof BrowserSwitchPendingRequest.Started) {
-            String pendingRequestToken =
-                    ((BrowserSwitchPendingRequest.Started) pendingRequest).getToken();
-            PendingRequestStore.put(this, pendingRequestToken);
+            String pendingRequestState =
+                    ((BrowserSwitchPendingRequest.Started) pendingRequest).getPendingRequestState();
+            PendingRequestStore.put(this, pendingRequestState);
         } else if (pendingRequest instanceof BrowserSwitchPendingRequest.Failure) {
             Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchPendingRequest.Failure) pendingRequest).getCause());
         }

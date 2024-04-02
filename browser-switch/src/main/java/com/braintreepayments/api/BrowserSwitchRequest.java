@@ -31,20 +31,19 @@ public class BrowserSwitchRequest {
     final String returnUrlScheme;
 
     @NonNull
-    static BrowserSwitchRequest fromToken(@NonNull String tokenBase64) throws BrowserSwitchException {
-        byte[] data = Base64.decode(tokenBase64, Base64.DEFAULT);
-        String token = new String(data, StandardCharsets.UTF_8);
-
+    static BrowserSwitchRequest fromBase64EncodedJSON(@NonNull String base64EncodedRequest) throws BrowserSwitchException {
+        byte[] data = Base64.decode(base64EncodedRequest, Base64.DEFAULT);
+        String requestJSONString = new String(data, StandardCharsets.UTF_8);
         try {
-            JSONObject tokenJSON = new JSONObject(token);
+            JSONObject requestJSON = new JSONObject(requestJSONString);
             return new BrowserSwitchRequest(
-                    tokenJSON.getInt(KEY_REQUEST_CODE),
-                    Uri.parse(tokenJSON.getString(KEY_URL)),
-                    tokenJSON.optJSONObject(KEY_METADATA),
-                    tokenJSON.getString(KEY_RETURN_URL_SCHEME)
+                    requestJSON.getInt(KEY_REQUEST_CODE),
+                    Uri.parse(requestJSON.getString(KEY_URL)),
+                    requestJSON.optJSONObject(KEY_METADATA),
+                    requestJSON.getString(KEY_RETURN_URL_SCHEME)
             );
         } catch (JSONException e) {
-            throw new BrowserSwitchException("Unable to decode browser switch state from token.", e);
+            throw new BrowserSwitchException("Unable to deserialize browser switch state.", e);
         }
     }
 
@@ -52,6 +51,7 @@ public class BrowserSwitchRequest {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
+        // TODO: make return url scheme accessor public
         this.returnUrlScheme = returnUrlScheme;
     }
 
@@ -68,19 +68,18 @@ public class BrowserSwitchRequest {
     }
 
     @NonNull
-    String tokenize() throws BrowserSwitchException {
+    String toBase64EncodedJSON() throws BrowserSwitchException {
         try {
-            // TODO: make return url scheme accessor public
-            JSONObject tokenJSON = new JSONObject()
+            JSONObject requestJSON = new JSONObject()
                     .put(KEY_REQUEST_CODE, requestCode)
                     .put(KEY_URL, url.toString())
                     .put(KEY_RETURN_URL_SCHEME, returnUrlScheme)
                     .putOpt(KEY_METADATA, metadata);
 
-            byte[] tokenBytes = tokenJSON.toString().getBytes(StandardCharsets.UTF_8);
-            return Base64.encodeToString(tokenBytes, Base64.DEFAULT);
+            byte[] requestJSONBytes = requestJSON.toString().getBytes(StandardCharsets.UTF_8);
+            return Base64.encodeToString(requestJSONBytes, Base64.DEFAULT);
         } catch (JSONException e) {
-            throw new BrowserSwitchException("Unable to tokenize Browser Switch State", e);
+            throw new BrowserSwitchException("Unable to serialize browser switch state.", e);
         }
     }
 
