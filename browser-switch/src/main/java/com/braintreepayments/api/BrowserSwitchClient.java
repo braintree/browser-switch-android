@@ -119,10 +119,10 @@ public class BrowserSwitchClient {
         if (intent != null && intent.getData() != null) {
             Uri deepLinkUrl = intent.getData();
             try {
-                BrowserSwitchRequest originalRequest =
+                BrowserSwitchRequest pendingRequest =
                         BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequestState);
-                if (originalRequest.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                    return new BrowserSwitchResult.Success(deepLinkUrl, originalRequest);
+                if (pendingRequest.matchesDeepLinkUrlScheme(deepLinkUrl)) {
+                    return new BrowserSwitchResult.Success(deepLinkUrl, pendingRequest);
                 }
             } catch (BrowserSwitchException e) {
                 return new BrowserSwitchResult.Failure(e);
