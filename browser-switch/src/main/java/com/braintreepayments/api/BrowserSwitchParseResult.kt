@@ -37,5 +37,5 @@ sealed class BrowserSwitchParseResult {
      * browser switch flow without completing by closing the browser, or navigates back to the app
      * without completing the browser switch flow.
      */
-    object None : BrowserSwitchParseResult()
+    object NoResult : BrowserSwitchParseResult()
 }

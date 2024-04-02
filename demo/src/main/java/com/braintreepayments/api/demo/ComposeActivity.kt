@@ -55,11 +55,11 @@ class ComposeActivity : ComponentActivity() {
                     PendingRequestStore.clear(this)
                 }
 
-                is BrowserSwitchParseResult.None ->
-                    viewModel.browserSwitchError = Exception("User did not complete browser switch")
-
                 is BrowserSwitchParseResult.Failure ->
                     viewModel.browserSwitchError = result.error
+
+                is BrowserSwitchParseResult.NoResult ->
+                    viewModel.browserSwitchError = Exception("User did not complete browser switch")
             }
         }
     }

@@ -111,8 +111,8 @@ public class BrowserSwitchClient {
      * @param pendingRequestState the {@link BrowserSwitchStartResult.Success} token returned from
      *                            {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
      * @return a {@link BrowserSwitchParseResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchParseResult.None} if no result can be found for the given
-     * {@link BrowserSwitchStartResult.Success}. A {@link BrowserSwitchParseResult.None} will be
+     * completed, or {@link BrowserSwitchParseResult.NoResult} if no result can be found for the given
+     * {@link BrowserSwitchStartResult.Success}. A {@link BrowserSwitchParseResult.NoResult} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
     @NonNull
@@ -129,6 +129,6 @@ public class BrowserSwitchClient {
                 return new BrowserSwitchParseResult.Failure(e);
             }
         }
-        return BrowserSwitchParseResult.None.INSTANCE;
+        return BrowserSwitchParseResult.NoResult.INSTANCE;
     }
 }

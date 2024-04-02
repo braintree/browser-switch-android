@@ -210,7 +210,7 @@ public class BrowserSwitchClientUnitTest {
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
         BrowserSwitchParseResult browserSwitchParseResult = sut.parseResult(intent, request.toBase64EncodedJSON());
 
-        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.None);
+        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.NoResult);
     }
 
     @Test
@@ -223,6 +223,6 @@ public class BrowserSwitchClientUnitTest {
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme");
 
         BrowserSwitchParseResult browserSwitchParseResult = sut.parseResult(null, request.toBase64EncodedJSON());
-        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.None);
+        assertTrue(browserSwitchParseResult instanceof BrowserSwitchParseResult.NoResult);
     }
 }
