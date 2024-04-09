@@ -18,7 +18,7 @@ public class BrowserSwitchRequest {
     public final String returnUrlScheme;
     private boolean shouldNotifyCancellation;
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     public static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
