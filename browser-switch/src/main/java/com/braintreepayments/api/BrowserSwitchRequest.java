@@ -14,11 +14,12 @@ public class BrowserSwitchRequest {
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
-    @VisibleForTesting
-    final String returnUrlScheme;
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public final String returnUrlScheme;
     private boolean shouldNotifyCancellation;
 
-    static BrowserSwitchRequest fromJson(String json) throws JSONException {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public static BrowserSwitchRequest fromJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
@@ -28,7 +29,8 @@ public class BrowserSwitchRequest {
         return new BrowserSwitchRequest(requestCode, Uri.parse(url), metadata, returnUrlScheme, shouldNotify);
     }
 
-    BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, boolean shouldNotifyCancellation) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public BrowserSwitchRequest(int requestCode, Uri url, JSONObject metadata, String returnUrlScheme, boolean shouldNotifyCancellation) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
@@ -36,19 +38,23 @@ public class BrowserSwitchRequest {
         this.shouldNotifyCancellation = shouldNotifyCancellation;
     }
 
-    Uri getUrl() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public Uri getUrl() {
         return url;
     }
 
-    int getRequestCode() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public int getRequestCode() {
         return requestCode;
     }
 
-    JSONObject getMetadata() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public JSONObject getMetadata() {
         return metadata;
     }
 
-    boolean getShouldNotifyCancellation() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public boolean getShouldNotifyCancellation() {
         return shouldNotifyCancellation;
     }
 
