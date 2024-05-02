@@ -1,6 +1,7 @@
 # browser-switch-android Release Notes
 
 ## unreleased
+
 * Add `appLinkUri` to `BrowserSwitchOptions` for Android App Link support
 
 ## 2.6.1

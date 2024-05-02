@@ -70,6 +70,7 @@ public class BrowserSwitchOptions {
     }
 
     /**
+     * Set App Link [Uri].
      *
      * @param appLinkUri The [Uri] containing the App Link URL used for navigating back into the application
      *                   after browser switch
