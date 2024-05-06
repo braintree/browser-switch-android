@@ -53,10 +53,11 @@ public class BrowserSwitchClient {
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
+        Uri appLinkUri = browserSwitchOptions.getAppLinkUri();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+            new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, appLinkUri, true);
         persistentStore.putActiveRequest(request, appContext);
 
         if (activity.isFinishing()) {

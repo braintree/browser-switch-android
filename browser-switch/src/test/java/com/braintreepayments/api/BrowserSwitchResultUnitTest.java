@@ -17,11 +17,12 @@ public class BrowserSwitchResultUnitTest {
     @Test
     public void toJSON_serializesResult() throws JSONException {
         Uri requestUrl = Uri.parse("https://www.example.com");
+        Uri appLinkUri = Uri.parse("https://www.example.com");
         String returnUrlScheme = "example.return.url.scheme";
         JSONObject requestMetadata = new JSONObject()
-                .put("sample", "value");
+            .put("sample", "value");
         BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, requestUrl, requestMetadata, returnUrlScheme, true);
+            new BrowserSwitchRequest(123, requestUrl, requestMetadata, returnUrlScheme, appLinkUri, true);
 
         Uri deepLinkUrl = Uri.parse("example.return.url.scheme://success/ok");
         BrowserSwitchResult sut = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
