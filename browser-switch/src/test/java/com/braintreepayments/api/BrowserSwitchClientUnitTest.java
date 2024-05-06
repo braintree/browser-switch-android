@@ -228,7 +228,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenNoReturnUrlSchemeSet_throwsError() {
+    public void start_whenNoAppLinkUriOrReturnUrlSchemeSet_throwsError() {
         when(browserSwitchInspector.deviceHasBrowser(applicationContext)).thenReturn(true);
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
@@ -238,13 +238,14 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .returnUrlScheme(null)
+                .appLinkUri(null)
                 .url(browserSwitchDestinationUrl)
                 .metadata(metadata);
         try {
             sut.start(activity, options);
             fail("should fail");
         } catch (BrowserSwitchException e) {
-            assertEquals("A returnUrlScheme is required.", e.getMessage());
+            assertEquals("An appLinkUri or returnUrlScheme is required.", e.getMessage());
         }
     }
 
