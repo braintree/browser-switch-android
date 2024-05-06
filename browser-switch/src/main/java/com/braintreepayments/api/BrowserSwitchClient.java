@@ -77,7 +77,10 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    void assertCanPerformBrowserSwitch(
+        FragmentActivity activity,
+        BrowserSwitchOptions browserSwitchOptions
+    ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -87,9 +90,10 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = activity.getString(R.string.error_request_code_invalid);
-        } else if (returnUrlScheme == null) {
-            errorMessage = activity.getString(R.string.error_return_url_required);
-        } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
+        } else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
+            errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
+        } else if (returnUrlScheme != null &&
+            !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         }
 
