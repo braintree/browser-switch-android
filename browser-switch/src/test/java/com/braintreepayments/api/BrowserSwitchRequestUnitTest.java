@@ -146,4 +146,52 @@ public class BrowserSwitchRequestUnitTest {
         BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
         assertFalse(request.matchesDeepLinkUrlScheme(Uri.parse("not-my-return-url-scheme://example.com")));
     }
+
+    @Test
+    public void matchesAppLinkUri_whenTheSame_returnsTrue() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+            "  \"appLinkUri\": \"https://example.com\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertTrue(request.matchesAppLinkUri(Uri.parse("https://example.com")));
+    }
+
+    @Test
+    public void matchesAppLinkUri_whenDifferent_returnsFalse() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+            "  \"appLinkUri\": \"https://example.com\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertFalse(request.matchesAppLinkUri(Uri.parse("https://another-example.com")));
+    }
+
+    @Test
+    public void matchesAppLinkUri_whenNull_returnsFalse() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertNull(request.getAppLinkUri());
+        assertFalse(request.matchesAppLinkUri(Uri.parse("https://example.com")));
+    }
 }

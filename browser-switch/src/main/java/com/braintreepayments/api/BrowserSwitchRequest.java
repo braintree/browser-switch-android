@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 class BrowserSwitchRequest {
 
-
     private final Uri url;
     private final int requestCode;
     private final JSONObject metadata;
@@ -104,5 +103,9 @@ class BrowserSwitchRequest {
 
     boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {
         return url.getScheme() != null && url.getScheme().equalsIgnoreCase(returnUrlScheme);
+    }
+
+    boolean matchesAppLinkUri(@NonNull Uri uri) {
+        return appLinkUri != null && uri.toString().equals(appLinkUri.toString());
     }
 }

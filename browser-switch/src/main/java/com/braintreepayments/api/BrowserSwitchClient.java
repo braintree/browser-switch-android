@@ -167,9 +167,10 @@ public class BrowserSwitchClient {
 
         BrowserSwitchResult result = null;
 
-        Uri deepLinkUrl = intent.getData();
-        if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+        Uri linkUrl = intent.getData();
+        if (linkUrl != null &&
+            (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl))) {
+            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, linkUrl);
         } else if (request.getShouldNotifyCancellation()) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         }
@@ -196,9 +197,9 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request =
                     persistentStore.getActiveRequest(context.getApplicationContext());
             if (request != null && request.getRequestCode() == requestCode) {
-                Uri deepLinkUrl = intent.getData();
-                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                Uri linkUrl = intent.getData();
+                if (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl)) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, linkUrl);
                 }
             }
         }
