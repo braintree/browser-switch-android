@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="navigation_links">
+        <item name="deep_link">Deep Link</item>
+        <item name="app_link">App Link</item>
+    </string-array>
+
+</resources>
