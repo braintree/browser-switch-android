@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo;
+package com.braintreepayments.api.browserswitch.demo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
