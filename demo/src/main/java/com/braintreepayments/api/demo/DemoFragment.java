@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
@@ -26,6 +29,8 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     private static final String TEST_KEY = "testKey";
     private static final String TEST_VALUE = "testValue";
 
+    private Spinner mLinkSpinner;
+
     private TextView mBrowserSwitchStatusTextView;
     private TextView mSelectedColorTextView;
     private TextView mMetadataTextView;
@@ -34,6 +39,15 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.demo_fragment, container, false);
+
+        mLinkSpinner = view.findViewById(R.id.link_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.navigation_links,
+            R.layout.support_simple_spinner_dropdown_item
+        );
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        mLinkSpinner.setAdapter(adapter);
 
         Button startBrowserSwitchButton = view.findViewById(R.id.browser_switch);
         startBrowserSwitchButton.setOnClickListener(this);
@@ -61,13 +75,21 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startBrowserSwitch(@Nullable JSONObject metadata) {
-        Uri url = buildBrowserSwitchUrl();
+        boolean isAppLink = mLinkSpinner.getSelectedItem().equals("App Link");
+        Uri url = buildBrowserSwitchUrl(isAppLink);
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-                .metadata(metadata)
-                .requestCode(1)
-                .url(url)
-                .launchAsNewTask(true)
-                .returnUrlScheme(getReturnUrlScheme());
+            .metadata(metadata)
+            .requestCode(1)
+            .url(url)
+            .launchAsNewTask(true);
+
+        if (isAppLink) {
+            browserSwitchOptions.appLinkUri(
+                Uri.parse("https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com")
+            );
+        } else {
+            browserSwitchOptions.returnUrlScheme(getReturnUrlScheme());
+        }
 
         try {
             getDemoActivity().startBrowserSwitch(browserSwitchOptions);
@@ -79,10 +101,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private Uri buildBrowserSwitchUrl() {
+    private Uri buildBrowserSwitchUrl(boolean isAppLink) {
         String url = "https://braintree.github.io/popup-bridge-example/" +
-                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=" +
-                getReturnUrlScheme() + "://";
+            "this_launches_in_popup.html?";
+        if (isAppLink) {
+            url += "isAppLink=true";
+        } else {
+            url += "popupBridgeReturnUrlPrefix=" + getReturnUrlScheme() + "://";
+        }
         return Uri.parse(url);
     }
 
