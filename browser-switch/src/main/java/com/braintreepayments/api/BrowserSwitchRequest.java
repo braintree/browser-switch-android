@@ -22,11 +22,14 @@ class BrowserSwitchRequest {
         JSONObject jsonObject = new JSONObject(json);
         int requestCode = jsonObject.getInt("requestCode");
         String url = jsonObject.getString("url");
-        String returnUrlScheme = jsonObject.getString("returnUrlScheme");
         JSONObject metadata = jsonObject.optJSONObject("metadata");
         Uri appLinkUri = null;
         if (jsonObject.has("appLinkUri")) {
             appLinkUri = Uri.parse(jsonObject.getString("appLinkUri"));
+        }
+        String returnUrlScheme = null;
+        if (jsonObject.has("returnUrlScheme")) {
+            returnUrlScheme = jsonObject.getString("returnUrlScheme");
         }
         boolean shouldNotify = jsonObject.optBoolean("shouldNotify", true);
         return new BrowserSwitchRequest(
@@ -106,6 +109,8 @@ class BrowserSwitchRequest {
     }
 
     boolean matchesAppLinkUri(@NonNull Uri uri) {
-        return appLinkUri != null && uri.toString().equals(appLinkUri.toString());
+        return appLinkUri != null &&
+            uri.getScheme().equals(appLinkUri.getScheme()) &&
+            uri.getHost().equals(appLinkUri.getHost());
     }
 }
