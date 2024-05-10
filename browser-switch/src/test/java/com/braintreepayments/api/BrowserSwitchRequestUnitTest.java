@@ -119,6 +119,27 @@ public class BrowserSwitchRequestUnitTest {
     }
 
     @Test
+    public void toJson_for_appLinkUri_without_returnUrlScheme() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"appLinkUri\": \"https://example.com\",\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest original = BrowserSwitchRequest.fromJson(json);
+        BrowserSwitchRequest restored = BrowserSwitchRequest.fromJson(original.toJson());
+
+        assertEquals(restored.getRequestCode(), original.getRequestCode());
+        assertEquals(restored.getUrl(), original.getUrl());
+        assertEquals("https://example.com", restored.getAppLinkUri().toString());
+        assertFalse(restored.getShouldNotifyCancellation());
+        JSONAssert.assertEquals(restored.getMetadata(), original.getMetadata(), true);
+    }
+
+    @Test
     public void matchesDeepLinkUrlScheme_whenSameSchemeDifferentCase_returnsTrue() throws JSONException {
         String json = "{\n" +
                 "  \"requestCode\": 123,\n" +
@@ -164,7 +185,39 @@ public class BrowserSwitchRequestUnitTest {
     }
 
     @Test
-    public void matchesAppLinkUri_whenDifferent_returnsFalse() throws JSONException {
+    public void matchesAppLinkUri_whenTheSame_withQueryParams_returnsTrue() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+            "  \"appLinkUri\": \"https://example.com\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertTrue(request.matchesAppLinkUri(Uri.parse("https://example.com?isAppLink=true")));
+    }
+
+    @Test
+    public void matchesAppLinkUri_whenSchemeIsDifferent_returnsFalse() throws JSONException {
+        String json = "{\n" +
+            "  \"requestCode\": 123,\n" +
+            "  \"url\": \"https://example.com\",\n" +
+            "  \"returnUrlScheme\": \"my-return-url-scheme\",\n" +
+            "  \"appLinkUri\": \"http://example.com\",\n" +
+            "  \"shouldNotify\": false,\n" +
+            "  \"metadata\": {\n" +
+            "    \"testKey\": \"testValue\"" +
+            "  }" +
+            "}";
+        BrowserSwitchRequest request = BrowserSwitchRequest.fromJson(json);
+        assertFalse(request.matchesAppLinkUri(Uri.parse("https://example.com")));
+    }
+
+    @Test
+    public void matchesAppLinkUri_whenHostIsDifferent_returnsFalse() throws JSONException {
         String json = "{\n" +
             "  \"requestCode\": 123,\n" +
             "  \"url\": \"https://example.com\",\n" +
