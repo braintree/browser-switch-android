@@ -79,7 +79,17 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(ComponentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    /**
+     * Throws a {@link BrowserSwitchException} when a browser switch flow cannot be started.
+     *
+     * @param activity the activity used to start browser switch
+     * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     * @throws BrowserSwitchException exception containing the error message on why browser switch cannot be started
+     */
+    public void assertCanPerformBrowserSwitch(
+        ComponentActivity activity,
+        BrowserSwitchOptions browserSwitchOptions
+    ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
