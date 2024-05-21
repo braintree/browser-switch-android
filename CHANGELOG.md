@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* Make `BrowserSwitchClient.assertCanPerformBrowserSwitch()` public
+
 * Breaking Changes
   * Bump `minSdkVersion` to API 23
   * Bump target Java version to Java 11
