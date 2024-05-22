@@ -40,7 +40,7 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
 }
 
-version = '3.0.0-beta2-SNAPSHOT'
+version = '3.0.0-beta1-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 34
