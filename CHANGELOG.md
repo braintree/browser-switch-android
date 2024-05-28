@@ -14,6 +14,7 @@
   * Add `BrowserSwitchRequest` and `BrowserSwitchPendingRequest`
   * Convert `BrowserSwitchResult` to sealed class and add `BrowserSwitchResultInfo`
   * Remove `BrowserSwitchStatus`
+  * Rename `parseResult()` to `completeRequest()`
 
 ## 2.6.1
 
