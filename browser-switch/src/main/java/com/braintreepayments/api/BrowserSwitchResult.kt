@@ -1,7 +1,7 @@
 package com.braintreepayments.api
 
 /**
- * The result of a browser switch obtained from [BrowserSwitchClient.parseResult]
+ * The result of a browser switch obtained from [BrowserSwitchClient.completeRequest]
  */
 sealed class BrowserSwitchResult {
 

@@ -50,7 +50,7 @@ class ComposeActivity : ComponentActivity() {
         super.onResume()
         PendingRequestStore.get(this)?.let { startedRequest ->
             when (val browserSwitchResult =
-                browserSwitchClient.parseResult(startedRequest, intent)) {
+                browserSwitchClient.completeRequest(startedRequest, intent)) {
                 is BrowserSwitchResult.Success -> viewModel.browserSwitchResult =
                     browserSwitchResult.resultInfo
 

@@ -4,13 +4,13 @@ import org.json.JSONException
 
 /**
  * A pending request for browser switching. This pending request should be stored locally within the app or
- * on-device and used to deliver a result of the browser flow in [BrowserSwitchClient.parseResult]
+ * on-device and used to deliver a result of the browser flow in [BrowserSwitchClient.completeRequest]
  */
 sealed class BrowserSwitchPendingRequest {
 
     /**
      * A browser switch was successfully started. This pending request should be store dnd passed to
-     * [BrowserSwitchClient.parseResult]
+     * [BrowserSwitchClient.completeRequest]
     */
     class Started(val browserSwitchRequest: BrowserSwitchRequest) : BrowserSwitchPendingRequest() {
 
