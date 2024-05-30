@@ -53,10 +53,11 @@ public class BrowserSwitchClient {
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
+        Uri appLinkUri = browserSwitchOptions.getAppLinkUri();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+            new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, appLinkUri, true);
         persistentStore.putActiveRequest(request, appContext);
 
         if (activity.isFinishing()) {
@@ -76,7 +77,10 @@ public class BrowserSwitchClient {
         }
     }
 
-    void assertCanPerformBrowserSwitch(FragmentActivity activity, BrowserSwitchOptions browserSwitchOptions) throws BrowserSwitchException {
+    void assertCanPerformBrowserSwitch(
+        FragmentActivity activity,
+        BrowserSwitchOptions browserSwitchOptions
+    ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
         int requestCode = browserSwitchOptions.getRequestCode();
@@ -86,9 +90,10 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = activity.getString(R.string.error_request_code_invalid);
-        } else if (returnUrlScheme == null) {
-            errorMessage = activity.getString(R.string.error_return_url_required);
-        } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
+        } else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
+            errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
+        } else if (returnUrlScheme != null &&
+            !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         }
 
@@ -162,9 +167,10 @@ public class BrowserSwitchClient {
 
         BrowserSwitchResult result = null;
 
-        Uri deepLinkUrl = intent.getData();
-        if (deepLinkUrl != null && request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+        Uri linkUrl = intent.getData();
+        if (linkUrl != null &&
+            (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl))) {
+            result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, linkUrl);
         } else if (request.getShouldNotifyCancellation()) {
             result = new BrowserSwitchResult(BrowserSwitchStatus.CANCELED, request);
         }
@@ -191,9 +197,9 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request =
                     persistentStore.getActiveRequest(context.getApplicationContext());
             if (request != null && request.getRequestCode() == requestCode) {
-                Uri deepLinkUrl = intent.getData();
-                if (request.matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, deepLinkUrl);
+                Uri linkUrl = intent.getData();
+                if (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl)) {
+                    result = new BrowserSwitchResult(BrowserSwitchStatus.SUCCESS, request, linkUrl);
                 }
             }
         }
