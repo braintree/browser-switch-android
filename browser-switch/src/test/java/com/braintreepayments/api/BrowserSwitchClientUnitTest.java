@@ -186,28 +186,28 @@ public class BrowserSwitchClientUnitTest {
         assertEquals("An appLinkUri or returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
     }
 
+    @Test
+    public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() {
+        Uri appLinkUri = Uri.parse("https://example.com");
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+            customTabsInternalClient);
 
-    // TODO: FIX THIS
-//    @Test
-//    public void getResult_whenAppLinkMatches_successReturnedWithAppLink() {
-//        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, persistentStore, customTabsInternalClient);
-//        Intent deepLinkIntent = new Intent().setData(appLinkUri);
-//        when(activity.getIntent()).thenReturn(deepLinkIntent);
-//        BrowserSwitchRequest request = new BrowserSwitchRequest(
-//            123,
-//            browserSwitchDestinationUrl,
-//            new JSONObject(),
-//            null,
-//            appLinkUri,
-//            true
-//        );
-//        when(persistentStore.getActiveRequest(applicationContext)).thenReturn(request);
-//
-//        BrowserSwitchResult result = sut.getResult(activity);
-//
-//        assertEquals(BrowserSwitchStatus.SUCCESS, result.getStatus());
-//        assertEquals(appLinkUri, result.getDeepLinkUrl());
-//    }
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+            123,
+            browserSwitchDestinationUrl,
+            requestMetadata,
+            null,
+            appLinkUri,
+            false
+        );
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, appLinkUri);
+        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
+
+        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
+        assertEquals(appLinkUri, ((BrowserSwitchResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
+    }
 
     @Test
     public void completeRequest_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
