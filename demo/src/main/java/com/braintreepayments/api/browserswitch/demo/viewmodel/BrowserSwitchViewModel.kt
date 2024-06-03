@@ -2,6 +2,7 @@ package com.braintreepayments.api.demo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.braintreepayments.api.BrowserSwitchResultInfo
+import com.braintreepayments.api.browserswitch.demo.viewmodel.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

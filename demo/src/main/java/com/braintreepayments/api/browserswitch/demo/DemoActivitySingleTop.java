@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo;
+package com.braintreepayments.api.browserswitch.demo;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchPendingRequest;
 import com.braintreepayments.api.BrowserSwitchResult;
-import com.braintreepayments.api.demo.utils.PendingRequestStore;
+import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore;
 
 import java.util.Objects;
 

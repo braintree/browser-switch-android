@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo;
+package com.braintreepayments.api.browserswitch.demo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.braintreepayments.api.demo.R;
 
 public class MainActivity extends AppCompatActivity {
 

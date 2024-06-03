@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo.viewmodel
+package com.braintreepayments.api.browserswitch.demo.viewmodel
 
 import com.braintreepayments.api.BrowserSwitchResultInfo
 

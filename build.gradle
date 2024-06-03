@@ -46,7 +46,7 @@ ext {
     compileSdkVersion = 34
     minSdkVersion = 23
     targetSdkVersion = 34
-    versionCode = 69
+    versionCode = 70
     versionName = version
 }
 
