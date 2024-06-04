@@ -9,12 +9,16 @@
   * Upgrade Kotlin version to 1.9.10
   * Upgrade to Android Gradle Plugin 8
   * Change `BrowserSwitchClient#start` parameters and return type
-  * Change `BrowserSwitchClient#parseResult` parameters 
+  * Change `BrowserSwitchClient#parseResult` parameters
   * Remove `deliverResult`, `getResult`, `captureResult`, `clearActiveRequests`, `getResultFromCache`, and `deliverResultFromCache` from `BrowserSwitchClient`
   * Add `BrowserSwitchRequest` and `BrowserSwitchPendingRequest`
   * Convert `BrowserSwitchResult` to sealed class and add `BrowserSwitchResultInfo`
   * Remove `BrowserSwitchStatus`
   * Rename `parseResult()` to `completeRequest()`
+
+## 2.7.0
+
+* Add `appLinkUri` to `BrowserSwitchOptions` for Android App Link support
 
 ## 2.6.1
 

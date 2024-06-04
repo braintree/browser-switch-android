@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo.utils
+package com.braintreepayments.api.browserswitch.demo.utils
 
 import android.content.Context
 import android.content.SharedPreferences

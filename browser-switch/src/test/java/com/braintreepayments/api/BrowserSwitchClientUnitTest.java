@@ -1,13 +1,17 @@
 package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,11 +22,13 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -35,6 +41,7 @@ public class BrowserSwitchClientUnitTest {
     private ChromeCustomTabsInternalClient customTabsInternalClient;
 
     private Uri browserSwitchDestinationUrl;
+    private Uri appLinkUri;
     private Context applicationContext;
 
     private ComponentActivity componentActivity;
@@ -45,6 +52,7 @@ public class BrowserSwitchClientUnitTest {
         customTabsInternalClient = mock(ChromeCustomTabsInternalClient.class);
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
+        appLinkUri = Uri.parse("https://example.com");
 
         ActivityController<ComponentActivity> componentActivityController =
                 Robolectric.buildActivity(ComponentActivity.class).setup();
@@ -160,7 +168,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenNoReturnUrlSchemeSet_throwsFailure() {
+    public void start_whenNoAppLinkUriOrReturnUrlSchemeSet_throwsError() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
@@ -170,21 +178,51 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchOptions options = new BrowserSwitchOptions()
                 .requestCode(123)
                 .returnUrlScheme(null)
+                .appLinkUri(null)
                 .url(browserSwitchDestinationUrl)
                 .metadata(metadata);
         BrowserSwitchPendingRequest request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchPendingRequest.Failure);
-        assertEquals("A returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
+        assertEquals("An appLinkUri or returnUrlScheme is required.", ((BrowserSwitchPendingRequest.Failure) request).getCause().getMessage());
+    }
+
+    @Test
+    public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() {
+        Uri appLinkUri = Uri.parse("https://example.com");
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+            customTabsInternalClient);
+
+        JSONObject requestMetadata = new JSONObject();
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+            123,
+            browserSwitchDestinationUrl,
+            requestMetadata,
+            null,
+            appLinkUri,
+            false
+        );
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, appLinkUri);
+        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
+
+        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
+        assertEquals(appLinkUri, ((BrowserSwitchResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
     }
 
     @Test
     public void completeRequest_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+            customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request =
-            new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+            123,
+            browserSwitchDestinationUrl,
+            requestMetadata,
+            "fake-url-scheme",
+            null,
+            false
+        );
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
@@ -200,8 +238,14 @@ public class BrowserSwitchClientUnitTest {
                 customTabsInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
-        BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+            123,
+            browserSwitchDestinationUrl,
+            requestMetadata,
+            "fake-url-scheme",
+            null,
+            false
+        );
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
@@ -217,7 +261,7 @@ public class BrowserSwitchClientUnitTest {
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
-                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", false);
+                new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", null, false);
 
         BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), null);
         assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);

@@ -1,4 +1,4 @@
-package com.braintreepayments.api.demo
+package com.braintreepayments.api.browserswitch.demo
 
 import android.net.Uri
 import android.os.Bundle
@@ -22,7 +22,7 @@ import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchPendingRequest
 import com.braintreepayments.api.BrowserSwitchResult
 import com.braintreepayments.api.BrowserSwitchResultInfo
-import com.braintreepayments.api.demo.utils.PendingRequestStore
+import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
 import java.lang.Exception
@@ -37,7 +37,7 @@ class ComposeActivity : ComponentActivity() {
         browserSwitchClient = BrowserSwitchClient()
 
         setContent {
-            Column (modifier = Modifier.padding(10.dp)) {
+            Column(modifier = Modifier.padding(10.dp)) {
                 BrowserSwitchButton {
                     startBrowserSwitch()
                 }
@@ -71,18 +71,19 @@ class ComposeActivity : ComponentActivity() {
             .returnUrlScheme(RETURN_URL_SCHEME)
         when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchPendingRequest.Started -> PendingRequestStore.put(this, pendingRequest)
-            is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError = pendingRequest.cause
+            is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
+                pendingRequest.cause
         }
     }
 
     private fun buildBrowserSwitchUrl(): Uri? {
         val url = "https://braintree.github.io/popup-bridge-example/" +
-                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=${RETURN_URL_SCHEME}://"
+                "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=$RETURN_URL_SCHEME://"
         return Uri.parse(url)
     }
 
     private fun buildMetadataObject(): JSONObject? {
-        return JSONObject().put("test_key","test_value")
+        return JSONObject().put("test_key", "test_value")
     }
 
     companion object {
@@ -102,8 +103,10 @@ fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
 
 @Composable
 fun BrowserSwitchButton(onClick: () -> Unit) {
-    Button(modifier = Modifier.fillMaxWidth(),
-        onClick = onClick) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
+    ) {
         Text(text = "Start Browser Switch")
     }
 }
@@ -115,7 +118,12 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResultInfo) {
         val selectedColorString = "Selected color: $color"
         val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
         Column(modifier = Modifier.padding(10.dp)) {
-            Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Successful")
+            Text(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                text = "Browser Switch Successful"
+            )
             Text(text = selectedColorString, color = Color.White)
             metadataOutput?.let {
                 Text(text = "Metadata: $it", color = Color.White)
@@ -127,8 +135,12 @@ fun BrowserSwitchSuccess(result: BrowserSwitchResultInfo) {
 @Composable
 fun BrowserSwitchError(exception: Exception) {
     Column(modifier = Modifier.padding(10.dp)) {
-        Text(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, text = "Browser Switch Error")
+        Text(
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            text = "Browser Switch Error"
+        )
         exception.message?.let { Text(text = it, color = Color.White) }
     }
 }
-

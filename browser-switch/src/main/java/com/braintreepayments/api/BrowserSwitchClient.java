@@ -58,6 +58,7 @@ public class BrowserSwitchClient {
         Uri browserSwitchUrl = browserSwitchOptions.getUrl();
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
+        Uri appLinkUri = browserSwitchOptions.getAppLinkUri();
 
         JSONObject metadata = browserSwitchOptions.getMetadata();
 
@@ -70,7 +71,7 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request;
             try {
                  request =
-                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, true);
+                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, appLinkUri, true);
                 customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
             } catch (ActivityNotFoundException e) {
                 return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser."));
@@ -99,9 +100,10 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = activity.getString(R.string.error_request_code_invalid);
-        } else if (returnUrlScheme == null) {
-            errorMessage = activity.getString(R.string.error_return_url_required);
-        } else if (!browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
+        } else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
+            errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
+        } else if (returnUrlScheme != null &&
+            !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         }
 
@@ -128,9 +130,11 @@ public class BrowserSwitchClient {
      */
     public BrowserSwitchResult completeRequest(@NonNull BrowserSwitchPendingRequest.Started pendingRequest, @Nullable Intent intent) {
         if (intent != null && intent.getData() != null) {
-            Uri deepLinkUrl = intent.getData();
-            if (pendingRequest.getBrowserSwitchRequest().matchesDeepLinkUrlScheme(deepLinkUrl)) {
-                BrowserSwitchResultInfo resultInfo = new BrowserSwitchResultInfo(pendingRequest.getBrowserSwitchRequest(), deepLinkUrl);
+            Uri linkUrl = intent.getData();
+            BrowserSwitchRequest request = pendingRequest.getBrowserSwitchRequest();
+            if (linkUrl != null &&
+                (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl))) {
+                BrowserSwitchResultInfo resultInfo = new BrowserSwitchResultInfo(pendingRequest.getBrowserSwitchRequest(), linkUrl);
                 return new BrowserSwitchResult.Success(resultInfo);
             }
         }
