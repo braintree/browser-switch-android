@@ -16,8 +16,7 @@ class BrowserSwitchPendingRequestUnitTest {
         Uri.parse("http://"),
         JSONObject().put("test_key", "test_value"),
         "return-url-scheme",
-        Uri.parse("https://example.com"),
-        false
+        Uri.parse("https://example.com")
     )
 
     @Test
@@ -32,10 +31,6 @@ class BrowserSwitchPendingRequestUnitTest {
             sut.browserSwitchRequest.metadata.getString("test_key")
         )
         assertEquals(browserSwitchRequest.url, sut.browserSwitchRequest.url)
-        assertEquals(
-            browserSwitchRequest.shouldNotifyCancellation,
-            sut.browserSwitchRequest.shouldNotifyCancellation
-        )
         assertEquals(browserSwitchRequest.returnUrlScheme, sut.browserSwitchRequest.returnUrlScheme)
     }
 

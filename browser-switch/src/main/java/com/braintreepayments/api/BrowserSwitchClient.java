@@ -71,7 +71,7 @@ public class BrowserSwitchClient {
             BrowserSwitchRequest request;
             try {
                  request =
-                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, appLinkUri, true);
+                        new BrowserSwitchRequest(requestCode, browserSwitchUrl, metadata, returnUrlScheme, appLinkUri);
                 customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
             } catch (ActivityNotFoundException e) {
                 return new BrowserSwitchPendingRequest.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser."));

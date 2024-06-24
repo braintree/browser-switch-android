@@ -18,7 +18,6 @@ public class BrowserSwitchRequest {
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     public final String returnUrlScheme;
     private Uri appLinkUri;
-    private boolean shouldNotifyCancellation;
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     public static BrowserSwitchRequest fromJson(String json) throws JSONException {
@@ -40,8 +39,7 @@ public class BrowserSwitchRequest {
             Uri.parse(url),
             metadata,
             returnUrlScheme,
-            appLinkUri,
-            shouldNotify
+            appLinkUri
         );
     }
 
@@ -51,15 +49,13 @@ public class BrowserSwitchRequest {
         Uri url,
         JSONObject metadata,
         String returnUrlScheme,
-        Uri appLinkUri,
-        boolean shouldNotifyCancellation
+        Uri appLinkUri
     ) {
         this.url = url;
         this.requestCode = requestCode;
         this.metadata = metadata;
         this.returnUrlScheme = returnUrlScheme;
         this.appLinkUri = appLinkUri;
-        this.shouldNotifyCancellation = shouldNotifyCancellation;
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
@@ -75,15 +71,6 @@ public class BrowserSwitchRequest {
     @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     public JSONObject getMetadata() {
         return metadata;
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public boolean getShouldNotifyCancellation() {
-        return shouldNotifyCancellation;
-    }
-
-    void setShouldNotifyCancellation(boolean shouldNotifyCancellation) {
-        this.shouldNotifyCancellation = shouldNotifyCancellation;
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -102,7 +89,6 @@ public class BrowserSwitchRequest {
         result.put("requestCode", requestCode);
         result.put("url", url.toString());
         result.put("returnUrlScheme", returnUrlScheme);
-        result.put("shouldNotify", shouldNotifyCancellation);
         if (metadata != null) {
             result.put("metadata", metadata);
         }
