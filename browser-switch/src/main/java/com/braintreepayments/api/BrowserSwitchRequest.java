@@ -1,6 +1,7 @@
 package com.braintreepayments.api;
 
 import android.net.Uri;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +11,15 @@ import androidx.annotation.VisibleForTesting;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+
 public class BrowserSwitchRequest {
+
+    private static final String KEY_REQUEST_CODE = "requestCode";
+    private static final String KEY_URL = "url";
+    private static final String KEY_RETURN_URL_SCHEME = "returnUrlScheme";
+    private static final String KEY_METADATA = "metadata";
+    private static final String KEY_APP_LINK_URI = "appLinkUri";
 
     private final Uri url;
     private final int requestCode;
@@ -33,7 +42,6 @@ public class BrowserSwitchRequest {
         if (jsonObject.has("returnUrlScheme")) {
             returnUrlScheme = jsonObject.getString("returnUrlScheme");
         }
-        boolean shouldNotify = jsonObject.optBoolean("shouldNotify", true);
         return new BrowserSwitchRequest(
             requestCode,
             Uri.parse(url),
@@ -41,6 +49,30 @@ public class BrowserSwitchRequest {
             returnUrlScheme,
             appLinkUri
         );
+    }
+
+    @NonNull
+    static BrowserSwitchRequest fromBase64EncodedJSON(@NonNull String base64EncodedRequest) throws BrowserSwitchException {
+        byte[] data = Base64.decode(base64EncodedRequest, Base64.DEFAULT);
+        String requestJSONString = new String(data, StandardCharsets.UTF_8);
+
+        try {
+            JSONObject requestJSON = new JSONObject(requestJSONString);
+
+            Uri appLinkUri = null;
+            if (requestJSON.has(KEY_APP_LINK_URI)) {
+                appLinkUri = Uri.parse(requestJSON.getString(KEY_APP_LINK_URI));
+            }
+            return new BrowserSwitchRequest(
+                    requestJSON.getInt(KEY_REQUEST_CODE),
+                    Uri.parse(requestJSON.getString(KEY_URL)),
+                    requestJSON.optJSONObject(KEY_METADATA),
+                    requestJSON.optString(KEY_RETURN_URL_SCHEME),
+                    appLinkUri
+            );
+        } catch (JSONException e) {
+            throw new BrowserSwitchException("Unable to deserialize browser switch state.", e);
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -96,6 +128,23 @@ public class BrowserSwitchRequest {
             result.put("appLinkUri", appLinkUri.toString());
         }
         return result.toString();
+    }
+
+    @NonNull
+    String toBase64EncodedJSON() throws BrowserSwitchException {
+        try {
+            JSONObject requestJSON = new JSONObject()
+                    .put(KEY_REQUEST_CODE, requestCode)
+                    .put(KEY_URL, url.toString())
+                    .putOpt(KEY_RETURN_URL_SCHEME, returnUrlScheme)
+                    .putOpt(KEY_METADATA, metadata)
+                    .putOpt(KEY_APP_LINK_URI, appLinkUri);
+
+            byte[] requestJSONBytes = requestJSON.toString().getBytes(StandardCharsets.UTF_8);
+            return Base64.encodeToString(requestJSONBytes, Base64.DEFAULT);
+        } catch (JSONException e) {
+            throw new BrowserSwitchException("Unable to serialize browser switch state.", e);
+        }
     }
 
     boolean matchesDeepLinkUrlScheme(@NonNull Uri url) {

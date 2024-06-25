@@ -11,4 +11,9 @@ public class BrowserSwitchException extends Exception {
     public BrowserSwitchException(String message) {
         super(message);
     }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    BrowserSwitchException(String message, Exception reason) {
+        super(message, reason);
+    }
 }
