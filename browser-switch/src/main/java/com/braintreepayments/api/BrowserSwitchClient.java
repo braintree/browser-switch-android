@@ -123,21 +123,21 @@ public class BrowserSwitchClient {
      * {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
      * @param intent the intent to return to your application containing a deep link result from the
      *               browser flow
-     * @return a {@link BrowserSwitchResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchResult.NoResult} if no result can be found for the given
-     * {@link BrowserSwitchPendingRequest.Started}. A {@link BrowserSwitchResult.NoResult} will be
+     * @return a {@link BrowserSwitchStartResult.Success} if the browser switch was successfully
+     * completed, or {@link BrowserSwitchStartResult.NoResult} if no result can be found for the given
+     * {@link BrowserSwitchPendingRequest.Started}. A {@link BrowserSwitchStartResult.NoResult} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
-    public BrowserSwitchResult completeRequest(@NonNull BrowserSwitchPendingRequest.Started pendingRequest, @Nullable Intent intent) {
+    public BrowserSwitchStartResult completeRequest(@NonNull BrowserSwitchPendingRequest.Started pendingRequest, @Nullable Intent intent) {
         if (intent != null && intent.getData() != null) {
             Uri linkUrl = intent.getData();
             BrowserSwitchRequest request = pendingRequest.getBrowserSwitchRequest();
             if (linkUrl != null &&
                 (request.matchesDeepLinkUrlScheme(linkUrl) || request.matchesAppLinkUri(linkUrl))) {
                 BrowserSwitchResultInfo resultInfo = new BrowserSwitchResultInfo(pendingRequest.getBrowserSwitchRequest(), linkUrl);
-                return new BrowserSwitchResult.Success(resultInfo);
+                return new BrowserSwitchStartResult.Success(resultInfo);
             }
         }
-        return BrowserSwitchResult.NoResult.INSTANCE;
+        return BrowserSwitchStartResult.NoResult.INSTANCE;
     }
 }

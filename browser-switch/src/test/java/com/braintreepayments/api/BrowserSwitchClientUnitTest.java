@@ -197,10 +197,10 @@ public class BrowserSwitchClientUnitTest {
         );
 
         Intent intent = new Intent(Intent.ACTION_VIEW, appLinkUri);
-        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchStartResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
 
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
-        assertEquals(appLinkUri, ((BrowserSwitchResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
+        assertTrue(browserSwitchResult instanceof BrowserSwitchStartResult.Success);
+        assertEquals(appLinkUri, ((BrowserSwitchStartResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
     }
 
     @Test
@@ -219,10 +219,10 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchStartResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
 
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.Success);
-        assertEquals(deepLinkUrl, ((BrowserSwitchResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
+        assertTrue(browserSwitchResult instanceof BrowserSwitchStartResult.Success);
+        assertEquals(deepLinkUrl, ((BrowserSwitchStartResult.Success) browserSwitchResult).getResultInfo().getDeepLinkUrl());
     }
 
     @Test
@@ -241,9 +241,9 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
+        BrowserSwitchStartResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), intent);
 
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
+        assertTrue(browserSwitchResult instanceof BrowserSwitchStartResult.NoResult);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", null);
 
-        BrowserSwitchResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), null);
-        assertTrue(browserSwitchResult instanceof BrowserSwitchResult.NoResult);
+        BrowserSwitchStartResult browserSwitchResult = sut.completeRequest(new BrowserSwitchPendingRequest.Started(request), null);
+        assertTrue(browserSwitchResult instanceof BrowserSwitchStartResult.NoResult);
     }
 }

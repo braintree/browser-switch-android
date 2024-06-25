@@ -13,7 +13,7 @@ import com.braintreepayments.api.BrowserSwitchClient;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchPendingRequest;
-import com.braintreepayments.api.BrowserSwitchResult;
+import com.braintreepayments.api.BrowserSwitchStartResult;
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore;
 
 import java.util.Objects;
@@ -45,9 +45,9 @@ public class DemoActivitySingleTop extends AppCompatActivity {
 
         BrowserSwitchPendingRequest.Started pendingRequest = PendingRequestStore.Companion.get(this);
         if (pendingRequest != null) {
-            BrowserSwitchResult result = browserSwitchClient.completeRequest(pendingRequest, intent);
-            if (result instanceof BrowserSwitchResult.Success) {
-                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchResult.Success) result).getResultInfo());
+            BrowserSwitchStartResult result = browserSwitchClient.completeRequest(pendingRequest, intent);
+            if (result instanceof BrowserSwitchStartResult.Success) {
+                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult(((BrowserSwitchStartResult.Success) result).getResultInfo());
             }
             PendingRequestStore.Companion.clear(this);
         }

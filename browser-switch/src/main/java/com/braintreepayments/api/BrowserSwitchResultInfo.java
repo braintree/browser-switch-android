@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Details of a successful {@link BrowserSwitchResult}
+ * Details of a successful {@link BrowserSwitchStartResult}
  */
 public class BrowserSwitchResultInfo {
 
