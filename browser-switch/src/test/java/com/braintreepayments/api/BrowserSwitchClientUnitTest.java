@@ -19,6 +19,7 @@ import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 @RunWith(RobolectricTestRunner.class)
 public class BrowserSwitchClientUnitTest {
@@ -75,7 +77,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void start_whenSuccessful_returnsBrowserSwitchRequest() throws BrowserSwitchException {
+    public void start_whenSuccessful_returnsBrowserSwitchRequest() throws BrowserSwitchException, JSONException {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
@@ -101,7 +103,7 @@ public class BrowserSwitchClientUnitTest {
 
         assertEquals(browserSwitchRequest.getRequestCode(), 123);
         assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
-        assertSame(browserSwitchRequest.getMetadata(), metadata);
+        JSONAssert.assertEquals(browserSwitchRequest.getMetadata(), metadata, false);
     }
 
     @Test

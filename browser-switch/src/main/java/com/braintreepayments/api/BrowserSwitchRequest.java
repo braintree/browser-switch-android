@@ -13,6 +13,9 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 
+// TODO: Consider renaming this class to `BrowserSwitchStartRequest` or
+// and remove `BrowserSwitchOptions` in favor this class
+
 public class BrowserSwitchRequest {
 
     private static final String KEY_REQUEST_CODE = "requestCode";
