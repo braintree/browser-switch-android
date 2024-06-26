@@ -116,20 +116,6 @@ public class BrowserSwitchRequest {
         this.appLinkUri = appLinkUri;
     }
 
-    String toJson() throws JSONException {
-        JSONObject result = new JSONObject();
-        result.put("requestCode", requestCode);
-        result.put("url", url.toString());
-        result.put("returnUrlScheme", returnUrlScheme);
-        if (metadata != null) {
-            result.put("metadata", metadata);
-        }
-        if (appLinkUri != null) {
-            result.put("appLinkUri", appLinkUri.toString());
-        }
-        return result.toString();
-    }
-
     @NonNull
     String toBase64EncodedJSON() throws BrowserSwitchException {
         try {
