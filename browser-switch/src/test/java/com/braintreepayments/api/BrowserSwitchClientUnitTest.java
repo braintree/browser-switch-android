@@ -185,7 +185,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() throws BrowserSwitchException {
+    public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() throws BrowserSwitchException, JSONException {
         Uri appLinkUri = Uri.parse("https://example.com");
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 customTabsInternalClient);
@@ -204,11 +204,17 @@ public class BrowserSwitchClientUnitTest {
                 sut.completeRequest(intent, request.toBase64EncodedJSON());
 
         assertTrue(result instanceof BrowserSwitchCompleteRequestResult.Success);
-        assertEquals(appLinkUri, ((BrowserSwitchCompleteRequestResult.Success) result).getDeepLinkUrl());
+
+        BrowserSwitchCompleteRequestResult.Success successResult =
+                (BrowserSwitchCompleteRequestResult.Success) result;
+        assertEquals(appLinkUri, successResult.getDeepLinkUrl());
+        assertEquals(123, successResult.getRequestCode());
+        JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
+        assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
     }
 
     @Test
-    public void completeRequest_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() throws BrowserSwitchException {
+    public void completeRequest_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() throws BrowserSwitchException, JSONException {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 customTabsInternalClient);
 
@@ -227,7 +233,13 @@ public class BrowserSwitchClientUnitTest {
                 sut.completeRequest(intent, request.toBase64EncodedJSON());
 
         assertTrue(result instanceof BrowserSwitchCompleteRequestResult.Success);
-        assertEquals(deepLinkUrl, ((BrowserSwitchCompleteRequestResult.Success) result).getDeepLinkUrl());
+
+        BrowserSwitchCompleteRequestResult.Success successResult =
+                (BrowserSwitchCompleteRequestResult.Success) result;
+        assertEquals(deepLinkUrl, successResult.getDeepLinkUrl());
+        assertEquals(123, successResult.getRequestCode());
+        JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
+        assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
     }
 
     @Test
