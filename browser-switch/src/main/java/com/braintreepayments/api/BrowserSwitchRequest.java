@@ -28,29 +28,6 @@ public class BrowserSwitchRequest {
     public final String returnUrlScheme;
     private Uri appLinkUri;
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-    public static BrowserSwitchRequest fromJson(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        int requestCode = jsonObject.getInt("requestCode");
-        String url = jsonObject.getString("url");
-        JSONObject metadata = jsonObject.optJSONObject("metadata");
-        Uri appLinkUri = null;
-        if (jsonObject.has("appLinkUri")) {
-            appLinkUri = Uri.parse(jsonObject.getString("appLinkUri"));
-        }
-        String returnUrlScheme = null;
-        if (jsonObject.has("returnUrlScheme")) {
-            returnUrlScheme = jsonObject.getString("returnUrlScheme");
-        }
-        return new BrowserSwitchRequest(
-            requestCode,
-            Uri.parse(url),
-            metadata,
-            returnUrlScheme,
-            appLinkUri
-        );
-    }
-
     @NonNull
     static BrowserSwitchRequest fromBase64EncodedJSON(@NonNull String base64EncodedRequest) throws BrowserSwitchException {
         byte[] data = Base64.decode(base64EncodedRequest, Base64.DEFAULT);
