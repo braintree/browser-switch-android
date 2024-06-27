@@ -18,14 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.braintreepayments.api.BrowserSwitchClient
+import com.braintreepayments.api.BrowserSwitchFinalResult
 import com.braintreepayments.api.BrowserSwitchOptions
-import com.braintreepayments.api.BrowserSwitchPendingRequest
-import com.braintreepayments.api.BrowserSwitchResult
-import com.braintreepayments.api.BrowserSwitchResultInfo
+import com.braintreepayments.api.BrowserSwitchStartResult
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore
 import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
-import java.lang.Exception
 
 class ComposeActivity : ComponentActivity() {
 
@@ -49,13 +47,16 @@ class ComposeActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         PendingRequestStore.get(this)?.let { startedRequest ->
-            when (val browserSwitchResult =
-                browserSwitchClient.completeRequest(startedRequest, intent)) {
-                is BrowserSwitchResult.Success -> viewModel.browserSwitchResult =
-                    browserSwitchResult.resultInfo
+            when (val completeRequestResult =
+                browserSwitchClient.completeRequest(intent, startedRequest)) {
+                is BrowserSwitchFinalResult.Success ->
+                    viewModel.browserSwitchFinalResult = completeRequestResult
 
-                is BrowserSwitchResult.NoResult -> viewModel.browserSwitchError =
+                is BrowserSwitchFinalResult.NoResult -> viewModel.browserSwitchError =
                     Exception("User did not complete browser switch")
+
+                is BrowserSwitchFinalResult.Failure -> viewModel.browserSwitchError =
+                    completeRequestResult.error
             }
             PendingRequestStore.clear(this)
         }
@@ -69,10 +70,11 @@ class ComposeActivity : ComponentActivity() {
             .url(url)
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
-        when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchPendingRequest.Started -> PendingRequestStore.put(this, pendingRequest)
-            is BrowserSwitchPendingRequest.Failure -> viewModel.browserSwitchError =
-                pendingRequest.cause
+        when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
+            is BrowserSwitchStartResult.Success ->
+                PendingRequestStore.put(this, startResult.pendingRequest)
+
+            is BrowserSwitchStartResult.Failure -> viewModel.browserSwitchError = startResult.error
         }
     }
 
@@ -94,7 +96,7 @@ class ComposeActivity : ComponentActivity() {
 @Composable
 fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
     val uiState = viewModel.uiState.collectAsState().value
-    uiState.browserSwitchResult?.let {
+    (uiState.browserSwitchFinalResult as? BrowserSwitchFinalResult.Success)?.let {
         BrowserSwitchSuccess(result = it)
     }
     uiState.browserSwitchError?.let { BrowserSwitchError(exception = it) }
@@ -112,22 +114,20 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun BrowserSwitchSuccess(result: BrowserSwitchResultInfo) {
-    result.deepLinkUrl?.let { returnUrl ->
-        val color = returnUrl.getQueryParameter("color")
-        val selectedColorString = "Selected color: $color"
-        val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
-        Column(modifier = Modifier.padding(10.dp)) {
-            Text(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                text = "Browser Switch Successful"
-            )
-            Text(text = selectedColorString, color = Color.White)
-            metadataOutput?.let {
-                Text(text = "Metadata: $it", color = Color.White)
-            }
+fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
+    val color = result.returnUrl.getQueryParameter("color")
+    val selectedColorString = "Selected color: $color"
+    val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
+    Column(modifier = Modifier.padding(10.dp)) {
+        Text(
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            text = "Browser Switch Successful"
+        )
+        Text(text = selectedColorString, color = Color.White)
+        metadataOutput?.let {
+            Text(text = "Metadata: $it", color = Color.White)
         }
     }
 }

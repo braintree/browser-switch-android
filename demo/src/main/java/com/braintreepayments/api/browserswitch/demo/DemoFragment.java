@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -16,9 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.braintreepayments.api.BrowserSwitchFinalResult;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
-import com.braintreepayments.api.BrowserSwitchResultInfo;
 import com.braintreepayments.api.demo.R;
 
 import org.json.JSONException;
@@ -42,9 +41,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
         mLinkSpinner = view.findViewById(R.id.link_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.navigation_links,
-            R.layout.support_simple_spinner_dropdown_item
+                requireContext(),
+                R.array.navigation_links,
+                R.layout.support_simple_spinner_dropdown_item
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         mLinkSpinner.setAdapter(adapter);
@@ -53,7 +52,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         startBrowserSwitchButton.setOnClickListener(this);
 
         Button startBrowserSwitchWithMetadataButton =
-            view.findViewById(R.id.browser_switch_with_metadata);
+                view.findViewById(R.id.browser_switch_with_metadata);
         startBrowserSwitchWithMetadataButton.setOnClickListener(this);
 
         mBrowserSwitchStatusTextView = view.findViewById(R.id.result);
@@ -78,14 +77,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         boolean isAppLink = mLinkSpinner.getSelectedItem().equals("App Link");
         Uri url = buildBrowserSwitchUrl(isAppLink);
         BrowserSwitchOptions browserSwitchOptions = new BrowserSwitchOptions()
-            .metadata(metadata)
-            .requestCode(1)
-            .url(url)
-            .launchAsNewTask(false);
+                .metadata(metadata)
+                .requestCode(1)
+                .url(url)
+                .launchAsNewTask(false);
 
         if (isAppLink) {
             browserSwitchOptions.appLinkUri(
-                Uri.parse("https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com")
+                    Uri.parse("https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com")
             );
         } else {
             browserSwitchOptions.returnUrlScheme(getReturnUrlScheme());
@@ -102,7 +101,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
     private Uri buildBrowserSwitchUrl(boolean isAppLink) {
         String url = "https://braintree.github.io/popup-bridge-example/" +
-            "this_launches_in_popup.html?";
+                "this_launches_in_popup.html?";
         if (isAppLink) {
             url += "isAppLink=true";
         } else {
@@ -126,16 +125,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mMetadataTextView.setText("");
     }
 
-    public void onBrowserSwitchResult(BrowserSwitchResultInfo result) {
+    public void onBrowserSwitchResult(BrowserSwitchFinalResult.Success result) {
         String selectedColorText = "";
 
         String resultText = "Browser Switch Successful";
 
-        Uri returnUrl = result.getDeepLinkUrl();
-        if (returnUrl != null) {
-            String color = returnUrl.getQueryParameter("color");
-            selectedColorText = String.format("Selected color: %s", color);
-        }
+        Uri returnUrl = result.getReturnUrl();
+        String color = returnUrl.getQueryParameter("color");
+        selectedColorText = String.format("Selected color: %s", color);
 
         mBrowserSwitchStatusTextView.setText(resultText);
         mSelectedColorTextView.setText(selectedColorText);

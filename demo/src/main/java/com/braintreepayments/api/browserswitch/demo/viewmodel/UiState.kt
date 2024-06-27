@@ -1,8 +1,8 @@
 package com.braintreepayments.api.browserswitch.demo.viewmodel
 
-import com.braintreepayments.api.BrowserSwitchResultInfo
+import com.braintreepayments.api.BrowserSwitchFinalResult
 
 data class UiState (
-    val browserSwitchResult: BrowserSwitchResultInfo? = null,
+    val browserSwitchFinalResult: BrowserSwitchFinalResult? = null,
     val browserSwitchError: Exception? = null,
 )
