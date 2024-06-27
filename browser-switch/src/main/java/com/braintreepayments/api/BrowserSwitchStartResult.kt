@@ -1,12 +1,13 @@
 package com.braintreepayments.api
 
 /**
- * The result of a browser switch obtained from [BrowserSwitchClient.completeRequest]
+ * The result of a browser switch obtained from [BrowserSwitchClient.start]
  */
 sealed class BrowserSwitchStartResult {
 
     /**
-     * The browser switch was successfully completed. See [resultInfo] for details.
+     * The browser switch was successfully completed. Store pendingRequest String to complete
+     * browser switch after deeplinking back into the application (see [BrowserSwitchClient.completeRequest]).
      */
     class Success(val pendingRequest: String) : BrowserSwitchStartResult()
 
