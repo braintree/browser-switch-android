@@ -75,7 +75,7 @@ public class BrowserSwitchRequest {
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     public BrowserSwitchRequest(
         int requestCode,
         Uri url,

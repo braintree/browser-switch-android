@@ -42,9 +42,9 @@ public class BrowserSwitchClient {
      *
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
-     * @return a {@link BrowserSwitchPendingRequest.Started} that should be stored and passed to
-     * {@link BrowserSwitchClient#completeRequest(Intent, BrowserSwitchPendingRequest.Started)} upon return to the app,
-     * or {@link BrowserSwitchPendingRequest.Failure} if browser could not be launched.
+     * @return a {@link BrowserSwitchStartResult.Success} that should be stored and passed to
+     * {@link BrowserSwitchClient#completeRequest(Intent, String)} upon return to the app,
+     * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
     public BrowserSwitchStartResult start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
@@ -126,11 +126,11 @@ public class BrowserSwitchClient {
      *
      * @param intent         the intent to return to your application containing a deep link result from the
      *                       browser flow
-     * @param pendingRequest the {@link BrowserSwitchPendingRequest.Started} returned from
+     * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Success} via
      *                       {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
-     * @return a {@link BrowserSwitchStartResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchStartResult.NoResult} if no result can be found for the given
-     * {@link BrowserSwitchPendingRequest.Started}. A {@link BrowserSwitchStartResult.NoResult} will be
+     * @return a {@link BrowserSwitchCompleteRequestResult.Success} if the browser switch was successfully
+     * completed, or {@link BrowserSwitchCompleteRequestResult.NoResult} if no result can be found for the given
+     * pending request String. A {@link BrowserSwitchCompleteRequestResult.NoResult} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
     public BrowserSwitchCompleteRequestResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
