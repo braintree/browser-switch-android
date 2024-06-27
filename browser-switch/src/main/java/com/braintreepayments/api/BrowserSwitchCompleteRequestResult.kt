@@ -4,12 +4,12 @@ import android.net.Uri
 import org.json.JSONObject
 
 /**
- * The result of a browser switch obtained from [BrowserSwitchClient.parseResult]
+ * The result of a browser switch obtained from [BrowserSwitchClient.completeRequest]
  */
 sealed class BrowserSwitchCompleteRequestResult {
 
     /**
-     * The browser switch was successfully completed. See [resultInfo] for details.
+     * The browser switch was successfully completed.
      */
     class Success internal constructor(
         val deepLinkUrl: Uri,
