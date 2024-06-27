@@ -200,13 +200,13 @@ public class BrowserSwitchClientUnitTest {
         );
 
         Intent intent = new Intent(Intent.ACTION_VIEW, appLinkUri);
-        BrowserSwitchCompleteRequestResult result =
+        BrowserSwitchFinalResult result =
                 sut.completeRequest(intent, request.toBase64EncodedJSON());
 
-        assertTrue(result instanceof BrowserSwitchCompleteRequestResult.Success);
+        assertTrue(result instanceof BrowserSwitchFinalResult.Success);
 
-        BrowserSwitchCompleteRequestResult.Success successResult =
-                (BrowserSwitchCompleteRequestResult.Success) result;
+        BrowserSwitchFinalResult.Success successResult =
+                (BrowserSwitchFinalResult.Success) result;
         assertEquals(appLinkUri, successResult.getDeepLinkUrl());
         assertEquals(123, successResult.getRequestCode());
         JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
@@ -229,13 +229,13 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("fake-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchCompleteRequestResult result =
+        BrowserSwitchFinalResult result =
                 sut.completeRequest(intent, request.toBase64EncodedJSON());
 
-        assertTrue(result instanceof BrowserSwitchCompleteRequestResult.Success);
+        assertTrue(result instanceof BrowserSwitchFinalResult.Success);
 
-        BrowserSwitchCompleteRequestResult.Success successResult =
-                (BrowserSwitchCompleteRequestResult.Success) result;
+        BrowserSwitchFinalResult.Success successResult =
+                (BrowserSwitchFinalResult.Success) result;
         assertEquals(deepLinkUrl, successResult.getDeepLinkUrl());
         assertEquals(123, successResult.getRequestCode());
         JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
@@ -258,10 +258,10 @@ public class BrowserSwitchClientUnitTest {
 
         Uri deepLinkUrl = Uri.parse("a-different-url-scheme://success");
         Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
-        BrowserSwitchCompleteRequestResult result =
+        BrowserSwitchFinalResult result =
                 sut.completeRequest(intent, request.toBase64EncodedJSON());
 
-        assertTrue(result instanceof BrowserSwitchCompleteRequestResult.NoResult);
+        assertTrue(result instanceof BrowserSwitchFinalResult.NoResult);
     }
 
     @Test
@@ -273,8 +273,8 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", null);
 
-        BrowserSwitchCompleteRequestResult result =
+        BrowserSwitchFinalResult result =
                 sut.completeRequest(null, request.toBase64EncodedJSON());
-        assertTrue(result instanceof BrowserSwitchCompleteRequestResult.NoResult);
+        assertTrue(result instanceof BrowserSwitchFinalResult.NoResult);
     }
 }

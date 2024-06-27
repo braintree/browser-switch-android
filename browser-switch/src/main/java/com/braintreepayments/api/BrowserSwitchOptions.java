@@ -24,7 +24,7 @@ public class BrowserSwitchOptions {
      * Set browser switch metadata.
      *
      * @param metadata JSONObject containing metadata that will be persisted and returned in a
-     *                 {@link BrowserSwitchCompleteRequestResult} when the app has re-entered the foreground
+     *                 {@link BrowserSwitchFinalResult} when the app has re-entered the foreground
      * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
      */
     public BrowserSwitchOptions metadata(@Nullable JSONObject metadata) {

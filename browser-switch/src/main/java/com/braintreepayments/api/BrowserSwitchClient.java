@@ -128,12 +128,12 @@ public class BrowserSwitchClient {
      *                       browser flow
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Success} via
      *                       {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
-     * @return a {@link BrowserSwitchCompleteRequestResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchCompleteRequestResult.NoResult} if no result can be found for the given
-     * pending request String. A {@link BrowserSwitchCompleteRequestResult.NoResult} will be
+     * @return a {@link BrowserSwitchFinalResult.Success} if the browser switch was successfully
+     * completed, or {@link BrowserSwitchFinalResult.NoResult} if no result can be found for the given
+     * pending request String. A {@link BrowserSwitchFinalResult.NoResult} will be
      * returned if the user returns to the app without completing the browser switch flow.
      */
-    public BrowserSwitchCompleteRequestResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
+    public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
         if (intent != null && intent.getData() != null) {
             Uri deepLinkUri = intent.getData();
 
@@ -141,12 +141,12 @@ public class BrowserSwitchClient {
                 BrowserSwitchRequest pr = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
                 if (deepLinkUri != null &&
                         (pr.matchesDeepLinkUrlScheme(deepLinkUri) || pr.matchesAppLinkUri(deepLinkUri))) {
-                    return new BrowserSwitchCompleteRequestResult.Success(deepLinkUri, pr);
+                    return new BrowserSwitchFinalResult.Success(deepLinkUri, pr);
                 }
             } catch (BrowserSwitchException e) {
                 throw new RuntimeException(e);
             }
         }
-        return BrowserSwitchCompleteRequestResult.NoResult.INSTANCE;
+        return BrowserSwitchFinalResult.NoResult.INSTANCE;
     }
 }

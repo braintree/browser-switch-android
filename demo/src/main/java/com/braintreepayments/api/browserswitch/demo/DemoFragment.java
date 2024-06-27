@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.braintreepayments.api.BrowserSwitchCompleteRequestResult;
+import com.braintreepayments.api.BrowserSwitchFinalResult;
 import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.demo.R;
@@ -125,7 +125,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         mMetadataTextView.setText("");
     }
 
-    public void onBrowserSwitchResult(BrowserSwitchCompleteRequestResult.Success result) {
+    public void onBrowserSwitchResult(BrowserSwitchFinalResult.Success result) {
         String selectedColorText = "";
 
         String resultText = "Browser Switch Successful";
