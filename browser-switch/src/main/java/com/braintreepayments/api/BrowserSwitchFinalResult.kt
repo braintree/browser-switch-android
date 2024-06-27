@@ -12,13 +12,13 @@ sealed class BrowserSwitchFinalResult {
      * The browser switch was successfully completed.
      */
     class Success internal constructor(
-        val deepLinkUrl: Uri,
+        val returnUrl: Uri,
         val requestCode: Int,
         val requestUrl: Uri,
         val requestMetadata: JSONObject?,
     ) : BrowserSwitchFinalResult() {
-        internal constructor(deepLinkUrl: Uri, originalRequest: BrowserSwitchRequest) : this(
-            deepLinkUrl,
+        internal constructor(returnUrl: Uri, originalRequest: BrowserSwitchRequest) : this(
+            returnUrl,
             originalRequest.requestCode,
             originalRequest.url,
             originalRequest.metadata

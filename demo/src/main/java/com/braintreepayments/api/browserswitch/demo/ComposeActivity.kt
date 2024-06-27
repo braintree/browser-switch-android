@@ -115,7 +115,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 
 @Composable
 fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
-    val color = result.deepLinkUrl.getQueryParameter("color")
+    val color = result.returnUrl.getQueryParameter("color")
     val selectedColorString = "Selected color: $color"
     val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
     Column(modifier = Modifier.padding(10.dp)) {

@@ -135,13 +135,13 @@ public class BrowserSwitchClient {
      */
     public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
         if (intent != null && intent.getData() != null) {
-            Uri deepLinkUri = intent.getData();
+            Uri returnUrl = intent.getData();
 
             try {
                 BrowserSwitchRequest pr = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
-                if (deepLinkUri != null &&
-                        (pr.matchesDeepLinkUrlScheme(deepLinkUri) || pr.matchesAppLinkUri(deepLinkUri))) {
-                    return new BrowserSwitchFinalResult.Success(deepLinkUri, pr);
+                if (returnUrl != null &&
+                        (pr.matchesDeepLinkUrlScheme(returnUrl) || pr.matchesAppLinkUri(returnUrl))) {
+                    return new BrowserSwitchFinalResult.Success(returnUrl, pr);
                 }
             } catch (BrowserSwitchException e) {
                 throw new RuntimeException(e);

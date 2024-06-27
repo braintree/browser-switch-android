@@ -207,7 +207,7 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchFinalResult.Success successResult =
                 (BrowserSwitchFinalResult.Success) result;
-        assertEquals(appLinkUri, successResult.getDeepLinkUrl());
+        assertEquals(appLinkUri, successResult.getReturnUrl());
         assertEquals(123, successResult.getRequestCode());
         JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
         assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
@@ -236,7 +236,7 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchFinalResult.Success successResult =
                 (BrowserSwitchFinalResult.Success) result;
-        assertEquals(deepLinkUrl, successResult.getDeepLinkUrl());
+        assertEquals(deepLinkUrl, successResult.getReturnUrl());
         assertEquals(123, successResult.getRequestCode());
         JSONAssert.assertEquals(requestMetadata, successResult.getRequestMetadata(), true);
         assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
