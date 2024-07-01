@@ -42,7 +42,7 @@ public class BrowserSwitchClient {
      *
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
-     * @return a {@link BrowserSwitchStartResult.Success} that should be stored and passed to
+     * @return a {@link BrowserSwitchStartResult.Started} that should be stored and passed to
      * {@link BrowserSwitchClient#completeRequest(Intent, String)} upon return to the app,
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
@@ -77,7 +77,7 @@ public class BrowserSwitchClient {
                         appLinkUri
                 );
                 customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
-                return new BrowserSwitchStartResult.Success(request.toBase64EncodedJSON());
+                return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
             } catch (ActivityNotFoundException | BrowserSwitchException e) {
                 return new BrowserSwitchStartResult.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));
             }
@@ -126,7 +126,7 @@ public class BrowserSwitchClient {
      *
      * @param intent         the intent to return to your application containing a deep link result from the
      *                       browser flow
-     * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Success} via
+     * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started} via
      *                       {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
      * @return a {@link BrowserSwitchFinalResult.Success} if the browser switch was successfully
      * completed, or {@link BrowserSwitchFinalResult.NoResult} if no result can be found for the given
