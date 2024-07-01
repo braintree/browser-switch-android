@@ -66,8 +66,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         BrowserSwitchStartResult result = browserSwitchClient.start(this, options);
-        if (result instanceof BrowserSwitchStartResult.Success) {
-            PendingRequestStore.Companion.put(this, ((BrowserSwitchStartResult.Success) result).getPendingRequest());
+        if (result instanceof BrowserSwitchStartResult.Started) {
+            PendingRequestStore.Companion.put(this, ((BrowserSwitchStartResult.Started) result).getPendingRequest());
         } else if (result instanceof BrowserSwitchStartResult.Failure) {
             Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchStartResult.Failure) result).getError());
         }

@@ -94,10 +94,10 @@ public class BrowserSwitchClientUnitTest {
         verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, false);
 
         assertNotNull(browserSwitchPendingRequest);
-        assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Success);
+        assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Started);
 
         String pendingRequest =
-                ((BrowserSwitchStartResult.Success) browserSwitchPendingRequest).getPendingRequest();
+                ((BrowserSwitchStartResult.Started) browserSwitchPendingRequest).getPendingRequest();
         BrowserSwitchRequest browserSwitchRequest =
                 BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
 

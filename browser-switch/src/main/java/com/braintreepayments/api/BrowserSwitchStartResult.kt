@@ -9,7 +9,7 @@ sealed class BrowserSwitchStartResult {
      * The browser switch was successfully completed. Store pendingRequest String to complete
      * browser switch after deeplinking back into the application (see [BrowserSwitchClient.completeRequest]).
      */
-    class Success(val pendingRequest: String) : BrowserSwitchStartResult()
+    class Started(val pendingRequest: String) : BrowserSwitchStartResult()
 
     /**
      * Browser switch failed with an [error].
