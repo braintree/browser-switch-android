@@ -7,36 +7,44 @@ buildscript {
         }
     }
 
+    def sdkTargetJavaVersion = JavaVersion.VERSION_11
+    ext.versions = [
+        "javaSourceCompatibility": sdkTargetJavaVersion,
+        "javaTargetCompatibility": sdkTargetJavaVersion,
+    ]
+
+
     ext.deps = [
-        'annotation'  : 'androidx.annotation:annotation:1.2.0',
-        'appcompat'   : 'androidx.appcompat:appcompat:1.3.1',
-        'browser'     : 'androidx.browser:browser:1.5.0',
-        'kotlin'      : 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10',
+        'annotation'  : 'androidx.annotation:annotation:1.7.0',
+        'appcompat'   : 'androidx.appcompat:appcompat:1.6.0',
+        'browser'     : 'androidx.browser:browser:1.7.0',
+        'kotlin'      : 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20',
 
         // test dependencies
         'junit'       : 'junit:junit:4.13.2',
-        'mockitoCore' : 'org.mockito:mockito-core:3.4.0',
+        'mockitoCore' : 'org.mockito:mockito-core:5.7.0',
         'jsonassert'  : 'org.skyscreamer:jsonassert:1.5.1',
-        'robolectric' : 'org.robolectric:robolectric:4.7.3'
+        'robolectric' : 'org.robolectric:robolectric:4.11.1'
     ]
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.7.20'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10'
+        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.9.10'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
     }
 }
 
 plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
-    id 'org.jetbrains.dokka' version '1.7.10'
+    id 'org.jetbrains.dokka' version '1.9.10'
+    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
 }
 
-version = '2.7.1-SNAPSHOT'
+version = '3.0.0-beta1-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 34
-    minSdkVersion = 21
+    minSdkVersion = 23
     targetSdkVersion = 34
     versionCode = 70
     versionName = version
@@ -77,16 +85,15 @@ task changeGradleReleaseVersion {
 
 task changeREADMEVersion {
     doLast {
-
         def readmeFile = new File('README.md')
-        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+'", ":browser-switch:" + versionParam + "'")
+        def readmeFileText = readmeFile.text.replaceFirst(":browser-switch:\\d+\\.\\d+\\.\\d+(-.*)?'", ":browser-switch:" + versionParam + "'")
         readmeFile.write(readmeFileText)
     }
 }
 
 task changeMigrationGuideVersion {
     doLast {
-        def migrationGuideFile = new File('v2_MIGRATION.md')
+        def migrationGuideFile = new File('v3_MIGRATION.md')
         def migrationGuideFileText = migrationGuideFile.text.replaceAll(":\\d+\\.\\d+\\.\\d+(-.*)?'", ":" + versionParam + "'")
         migrationGuideFile.write(migrationGuideFileText)
     }
@@ -104,8 +111,10 @@ task incrementSNAPSHOTVersion {
     doLast {
         def gradleFile = new File('build.gradle')
         def (major, minor, patch) = versionParam.tokenize('.')
-        def patchInteger = patch.toInteger()
-        def newVersion = "$major.$minor.${patchInteger + 1}-SNAPSHOT"
+        def patchInteger = patch[-1].toInteger()
+        patchInteger++
+        def newPatch = patch.substring(0,patch.length()-1) + patchInteger.toString()
+        def newVersion = "$major.$minor.$newPatch-SNAPSHOT"
         def gradleFileText = gradleFile.text.replaceFirst("\\nversion = '\\d+\\.\\d+\\.\\d+(-.*)?'", "\nversion = '" + newVersion + "'")
         gradleFile.write(gradleFileText)
 

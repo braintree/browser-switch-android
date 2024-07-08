@@ -1,5 +1,21 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Make `BrowserSwitchClient.assertCanPerformBrowserSwitch()` public
+* Breaking Changes
+  * Bump `minSdkVersion` to API 23
+  * Bump target Java version to Java 11
+  * Upgrade Kotlin version to 1.9.10
+  * Upgrade to Android Gradle Plugin 8
+  * Change `BrowserSwitchClient#start` parameters and return type
+  * Change `BrowserSwitchClient#parseResult` parameters
+  * Remove `deliverResult`, `getResult`, `captureResult`, `clearActiveRequests`, `getResultFromCache`, and `deliverResultFromCache` from `BrowserSwitchClient`
+  * Add `BrowserSwitchRequest` and `BrowserSwitchPendingRequest`
+  * Convert `BrowserSwitchResult` to sealed class and add `BrowserSwitchResultInfo`
+  * Remove `BrowserSwitchStatus`
+  * Rename `parseResult()` to `completeRequest()`
+
 ## 2.7.0
 
 * Add `appLinkUri` to `BrowserSwitchOptions` for Android App Link support
