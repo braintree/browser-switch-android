@@ -2,5 +2,6 @@
 <resources>
     <string name="browser_switch_btn_text">Start Browser Switch</string>
     <string name="browser_switch_with_metadata_btn_text">Start Browser Switch With Metadata</string>
+    <string name="title_activity_compose">ComposeActivity</string>
     <string name="navigation_link_type">Navigation Link Type:</string>
 </resources>

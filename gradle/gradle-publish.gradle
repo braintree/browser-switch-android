@@ -47,9 +47,10 @@ afterEvaluate {
     }
 
     def isCiEnvironment = System.getenv('CI')
+
     signing {
         required { isCiEnvironment }
-        if(isCiEnvironment) {
+        if (isCiEnvironment) {
             sign publishing.publications
             sign configurations.archives
         }
@@ -58,7 +59,6 @@ afterEvaluate {
 
 task javadocs(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     failOnError false
 }
 

@@ -45,7 +45,7 @@ public class BrowserSwitchTest {
     }
 
     @Test(timeout = 60000)
-    public void standardLaunchMode_startWithoutMetadata() {
+    public void standardLaunchMode() {
         onDevice(withText("Launch Mode: Standard")).perform(click());
         onDevice(withText("Start Browser Switch")).perform(click());
         onDevice(withText("Red")).waitForExists().perform(click());
@@ -54,20 +54,7 @@ public class BrowserSwitchTest {
 
         assertTrue(onDevice(withText("Browser Switch Successful")).exists());
         assertTrue(onDevice(withText("Selected Color: red")).exists());
-        assertTrue(onDevice(withText("Metadata: null")).exists());
-    }
-
-    @Test(timeout = 60000)
-    public void standardLaunchMode_startWithMetadata() {
-        onDevice(withText("Launch Mode: Standard")).perform(click());
-        onDevice(withText("Start Browser Switch With Metadata")).perform(click());
-        onDevice(withText("Red")).waitForExists().perform(click());
-
-        onDevice(withText("Browser Switch Successful")).waitForExists();
-
-        assertTrue(onDevice(withText("Browser Switch Successful")).exists());
-        assertTrue(onDevice(withText("Selected Color: red")).exists());
-        assertTrue(onDevice(withText("Metadata: testKey=testValue")).exists());
+        assertTrue(onDevice(withText("Metadata: test_key=test_value")).exists());
     }
 
     @Test(timeout = 60000)

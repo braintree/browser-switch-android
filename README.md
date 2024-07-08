@@ -20,7 +20,7 @@ To preview the latest work in progress builds, add the following SNAPSHOT depend
 
 ```groovy
 dependencies {
-  implementation 'com.braintreepayments.api:browser-switch:2.7.1-SNAPSHOT'
+  implementation 'com.braintreepayments.api:browser-switch:3.0.0-beta1-SNAPSHOT'
 }
 ```
 
@@ -42,7 +42,6 @@ Declare an activity that you own as a deep link target in your `AndroidManifest.
 
 ```xml
 <activity android:name="com.myapp.MyDeepLinkTargetActivity"
-    android:launchMode="singleTask"
     android:exported="true">
     <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
@@ -62,11 +61,20 @@ If these requirements are not met, an error will be returned and no browser swit
 A browser switch can be initiated by calling `BrowserSwitchClient#start()`. Use `BrowserSwitchOptions` to configure options for browser switching:
 
 ```kotlin
-val browserSwitchOptions = BrowserSwitchOptions()
-    .requestCode(MY_REQUEST_CODE)
-    .url("https://site-to-load.com?callbackURL=my-custom-url-scheme%3A%2F%2Fsuccess")
-    .returnUrlScheme("my-custom-url-scheme")
-browserSwitchClient.start(activity, browserSwitchOptions)
+val browserSwitchOptions = BrowserSwitchOptions().apply {
+    requestCode = MY_REQUEST_CODE
+    url = "https://site-to-load.com?callbackURL=my-custom-url-scheme%3A%2F%2Fsuccess"
+    returnUrlScheme = "my-custom-url-scheme"
+}
+
+when (val pendingRequest = browserSwitchClient.start(this, browserSwitchOptions)) {
+    is BrowserSwitchPendingRequest.Started -> {
+        // store pending request
+    }
+    is BrowserSwitchPendingRequest.Failure -> {
+        // browser was unable to be launched, handle failure
+    }
+}
 ```
 
 In the above example, notice the encoded `callbackURL` parameter is forwarded to the website that will be loaded. The callback url must have the same custom scheme set in `BrowserSwitchOptions`. When this URL is loaded by the site, the Android OS will re-direct the user to the deep link destination `Activity` defined in the `AndroidManifest.xml`.
@@ -74,17 +82,21 @@ In the above example, notice the encoded `callbackURL` parameter is forwarded to
 To capture a browser switch result, override your deep link target `Activity` with the following code snippet:
 
 ```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    browserSwitchClient.deliverResult(this)?.let { result ->
-        when (result) {
-            BrowserSwitchStatus.OK -> {
-                // the browser switch returned data in the return uri
-                // TODO: handle success
+override fun onResume() {
+    handleReturnToAppFromBrowser(intent) 
+}
+
+fun handleReturnToAppFromBrowser(intent: Intent) {
+    // fetch stored pending request
+    fetchPendingRequestFromPersistentStorage()?.let { startedRequest ->
+        when (val browserSwitchResult = browserSwitchClient.parseResult(startedRequest, intent)) {
+            is BrowserSwitchResult.Success -> {
+                // handle successful browser switch result
+                // clear stored pending request
             }
-            BrowserSwitchStatus.CANCEL -> {
-                // the user canceled and returned to your app return uri is null
-                // TODO: handle cancelation
+            is BrowserSwitchResult.NoResult -> {
+                // user did not complete browser switch
+                // allow user to complete browser switch, or clear stored pending request
             }
         }
     }
@@ -93,12 +105,12 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ## Launch Modes
 
-If your deep link target `Activity` has `android:launchMode="singleTop"`, `android:launchMode="singleTask"`, or `android:launchMode="singleInstance"`, add the following code snippet to your deep link target `Activity`:
+If your deep link target `Activity` has `android:launchMode="singleTop"`, `android:launchMode="singleTask"`, or `android:launchMode="singleInstance"`, add the following code snippet to your deep link target `Activity` in the `onNewIntent` method instead of `onResume`:
 
 ```kotlin
 override fun onNewIntent(newIntent: Intent?) {
     super.onNewIntent(intent)
-    intent = newIntent
+    handleReturnToAppFromBrowser(intent) 
 }
 ```
 
@@ -106,10 +118,11 @@ override fun onNewIntent(newIntent: Intent?) {
 
 This SDK abides by our Client SDK Deprecation Policy. For more information on the potential statuses of an SDK check our [developer docs](https://developer.paypal.com/braintree/docs/guides/client-sdk/deprecation-policy/android/v4).
 
-| Major version number | Status | Released | Deprecated | Unsupported |
-| -------------------- | ------ | -------- | ---------- | ----------- |
-| 2.x.x | Active | February 2021 | TBA | TBA |
-| 1.x.x | Inactive | June 2020 | April 2022 | April 2023 |
+| Major version number | Status   | Released      | Deprecated | Unsupported |
+|----------------------|----------|---------------| ---------- | ----------- |
+| 3.x.x                | Beta     | TBA           | TBA | TBA |
+| 2.x.x                | Active   | February 2021 | TBA | TBA |
+| 1.x.x                | Inactive | June 2020     | April 2022 | April 2023 |
 
 ## Help
 
