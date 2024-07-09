@@ -5,13 +5,6 @@ on:
       version:
         description: 'Version to release'
         required: true
-      job_to_run:
-        description: 'Run individual job (DO NOT USE THIS FOR A NORMAL RELEASE)'
-        required: false
-        type: choice
-        options:
-          - bump_version
-          - create_github_release
 env:
   SIGNING_KEY_FILE: /home/runner/secretKey.gpg
 jobs:
