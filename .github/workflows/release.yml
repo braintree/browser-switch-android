@@ -8,6 +8,7 @@ on:
       job_to_run:
         description: 'Run individual job (DO NOT USE THIS FOR A NORMAL RELEASE)'
         required: false
+        type: choice
         options:
           - bump_version
           - create_github_release
