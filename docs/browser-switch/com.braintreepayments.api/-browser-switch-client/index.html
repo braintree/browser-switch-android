@@ -1,9 +1,11 @@
 <!doctype html>
-<html>
+<html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>BrowserSwitchClient</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
     if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
@@ -16,12 +18,13 @@
         }
     }
     </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
-<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
@@ -29,166 +32,104 @@
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
 <body>
-<div class="navigation-wrapper" id="navigation-wrapper">
-    <div id="leftToggler"><span class="icon-toggler"></span></div>
-    <div class="library-name">
-<a href="../../../index.html">
-<span>browser-switch-android</span>            </a>    </div>
-    <div>2.6.2-SNAPSHOT
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            browser-switch-android
+                    </a>            </div>
+            <div class="library-version">3.0.0-beta1-SNAPSHOT
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":browser-switch:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
     </div>
-    <div class="pull-right d-flex">
-        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
-        <div id="searchBar"></div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
     </div>
-</div>
-<div id="container">
-    <div id="leftColumn">
-        <div id="sideMenu"></div>
-    </div>
-    <div id="main">
-<div class="main-content" id="content" pageids="browser-switch::com.braintreepayments.api/BrowserSwitchClient///PointingToDeclaration//1744267642">
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="browser-switch::com.braintreepayments.api/BrowserSwitchClient///PointingToDeclaration//1744267642">
   <div class="breadcrumbs"><a href="../../index.html">browser-switch</a><span class="delimiter">/</span><a href="../index.html">com.braintreepayments.api</a><span class="delimiter">/</span><span class="current">BrowserSwitchClient</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Browser</span><wbr><span>Switch</span><wbr><span><span>Client</span></span></h1>
     <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">BrowserSwitchClient</a></div><p class="paragraph">Client that manages the logic for browser switching.</p></div></div>
   </div>
   <div class="tabbedcontent">
-    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button></div>
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
-      <h2 class="tabbedcontent">Constructors</h2>
-      <div class="table" data-togglable="Constructors"><a data-name="1870465933%2FConstructors%2F1744267642" anchor-label="BrowserSwitchClient" id="1870465933%2FConstructors%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue TabbedContent">
-            <div class=""><span class="inline-flex">
-                <div><a href="-browser-switch-client.html"><span>Browser</span><wbr><span>Switch</span><wbr><span><span>Client</span></span></a></div>
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1870465933%2FConstructors%2F1744267642" anchor-label="BrowserSwitchClient" id="1870465933%2FConstructors%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-browser-switch-client.html"><span>Browser</span><wbr><span>Switch</span><wbr><span><span>Client</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1870465933%2FConstructors%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="-browser-switch-client.html"><span class="token function">BrowserSwitchClient</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Construct a client that manages the logic for browser switching.</div></div></div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Construct a client that manages the logic for browser switching.</div></div></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <h2 class="">Functions</h2>
-      <div class="table" data-togglable="Functions"><a data-name="1086425996%2FFunctions%2F1744267642" anchor-label="captureResult" id="1086425996%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="capture-result.html"><span>capture</span><wbr><span><span>Result</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1086425996%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="capture-result.html"><span class="token function">captureResult</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/FragmentActivity.html">FragmentActivity</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Capture a pending browser switch result for an Android activity into a persistent storage cache.</div></div></div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-882639314%2FFunctions%2F1744267642" anchor-label="assertCanPerformBrowserSwitch" id="-882639314%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="assert-can-perform-browser-switch.html"><span>assert</span><wbr><span>Can</span><wbr><span>Perform</span><wbr><span>Browser</span><wbr><span><span>Switch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-882639314%2FFunctions%2F1744267642"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="assert-can-perform-browser-switch.html"><span class="token function">assertCanPerformBrowserSwitch</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a><span class="token punctuation">, </span></span><span class="parameter ">browserSwitchOptions<span class="token operator">: </span><a href="../-browser-switch-options/index.html">BrowserSwitchOptions</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Throws a <a href="../-browser-switch-exception/index.html">BrowserSwitchException</a> when a browser switch flow cannot be started.</div></div></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-<a data-name="-1464646550%2FFunctions%2F1744267642" anchor-label="clearActiveRequests" id="-1464646550%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="clear-active-requests.html"><span>clear</span><wbr><span>Active</span><wbr><span><span>Requests</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1464646550%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clear-active-requests.html"><span class="token function">clearActiveRequests</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Clear singleton storage holding single pending browser switch request.</div></div></div>
+<a data-name="481109772%2FFunctions%2F1744267642" anchor-label="completeRequest" id="481109772%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="complete-request.html"><span>complete</span><wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="481109772%2FFunctions%2F1744267642"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="complete-request.html"><span class="token function">completeRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>intent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>pendingRequest<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-final-result/index.html">BrowserSwitchFinalResult</a></div><div class="brief ">Completes the browser switch flow and returns a browser switch result if a match is found for the given <a href="../-browser-switch-request/index.html">BrowserSwitchRequest</a></div></div></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-<a data-name="918689037%2FFunctions%2F1744267642" anchor-label="deliverResult" id="918689037%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="deliver-result.html"><span>deliver</span><wbr><span><span>Result</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="918689037%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="deliver-result.html"><span class="token function">deliverResult</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/FragmentActivity.html">FragmentActivity</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-result/index.html">BrowserSwitchResult</a></div><div class="brief ">Deliver a pending browser switch result to an Android activity.</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-236793385%2FFunctions%2F1744267642" anchor-label="deliverResultFromCache" id="-236793385%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="deliver-result-from-cache.html"><span>deliver</span><wbr><span>Result</span><wbr><span>From</span><wbr><span><span>Cache</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-236793385%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="deliver-result-from-cache.html"><span class="token function">deliverResultFromCache</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-result/index.html">BrowserSwitchResult</a></div><div class="brief ">Deliver a pending browser switch result that was previously captured by another Android activity.</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-545390340%2FFunctions%2F1744267642" anchor-label="getResult" id="-545390340%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="get-result.html"><span>get</span><wbr><span><span>Result</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-545390340%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-result.html"><span class="token function">getResult</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/FragmentActivity.html">FragmentActivity</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-result/index.html">BrowserSwitchResult</a></div><div class="brief ">Peek at a pending browser switch result to an Android activity.</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-1589764858%2FFunctions%2F1744267642" anchor-label="getResultFromCache" id="-1589764858%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="get-result-from-cache.html"><span>get</span><wbr><span>Result</span><wbr><span>From</span><wbr><span><span>Cache</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1589764858%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-result-from-cache.html"><span class="token function">getResultFromCache</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-result/index.html">BrowserSwitchResult</a></div><div class="brief ">Peek at a pending browser switch result that was previously captured by another Android activity.</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-938273576%2FFunctions%2F1744267642" anchor-label="parseResult" id="-938273576%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="parse-result.html"><span>parse</span><wbr><span><span>Result</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-938273576%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="parse-result.html"><span class="token function">parseResult</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">requestCode<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a>&nbsp;</span>intent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-result/index.html">BrowserSwitchResult</a></div><div class="brief ">Parses and returns a browser switch result if a match is found.</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-1289637886%2FFunctions%2F1744267642" anchor-label="start" id="-1289637886%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
-        <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="start.html"><span><span>start</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1289637886%2FFunctions%2F1744267642"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="start.html"><span class="token function">start</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/FragmentActivity.html">FragmentActivity</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>browserSwitchOptions<span class="token operator">: </span><a href="../-browser-switch-options/index.html">BrowserSwitchOptions</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a> with a given set of <a href="../-browser-switch-options/index.html">BrowserSwitchOptions</a> from an Android activity.</div></div></div>
+<a data-name="391412497%2FFunctions%2F1744267642" anchor-label="start" id="391412497%2FFunctions%2F1744267642" data-filterable-set=":browser-switch:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":browser-switch:dokkaHtmlPartial/release" data-filterable-set=":browser-switch:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="start.html"><span><span>start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="391412497%2FFunctions%2F1744267642"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":browser-switch:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="start.html"><span class="token function">start</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>activity<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a>&nbsp;</span>browserSwitchOptions<span class="token operator">: </span><a href="../-browser-switch-options/index.html">BrowserSwitchOptions</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-browser-switch-start-result/index.html">BrowserSwitchStartResult</a></div><div class="brief ">Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a> with a given set of <a href="../-browser-switch-options/index.html">BrowserSwitchOptions</a> from an Android activity.</div></div></div>
+                </div>
               </div>
             </div>
           </div>
@@ -200,8 +141,9 @@
       <div class="footer">
         <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
+            </div>
+        </div>
     </div>
-</div>
-
-</body></html>
+</body>
+</html>
 

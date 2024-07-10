@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 3.0.0-beta1
 
 * Make `BrowserSwitchClient.assertCanPerformBrowserSwitch()` public
 * Breaking Changes
