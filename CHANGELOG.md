@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Upgrade `compileSdkVersion` and `targetSdkVersion` to API 35
+
 ## 3.0.0-beta1
 
 * Make `BrowserSwitchClient.assertCanPerformBrowserSwitch()` public
