@@ -8,6 +8,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +37,7 @@ class ComposeActivity : ComponentActivity() {
         browserSwitchClient = BrowserSwitchClient()
 
         setContent {
-            Column(modifier = Modifier.padding(10.dp)) {
+            Column(modifier = Modifier.safeGesturesPadding()) {
                 BrowserSwitchButton {
                     startBrowserSwitch()
                 }

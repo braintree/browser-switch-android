@@ -2,10 +2,14 @@ package com.braintreepayments.api.browserswitch.demo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -15,6 +19,7 @@ import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchStartResult;
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore;
+import com.braintreepayments.api.demo.R;
 
 import java.util.Objects;
 
@@ -37,6 +42,19 @@ public class DemoActivitySingleTop extends AppCompatActivity {
                     .add(android.R.id.content, new DemoFragment(), FRAGMENT_TAG)
                     .commit();
         }
+
+        // Support Edge-to-Edge layout in Android 15
+        // Ref: https://developer.android.com/develop/ui/views/layout/edge-to-edge#cutout-insets
+        View navHostView = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(navHostView, (v, insets) -> {
+            @WindowInsetsCompat.Type.InsetsType int insetTypeMask =
+                    WindowInsetsCompat.Type.systemBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+                            | WindowInsetsCompat.Type.systemGestures();
+            Insets bars = insets.getInsets(insetTypeMask);
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     @Override
