@@ -1,6 +1,9 @@
 package com.braintreepayments.api.browserswitch.demo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +24,19 @@ public class MainActivity extends AppCompatActivity {
 
         Button singleTopButton = findViewById(R.id.single_top_button);
         singleTopButton.setOnClickListener(this::launchSingleTopBrowserSwitch);
+
+        // Support Edge-to-Edge layout in Android 15
+        // Ref: https://developer.android.com/develop/ui/views/layout/edge-to-edge#cutout-insets
+        View navHostView = findViewById(R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(navHostView, (v, insets) -> {
+            @WindowInsetsCompat.Type.InsetsType int insetTypeMask =
+                    WindowInsetsCompat.Type.systemBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+                            | WindowInsetsCompat.Type.systemGestures();
+            Insets bars = insets.getInsets(insetTypeMask);
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     public void launchStandardBrowserSwitch(View view) {
