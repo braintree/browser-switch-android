@@ -17,7 +17,7 @@ buildscript {
     ext.deps = [
         'annotation'  : 'androidx.annotation:annotation:1.7.0',
         'appcompat'   : 'androidx.appcompat:appcompat:1.6.0',
-        'browser'     : 'androidx.browser:browser:1.7.0',
+        'browser'     : 'androidx.browser:browser:1.8.0',
         'kotlin'      : 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20',
 
         // test dependencies
