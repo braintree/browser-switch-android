@@ -1,14 +1,15 @@
 package com.braintreepayments.api.browserswitch.demo
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -19,17 +20,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.braintreepayments.api.BrowserSwitchCallbacks
 import com.braintreepayments.api.BrowserSwitchClient
 import com.braintreepayments.api.BrowserSwitchFinalResult
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchStartResult
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore
-import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
+import com.braintreepayments.api.browserswitch.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
 
 class ComposeActivity : ComponentActivity() {
 
     private val viewModel by viewModels<BrowserSwitchViewModel>()
+    private var resultIntent: Intent? = null
 
     private lateinit var browserSwitchClient: BrowserSwitchClient
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +40,20 @@ class ComposeActivity : ComponentActivity() {
         browserSwitchClient = BrowserSwitchClient()
 
         setContent {
-            Column(modifier = Modifier.safeGesturesPadding()) {
+            Column(
+                modifier = Modifier
+                    .safeGesturesPadding()
+                    .padding(10.dp)
+            ) {
                 BrowserSwitchButton {
                     startBrowserSwitch()
+                }
+                viewModel.uiState.collectAsState().value.browserSwitchStatusText?.let {
+                    Text(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        color = Color.White,
+                        text = it
+                    )
                 }
                 BrowserSwitchResult(viewModel = viewModel)
             }
@@ -48,22 +62,38 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        PendingRequestStore.get(this)?.let { startedRequest ->
-            when (val completeRequestResult =
-                browserSwitchClient.completeRequest(intent, startedRequest)) {
-                is BrowserSwitchFinalResult.Success ->
-                    viewModel.browserSwitchFinalResult = completeRequestResult
 
-                is BrowserSwitchFinalResult.NoResult -> viewModel.browserSwitchError =
-                    Exception("User did not complete browser switch")
+        resultIntent = intent
+        Log.d("asdf", resultIntent.toString())
 
-                is BrowserSwitchFinalResult.Failure -> viewModel.browserSwitchError =
-                    completeRequestResult.error
-            }
-            PendingRequestStore.clear(this)
-        }
+//        PendingRequestStore.get(this)?.let { startedRequest ->
+//            Log.e("asdf", "ComposeActivity.onResume() - calling browserSwitchClient.completeRequest()")
+//            when (val completeRequestResult =
+//                browserSwitchClient.completeRequest(intent, startedRequest)) {
+//                is A.Success -> {
+//                    viewModel.browserSwitchFinalResult = completeRequestResult
+//                    PendingRequestStore.clear(this)
+//                }
+//
+//                is BrowserSwitchFinalResult.NoResult -> {
+//                    viewModel.browserSwitchError = Exception("User did not complete browser switch")
+//                    PendingRequestStore.clear(this)
+//                }
+//
+//                is BrowserSwitchFinalResult.Failure -> {
+//                    viewModel.browserSwitchError = completeRequestResult.error
+//                    PendingRequestStore.clear(this)
+//                }
+//            }
+//        }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("asdf", "ON DESTROY of ComposeActivity")
+    }
+
+    // TODO: move this function call into BrowserSwitchViewModel
     private fun startBrowserSwitch() {
         val url = buildBrowserSwitchUrl()
         val browserSwitchOptions = BrowserSwitchOptions()
@@ -72,7 +102,40 @@ class ComposeActivity : ComponentActivity() {
             .url(url)
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
-        when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
+
+        val browserSwitchCallbacks = BrowserSwitchCallbacks(
+            onMinimized = {
+                Log.e("asdf", "BrowserSwitchCallbacks.onMinimized()")
+            },
+            onFinished = {
+                Log.e("asdf", "BrowserSwitchCallbacks.onFinished()")
+
+                PendingRequestStore.get(this)?.let { startedRequest ->
+                    resultIntent?.let {
+                        Log.e("asdf", "ComposeActivity.onResume() - calling browserSwitchClient.completeRequest()")
+                        when (val completeRequestResult =
+                            browserSwitchClient.completeRequest(it, startedRequest)) {
+                            is BrowserSwitchFinalResult.Success -> {
+                                viewModel.browserSwitchFinalResult = completeRequestResult
+                                PendingRequestStore.clear(this)
+                            }
+
+                            is BrowserSwitchFinalResult.NoResult -> {
+                                viewModel.browserSwitchError = Exception("User did not complete browser switch")
+                                PendingRequestStore.clear(this)
+                            }
+
+                            is BrowserSwitchFinalResult.Failure -> {
+                                viewModel.browserSwitchError = completeRequestResult.error
+                                PendingRequestStore.clear(this)
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
+        when (val startResult = browserSwitchClient.start(this, browserSwitchOptions, browserSwitchCallbacks)) {
             is BrowserSwitchStartResult.Started ->
                 PendingRequestStore.put(this, startResult.pendingRequest)
 
@@ -136,7 +199,7 @@ fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
 
 @Composable
 fun BrowserSwitchError(exception: Exception) {
-    Column(modifier = Modifier.padding(10.dp)) {
+    Column {
         Text(
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,

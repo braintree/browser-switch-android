@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.braintreepayments.api.browserswitch.R;
@@ -47,7 +48,11 @@ public class BrowserSwitchClient {
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
-    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+    public BrowserSwitchStartResult start(
+        @NonNull ComponentActivity activity,
+        @NonNull BrowserSwitchOptions browserSwitchOptions,
+        @Nullable BrowserSwitchCallbacks browserSwitchCallbacks
+    ) {
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -63,23 +68,30 @@ public class BrowserSwitchClient {
 
         if (activity.isFinishing()) {
             String activityFinishingMessage =
-                    "Unable to start browser switch while host Activity is finishing.";
+                "Unable to start browser switch while host Activity is finishing.";
             return new BrowserSwitchStartResult.Failure(new BrowserSwitchException(activityFinishingMessage));
         } else {
             boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
             BrowserSwitchRequest request;
             try {
                 request = new BrowserSwitchRequest(
-                        requestCode,
-                        browserSwitchUrl,
-                        metadata,
-                        returnUrlScheme,
-                        appLinkUri
+                    requestCode,
+                    browserSwitchUrl,
+                    metadata,
+                    returnUrlScheme,
+                    appLinkUri
                 );
-                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+                customTabsInternalClient.openCustomTab(
+                    activity,
+                    browserSwitchUrl,
+                    launchAsNewTask,
+                    browserSwitchCallbacks
+                );
                 return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
             } catch (ActivityNotFoundException | BrowserSwitchException e) {
-                return new BrowserSwitchStartResult.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));
+                return new BrowserSwitchStartResult.Failure(
+                    new BrowserSwitchException("Unable to start browser switch without a web browser.", e)
+                );
             }
         }
     }
@@ -92,8 +104,8 @@ public class BrowserSwitchClient {
      * @throws BrowserSwitchException exception containing the error message on why browser switch cannot be started
      */
     public void assertCanPerformBrowserSwitch(
-            ComponentActivity activity,
-            BrowserSwitchOptions browserSwitchOptions
+        ComponentActivity activity,
+        BrowserSwitchOptions browserSwitchOptions
     ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
 
@@ -107,7 +119,7 @@ public class BrowserSwitchClient {
         } else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
             errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
         } else if (returnUrlScheme != null &&
-                !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
+            !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
             errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         }
 
@@ -140,7 +152,7 @@ public class BrowserSwitchClient {
             try {
                 BrowserSwitchRequest pr = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
                 if (returnUrl != null &&
-                        (pr.matchesDeepLinkUrlScheme(returnUrl) || pr.matchesAppLinkUri(returnUrl))) {
+                    (pr.matchesDeepLinkUrlScheme(returnUrl) || pr.matchesAppLinkUri(returnUrl))) {
                     return new BrowserSwitchFinalResult.Success(returnUrl, pr);
                 }
             } catch (BrowserSwitchException e) {
