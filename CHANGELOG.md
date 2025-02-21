@@ -3,8 +3,6 @@
 ## unreleased
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 35
-* Breaking Changes
-  * Bump target Java version to Java 17
 
 ## 3.0.0-beta1
 

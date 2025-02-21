@@ -30,7 +30,6 @@ android {
         }
     }
 
-
     // robolectric
     testOptions {
         unitTests {

@@ -35,12 +35,6 @@ android {
         jvmTarget = "11"
     }
 
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of("11"))
-        }
-    }
-
     buildFeatures {
         compose true
     }
