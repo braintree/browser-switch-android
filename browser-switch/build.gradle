@@ -20,6 +20,17 @@ android {
         targetCompatibility versions.javaTargetCompatibility
     }
 
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("11"))
+        }
+    }
+
     // robolectric
     testOptions {
         unitTests {

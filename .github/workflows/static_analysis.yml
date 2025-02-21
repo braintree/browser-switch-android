@@ -10,10 +10,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Set up Java 11
+        uses: ./.github/actions/setup_java_11
+      - name: Lint
+        run: ./ci android_lint
       - name: Set up Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'microsoft'
+        uses: ./.github/actions/setup_java_17
       - name: Lint
         run: ./ci android_lint

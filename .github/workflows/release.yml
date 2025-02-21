@@ -14,8 +14,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Decode Signing Key
         run: ./ci decode_signing_key
         env:
@@ -33,8 +33,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Run Unit Tests
         run: ./ci unit_tests
 
@@ -46,8 +46,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Decode Signing Key
         run: ./ci decode_signing_key
         env:
@@ -76,8 +76,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Set GitHub User
         run: ./ci set_github_user_to_braintreeps
       - name: Update Version
@@ -98,8 +98,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Save changelog entries to a file
         run: ./ci get_latest_changelog_entries > changelog_entries.md
       - name: Create GitHub Release

@@ -1,10 +1,10 @@
-name: Setup Java
-description: Set up Java
+name: Setup Java 11
+description: Set up Java 11
 runs:
   using: composite
   steps:
-    - name: Set up Java
+    - name: Set up Java 11
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '11'
         distribution: zulu

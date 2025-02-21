@@ -14,8 +14,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Decode Signing Key
         run: ./ci decode_signing_key
         env:
@@ -33,8 +33,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Run Unit Tests
         run: ./ci unit_tests
 
@@ -45,8 +45,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Setup Java
-        uses: ./.github/actions/setup_java
+      - name: Setup Java 11
+        uses: ./.github/actions/setup_java_11
       - name: Decode Signing Key
         run: ./ci decode_signing_key
         env:
