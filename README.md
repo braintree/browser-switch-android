@@ -20,7 +20,7 @@ To preview the latest work in progress builds, add the following SNAPSHOT depend
 
 ```groovy
 dependencies {
-  implementation 'com.braintreepayments.api:browser-switch:3.0.0-beta1-SNAPSHOT'
+  implementation 'com.braintreepayments.api:browser-switch:3.0.0-SNAPSHOT'
 }
 ```
 
@@ -116,13 +116,13 @@ override fun onNewIntent(newIntent: Intent?) {
 
 ## Versions
 
-This SDK abides by our Client SDK Deprecation Policy. For more information on the potential statuses of an SDK check our [developer docs](https://developer.paypal.com/braintree/docs/guides/client-sdk/deprecation-policy/android/v4).
+This SDK abides by our Client SDK Deprecation Policy. For more information on the potential statuses of an SDK check our [developer docs](https://developer.paypal.com/braintree/docs/guides/client-sdk/deprecation-policy/android/v5).
 
-| Major version number | Status   | Released      | Deprecated | Unsupported |
-|----------------------|----------|---------------| ---------- | ----------- |
-| 3.x.x                | Beta     | TBA           | TBA | TBA |
-| 2.x.x                | Active   | February 2021 | TBA | TBA |
-| 1.x.x                | Inactive | June 2020     | April 2022 | April 2023 |
+| Major version number | Status      | Released      | Deprecated | Unsupported |
+|----------------------|-------------|---------------|------------|-------------|
+| 3.x.x                | Active      | March 2025    | TBA        | TBA         |
+| 2.x.x                | Inactive    | February 2021 | March 2026 | March 2027  |
+| 1.x.x                | Unsupported | June 2020     | April 2022 | April 2023  |
 
 ## Help
 
