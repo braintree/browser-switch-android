@@ -23,13 +23,15 @@ class ChromeCustomTabsInternalClient {
 
     void launchUrl(Context context, Uri url, LaunchType launchType) throws ActivityNotFoundException {
         CustomTabsIntent customTabsIntent = customTabsIntentBuilder.build();
-        switch (launchType) {
-            case ACTIVITY_NEW_TASK:
-                customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                break;
-            case ACTIVITY_CLEAR_TOP:
-                customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                break;
+        if (launchType != null) {
+            switch (launchType) {
+                case ACTIVITY_NEW_TASK:
+                    customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    break;
+                case ACTIVITY_CLEAR_TOP:
+                    customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    break;
+            }
         }
         customTabsIntent.launchUrl(context, url);
     }
