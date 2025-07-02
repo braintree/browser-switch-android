@@ -37,7 +37,6 @@ public class BrowserSwitchClientUnitTest {
     private ChromeCustomTabsInternalClient customTabsInternalClient;
 
     private Uri browserSwitchDestinationUrl;
-    private Uri appLinkUri;
     private Context applicationContext;
 
     private ComponentActivity componentActivity;
@@ -48,7 +47,6 @@ public class BrowserSwitchClientUnitTest {
         customTabsInternalClient = mock(ChromeCustomTabsInternalClient.class);
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
-        appLinkUri = Uri.parse("https://example.com");
 
         ActivityController<ComponentActivity> componentActivityController =
                 Robolectric.buildActivity(ComponentActivity.class).setup();
@@ -90,10 +88,11 @@ public class BrowserSwitchClientUnitTest {
                 .requestCode(123)
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
+                .launchType(LaunchType.ACTIVITY_CLEAR_TOP)
                 .metadata(metadata);
         BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
 
-        verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, false);
+        verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, LaunchType.ACTIVITY_CLEAR_TOP);
 
         assertNotNull(browserSwitchPendingRequest);
         assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Started);
@@ -111,7 +110,7 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void start_whenNoBrowserAvailable_returnsFailure() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        doThrow(new ActivityNotFoundException()).when(customTabsInternalClient).launchUrl(any(Context.class), any(Uri.class), eq(false));
+        doThrow(new ActivityNotFoundException()).when(customTabsInternalClient).launchUrl(any(Context.class), any(Uri.class), eq(null));
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 customTabsInternalClient);
