@@ -66,7 +66,7 @@ public class BrowserSwitchClient {
                     "Unable to start browser switch while host Activity is finishing.";
             return new BrowserSwitchStartResult.Failure(new BrowserSwitchException(activityFinishingMessage));
         } else {
-            boolean launchAsNewTask = browserSwitchOptions.isLaunchAsNewTask();
+            LaunchType launchType = browserSwitchOptions.getLaunchType();
             BrowserSwitchRequest request;
             try {
                 request = new BrowserSwitchRequest(
@@ -76,7 +76,7 @@ public class BrowserSwitchClient {
                         returnUrlScheme,
                         appLinkUri
                 );
-                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchAsNewTask);
+                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchType);
                 return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
             } catch (ActivityNotFoundException | BrowserSwitchException e) {
                 return new BrowserSwitchStartResult.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));

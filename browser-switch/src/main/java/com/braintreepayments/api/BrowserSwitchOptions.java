@@ -19,6 +19,7 @@ public class BrowserSwitchOptions {
     private Uri appLinkUri;
 
     private boolean launchAsNewTask;
+    private LaunchType launchType;
 
     /**
      * Set browser switch metadata.
@@ -117,12 +118,39 @@ public class BrowserSwitchOptions {
         return appLinkUri;
     }
 
+    /**
+     * @deprecated Use {@link #getLaunchType()} instead.
+     */
+    @Deprecated
     public boolean isLaunchAsNewTask() {
         return launchAsNewTask;
     }
 
+    /**
+     * @deprecated Use {@link #launchType(LaunchType)} instead.
+     */
+    @Deprecated
     public BrowserSwitchOptions launchAsNewTask(boolean launchAsNewTask) {
         this.launchAsNewTask = launchAsNewTask;
+        this.launchType = LaunchType.ACTIVITY_NEW_TASK;
+        return this;
+    }
+
+    /**
+     * @return the activity launch type flag.
+     */
+    public LaunchType getLaunchType() {
+        return launchType;
+    }
+
+    /**
+     * Sets the activity launch type flag.
+     *
+     * @param launchType the type of launch for the browser activity
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
+     */
+    public BrowserSwitchOptions launchType(LaunchType launchType) {
+        this.launchType = launchType;
         return this;
     }
 }

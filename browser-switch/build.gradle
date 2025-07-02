@@ -47,6 +47,7 @@ dependencies {
     testImplementation deps.mockitoCore
     testImplementation deps.jsonassert
     testImplementation deps.robolectric
+    testImplementation deps.mockk
 }
 
 // region signing and publishing
@@ -60,4 +61,3 @@ project.ext.pom_desc = "Android Browser Switch makes it easy to open a url in a 
 apply from: rootProject.file("gradle/gradle-publish.gradle")
 
 // endregion
-

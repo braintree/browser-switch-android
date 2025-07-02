@@ -1,5 +1,11 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add `LaunchType` to `BrowserSwitchOptions` to specify how the browser switch should be launched
+  * Add ability to set `Intent.FLAG_ACTIVITY_CLEAR_TOP` on the `CustomTabsIntent`
+* Deprecate `launchAsNewTask` in `BrowserSwitchOptions` in favor of `LaunchType`
+
 ## 3.0.0
 
 * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 35
