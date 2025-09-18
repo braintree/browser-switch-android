@@ -1,5 +1,9 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Widen BraintreeClient.start() activity reference from `ComponentActivity` to plain `Activity`
+
 ## 3.1.0
 
 * Add `LaunchType` to `BrowserSwitchOptions` to specify how the browser switch should be launched
