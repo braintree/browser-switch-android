@@ -1,11 +1,11 @@
 package com.braintreepayments.api;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -47,7 +47,7 @@ public class BrowserSwitchClient {
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
-    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+    public BrowserSwitchStartResult start(@NonNull Activity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -92,7 +92,7 @@ public class BrowserSwitchClient {
      * @throws BrowserSwitchException exception containing the error message on why browser switch cannot be started
      */
     public void assertCanPerformBrowserSwitch(
-            ComponentActivity activity,
+            Activity activity,
             BrowserSwitchOptions browserSwitchOptions
     ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();
@@ -127,7 +127,7 @@ public class BrowserSwitchClient {
      * @param intent         the intent to return to your application containing a deep link result from the
      *                       browser flow
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started} via
-     *                       {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
+     *                       {@link BrowserSwitchClient#start(Activity, BrowserSwitchOptions)}
      * @return a {@link BrowserSwitchFinalResult.Success} if the browser switch was successfully
      * completed, or {@link BrowserSwitchFinalResult.NoResult} if no result can be found for the given
      * pending request String. A {@link BrowserSwitchFinalResult.NoResult} will be

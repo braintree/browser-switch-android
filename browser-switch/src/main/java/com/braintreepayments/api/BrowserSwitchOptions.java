@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 /**
  * Object that contains a set of browser switch parameters for use with
- * {@link BrowserSwitchClient#start(androidx.activity.ComponentActivity, BrowserSwitchOptions)}.
+ * {@link BrowserSwitchClient#start(android.app.Activity, BrowserSwitchOptions)}.
  */
 public class BrowserSwitchOptions {
 
