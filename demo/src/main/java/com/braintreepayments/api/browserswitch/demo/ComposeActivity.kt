@@ -34,7 +34,7 @@ class ComposeActivity : ComponentActivity() {
     private lateinit var browserSwitchClient: BrowserSwitchClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        browserSwitchClient = BrowserSwitchClient()
+        browserSwitchClient = BrowserSwitchClient(this)
 
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {

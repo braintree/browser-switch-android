@@ -25,8 +25,8 @@ public class BrowserSwitchClient {
     /**
      * Construct a client that manages the logic for browser switching.
      */
-    public BrowserSwitchClient() {
-        this(new BrowserSwitchInspector(), new ChromeCustomTabsInternalClient());
+    public BrowserSwitchClient(@NonNull ComponentActivity activity) {
+        this(new BrowserSwitchInspector(), new ChromeCustomTabsInternalClient(activity));
     }
 
     @VisibleForTesting

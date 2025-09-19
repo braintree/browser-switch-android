@@ -13,11 +13,10 @@ buildscript {
         "javaTargetCompatibility": sdkTargetJavaVersion,
     ]
 
-
     ext.deps = [
         'annotation'  : 'androidx.annotation:annotation:1.7.0',
         'appcompat'   : 'androidx.appcompat:appcompat:1.6.0',
-        'browser'     : 'androidx.browser:browser:1.7.0',
+        'browser'     : 'androidx.browser:browser:1.9.0',
         'kotlin'      : 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20',
 
         // test dependencies
@@ -29,7 +28,7 @@ buildscript {
     ]
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.android.tools.build:gradle:8.9.1'
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.9.10'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
     }
@@ -44,9 +43,9 @@ plugins {
 version = '3.0.1-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
-    compileSdkVersion = 35
+    compileSdkVersion = 36
     minSdkVersion = 23
-    targetSdkVersion = 35
+    targetSdkVersion = 36
     versionCode = 72
     versionName = version
 }

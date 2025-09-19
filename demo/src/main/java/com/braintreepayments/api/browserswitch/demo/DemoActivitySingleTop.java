@@ -34,7 +34,7 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
+        browserSwitchClient = new BrowserSwitchClient(this);
 
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
