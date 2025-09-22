@@ -58,15 +58,7 @@ class ChromeCustomTabsInternalClient {
 
     @OptIn(markerClass = ExperimentalOpenInBrowser.class)
     void launchUrl(@NonNull ComponentActivity activity, Uri url, LaunchType launchType) throws ActivityNotFoundException {
-//        ActivityResultLauncher<Intent> launcher = AuthTabIntent.registerActivityResultLauncher(activity, this::handleAuthResult);
         AuthTabIntent customTabsIntent = authTabIntentBuilder
-                .setEphemeralBrowsingEnabled(true)
-//                .setOpenInBrowserButtonState(OPEN_IN_BROWSER_STATE_OFF) // this was requested by a merchant, should
-//                .setCloseButtonEnabled(false)
-//                .setBackgroundInteractionEnabled(false)
-//                .setCloseButtonPosition(CustomTabsIntent.CLOSE_BUTTON_POSITION_END)
-//                .setToolbarCornerRadiusDp(10)
-                // probably be a setting exposed to customize by the merchant.
                 .build();
         if (launchType != null) {
             switch (launchType) {
