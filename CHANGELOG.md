@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 3.2.0
 
 * Widen BraintreeClient.start() activity reference from `ComponentActivity` to plain `Activity`
 
