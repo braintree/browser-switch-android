@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -30,11 +29,20 @@ import org.json.JSONObject
 class ComposeActivity : ComponentActivity() {
 
     private val viewModel by viewModels<BrowserSwitchViewModel>()
-
     private lateinit var browserSwitchClient: BrowserSwitchClient
+    private var useAuthTab = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         browserSwitchClient = BrowserSwitchClient()
+
+        // Initialize Auth Tab if supported
+        if (browserSwitchClient.isAuthTabSupported(this)) {
+            useAuthTab = true
+            browserSwitchClient.initializeAuthTabLauncher(this) { result ->
+                handleBrowserSwitchResult(result)
+            }
+        }
 
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {
@@ -48,19 +56,26 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        PendingRequestStore.get(this)?.let { startedRequest ->
-            when (val completeRequestResult =
-                browserSwitchClient.completeRequest(intent, startedRequest)) {
-                is BrowserSwitchFinalResult.Success ->
-                    viewModel.browserSwitchFinalResult = completeRequestResult
-
-                is BrowserSwitchFinalResult.NoResult -> viewModel.browserSwitchError =
-                    Exception("User did not complete browser switch")
-
-                is BrowserSwitchFinalResult.Failure -> viewModel.browserSwitchError =
-                    completeRequestResult.error
+        // Only handle Custom Tabs fallback case
+        if (!useAuthTab) {
+            PendingRequestStore.get(this)?.let { startedRequest ->
+                val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
+                handleBrowserSwitchResult(completeRequestResult)
+                PendingRequestStore.clear(this)
             }
-            PendingRequestStore.clear(this)
+        }
+    }
+
+    private fun handleBrowserSwitchResult(result: BrowserSwitchFinalResult) {
+        when (result) {
+            is BrowserSwitchFinalResult.Success ->
+                viewModel.browserSwitchFinalResult = result
+
+            is BrowserSwitchFinalResult.NoResult ->
+                viewModel.browserSwitchError = Exception("User did not complete browser switch")
+
+            is BrowserSwitchFinalResult.Failure ->
+                viewModel.browserSwitchError = result.error
         }
     }
 
@@ -72,11 +87,16 @@ class ComposeActivity : ComponentActivity() {
             .url(url)
             .launchAsNewTask(false)
             .returnUrlScheme(RETURN_URL_SCHEME)
-        when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
-            is BrowserSwitchStartResult.Started ->
-                PendingRequestStore.put(this, startResult.pendingRequest)
 
-            is BrowserSwitchStartResult.Failure -> viewModel.browserSwitchError = startResult.error
+        when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
+            is BrowserSwitchStartResult.Started -> {
+                // Only store for Custom Tabs fallback
+                if (!useAuthTab) {
+                    PendingRequestStore.put(this, startResult.pendingRequest)
+                }
+            }
+            is BrowserSwitchStartResult.Failure ->
+                viewModel.browserSwitchError = startResult.error
         }
     }
 
