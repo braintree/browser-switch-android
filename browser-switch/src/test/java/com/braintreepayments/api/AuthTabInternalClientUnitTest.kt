@@ -47,7 +47,7 @@ class AuthTabInternalClientUnitTest {
     fun `isAuthTabSupported returns false when no browser package available`() {
         every { CustomTabsClient.getPackageName(context, null) } returns null
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
         assertFalse(client.isAuthTabSupported(context))
     }
@@ -58,7 +58,7 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
         assertTrue(client.isAuthTabSupported(context))
     }
@@ -69,7 +69,7 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns false
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
         assertFalse(client.isAuthTabSupported(context))
     }
@@ -82,9 +82,9 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
-        client.launchUrl(context, url, null, appLinkUri, launcher, null)
+        client.launchUrl( url, null, appLinkUri, launcher, null)
 
         verify {
             authTabIntent.launch(launcher, url, "example.com", "/auth")
@@ -102,9 +102,9 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
-        client.launchUrl(context, url, returnUrlScheme, null, launcher, null)
+        client.launchUrl(url, returnUrlScheme, null, launcher, null)
 
         verify {
             authTabIntent.launch(launcher, url, returnUrlScheme)
@@ -122,10 +122,10 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
         val intent = authTabIntent.intent
 
-        client.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
+        client.launchUrl(url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
 
@@ -133,50 +133,6 @@ class AuthTabInternalClientUnitTest {
             authTabIntent.launch(launcher, url, returnUrlScheme)
         }
     }
-
-
-    @Test
-    fun `launchUrl falls back to Custom Tabs when launcher is null`() {
-        authTabIntent = mockk(relaxed = true)
-        every { authTabBuilder.build() } returns authTabIntent
-
-        val returnUrlScheme = "example"
-
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-
-        client.launchUrl(context, url, returnUrlScheme, null, null, null)
-
-        verify {
-            customTabsIntent.launchUrl(context, url)
-        }
-        verify(exactly = 0) {
-            authTabIntent.launch(any(), any(), any<String>())
-        }
-    }
-
-    @Test
-    fun `launchUrl falls back to Custom Tabs when Auth Tab not supported`() {
-        authTabIntent = mockk(relaxed = true)
-        every { authTabBuilder.build() } returns authTabIntent
-
-        val returnUrlScheme = "example"
-        val packageName = "com.android.chrome"
-
-        every { CustomTabsClient.getPackageName(context, null) } returns packageName
-        every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns false
-
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-
-        client.launchUrl(context, url, returnUrlScheme, null, launcher, null)
-
-        verify {
-            customTabsIntent.launchUrl(context, url)
-        }
-        verify(exactly = 0) {
-            authTabIntent.launch(any(), any(), any<String>())
-        }
-    }
-
 
     @Test
     fun `launchUrl handles app link with no path`() {
@@ -186,42 +142,12 @@ class AuthTabInternalClientUnitTest {
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
         every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
 
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val client = AuthTabInternalClient(authTabBuilder)
 
-        client.launchUrl(context, url, null, appLinkUri, launcher, null)
+        client.launchUrl(url, null, appLinkUri, launcher, null)
 
         verify {
             authTabIntent.launch(launcher, url, "example.com", "/")
         }
-    }
-
-    @Test
-    fun `launchUrl with null LaunchType does not add flags to Custom Tabs`() {
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-        val intent = customTabsIntent.intent
-
-        client.launchUrl(context, url, null, null, null, null)
-
-        assertEquals(0, intent.flags)
-    }
-
-    @Test
-    fun `launchUrl with ACTIVITY_NEW_TASK adds new task flag to Custom Tabs`() {
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-        val intent = customTabsIntent.intent
-
-        client.launchUrl(context, url, null, null, null, LaunchType.ACTIVITY_NEW_TASK)
-
-        assertTrue(intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0)
-    }
-
-    @Test
-    fun `launchUrl with ACTIVITY_CLEAR_TOP adds clear top flag to Custom Tabs`() {
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-        val intent = customTabsIntent.intent
-
-        client.launchUrl(context, url, null, null, null, LaunchType.ACTIVITY_CLEAR_TOP)
-
-        assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
     }
 }
