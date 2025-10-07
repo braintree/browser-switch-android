@@ -46,7 +46,7 @@ public class BrowserSwitchClient {
      */
     public void initializeAuthTabLauncher(@NonNull ComponentActivity activity,
                                           @NonNull AuthTabCallback callback) {
-        //this.authTabCallback = callback;
+        this.authTabCallback = callback;
         this.authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
                 activity,
                 result -> {
@@ -76,8 +76,8 @@ public class BrowserSwitchClient {
                             finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
                     }
 
-                    if (callback != null) {
-                        callback.onResult(finalResult);
+                    if (this.authTabCallback != null) {
+                        this.authTabCallback.onResult(finalResult);
                     }
                     pendingAuthTabRequest = null;
                 }
@@ -170,14 +170,12 @@ public class BrowserSwitchClient {
 
         if (!isValidRequestCode(requestCode)) {
             errorMessage = activity.getString(R.string.error_request_code_invalid);
+        } else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
+            errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
+        } else if (returnUrlScheme != null &&
+                !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
+            errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
         }
-//        else if (returnUrlScheme == null && browserSwitchOptions.getAppLinkUri() == null) {
-//            errorMessage = activity.getString(R.string.error_app_link_uri_or_return_url_required);
-//        }
-//        } else if (returnUrlScheme != null &&
-//                !browserSwitchInspector.isDeviceConfiguredForDeepLinking(appContext, returnUrlScheme)) {
-//            errorMessage = activity.getString(R.string.error_device_not_configured_for_deep_link);
-//        }
 
         if (errorMessage != null) {
             throw new BrowserSwitchException(errorMessage);
@@ -196,23 +194,23 @@ public class BrowserSwitchClient {
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started}
      * @return a {@link BrowserSwitchFinalResult}
      */
-//    // TO-DO
-//    public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
-//        if (intent != null && intent.getData() != null) {
-//            Uri returnUrl = intent.getData();
-//
-//            try {
-//                BrowserSwitchRequest pr = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
-//                if (returnUrl != null &&
-//                        (pr.matchesDeepLinkUrlScheme(returnUrl) || pr.matchesAppLinkUri(returnUrl))) {
-//                    return new BrowserSwitchFinalResult.Success(returnUrl, pr);
-//                }
-//            } catch (BrowserSwitchException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        return BrowserSwitchFinalResult.NoResult.INSTANCE;
-//    }
+    // TO-DO -- ask if we can leave it
+    public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
+        if (intent != null && intent.getData() != null) {
+            Uri returnUrl = intent.getData();
+
+            try {
+                BrowserSwitchRequest pr = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
+                if (returnUrl != null &&
+                        (pr.matchesDeepLinkUrlScheme(returnUrl) || pr.matchesAppLinkUri(returnUrl))) {
+                    return new BrowserSwitchFinalResult.Success(returnUrl, pr);
+                }
+            } catch (BrowserSwitchException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return BrowserSwitchFinalResult.NoResult.INSTANCE;
+    }
 
     /**
      * Check if Auth Tab is supported on the current device

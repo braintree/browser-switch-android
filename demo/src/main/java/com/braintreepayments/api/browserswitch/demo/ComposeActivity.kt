@@ -57,13 +57,13 @@ class ComposeActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
          //Only handle Custom Tabs fallback case
-//        if (!useAuthTab) {
-//            PendingRequestStore.get(this)?.let { startedRequest ->
-//                val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
-//                handleBrowserSwitchResult(completeRequestResult)
-//                PendingRequestStore.clear(this)
-//            }
-//        }
+        if (!useAuthTab) {
+            PendingRequestStore.get(this)?.let { startedRequest ->
+                val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
+                handleBrowserSwitchResult(completeRequestResult)
+                PendingRequestStore.clear(this)
+            }
+        }
     }
 
     private fun handleBrowserSwitchResult(result: BrowserSwitchFinalResult) {
@@ -91,9 +91,9 @@ class ComposeActivity : ComponentActivity() {
         when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchStartResult.Started -> {
                 // Only store for Custom Tabs fallback
-//                if (!useAuthTab) {
-//                    PendingRequestStore.put(this, startResult.pendingRequest)
-//                }
+                if (!useAuthTab) {
+                    PendingRequestStore.put(this, startResult.pendingRequest)
+                }
             }
             is BrowserSwitchStartResult.Failure ->
                 viewModel.browserSwitchError = startResult.error

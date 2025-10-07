@@ -67,15 +67,15 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         super.onNewIntent(intent);
 
         // Only handle Custom Tabs fallback case
-//        if (!useAuthTab) {
-//            String pendingRequest = PendingRequestStore.get(this);
-//            if (pendingRequest != null) {
-//                BrowserSwitchFinalResult result =
-//                        browserSwitchClient.completeRequest(intent, pendingRequest);
-//                handleBrowserSwitchResult(result);
-//                PendingRequestStore.clear(this);
-//            }
-//        }
+        if (!useAuthTab) {
+            String pendingRequest = PendingRequestStore.get(this);
+            if (pendingRequest != null) {
+                BrowserSwitchFinalResult result =
+                        browserSwitchClient.completeRequest(intent, pendingRequest);
+                handleBrowserSwitchResult(result);
+                PendingRequestStore.clear(this);
+            }
+        }
     }
 
     @Override
@@ -83,14 +83,14 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         super.onResume();
 
         // Only check for incomplete browser switch in Custom Tabs mode
-//        if (!useAuthTab) {
-//            String pendingRequest = PendingRequestStore.get(this);
-//            if (pendingRequest != null) {
-//                Objects.requireNonNull(getDemoFragment())
-//                        .onBrowserSwitchError(new Exception("User did not complete browser switch"));
-//                PendingRequestStore.clear(this);
-//            }
-//        }
+        if (!useAuthTab) {
+            String pendingRequest = PendingRequestStore.get(this);
+            if (pendingRequest != null) {
+                Objects.requireNonNull(getDemoFragment())
+                        .onBrowserSwitchError(new Exception("User did not complete browser switch"));
+                PendingRequestStore.clear(this);
+            }
+        }
     }
 
     private void handleBrowserSwitchResult(BrowserSwitchFinalResult result) {
@@ -110,8 +110,10 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         BrowserSwitchStartResult result = browserSwitchClient.start(this, options);
         if (result instanceof BrowserSwitchStartResult.Started) {
             // Only store pending request for Custom Tabs fallback
+            if (!useAuthTab) {
                 PendingRequestStore.put(this,
                         ((BrowserSwitchStartResult.Started) result).getPendingRequest());
+            }
         } else if (result instanceof BrowserSwitchStartResult.Failure) {
             Objects.requireNonNull(getDemoFragment())
                     .onBrowserSwitchError(((BrowserSwitchStartResult.Failure) result).getError());
