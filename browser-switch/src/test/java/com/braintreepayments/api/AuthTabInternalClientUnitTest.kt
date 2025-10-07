@@ -134,26 +134,6 @@ class AuthTabInternalClientUnitTest {
         }
     }
 
-
-    @Test
-    fun `launchUrl falls back to Custom Tabs when launcher is null`() {
-        authTabIntent = mockk(relaxed = true)
-        every { authTabBuilder.build() } returns authTabIntent
-
-        val returnUrlScheme = "example"
-
-        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
-
-        client.launchUrl(context, url, returnUrlScheme, null, null, null)
-
-        verify {
-            customTabsIntent.launchUrl(context, url)
-        }
-        verify(exactly = 0) {
-            authTabIntent.launch(any(), any(), any<String>())
-        }
-    }
-
     @Test
     fun `launchUrl falls back to Custom Tabs when Auth Tab not supported`() {
         authTabIntent = mockk(relaxed = true)
@@ -199,8 +179,12 @@ class AuthTabInternalClientUnitTest {
     fun `launchUrl with null LaunchType does not add flags to Custom Tabs`() {
         val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
         val intent = customTabsIntent.intent
+        val returnUrlScheme = "example"
 
-        client.launchUrl(context, url, null, null, null, null)
+        // Force AuthTab not to be supported to fall back to Custom Tabs
+        every { CustomTabsClient.getPackageName(context, null) } returns null
+
+        client.launchUrl(context, url, returnUrlScheme, null, launcher, null)
 
         assertEquals(0, intent.flags)
     }
@@ -209,8 +193,12 @@ class AuthTabInternalClientUnitTest {
     fun `launchUrl with ACTIVITY_NEW_TASK adds new task flag to Custom Tabs`() {
         val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
         val intent = customTabsIntent.intent
+        val returnUrlScheme = "example"
 
-        client.launchUrl(context, url, null, null, null, LaunchType.ACTIVITY_NEW_TASK)
+        // Force AuthTab not to be supported to fall back to Custom Tabs
+        every { CustomTabsClient.getPackageName(context, null) } returns null
+
+        client.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_NEW_TASK)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0)
     }
@@ -219,8 +207,12 @@ class AuthTabInternalClientUnitTest {
     fun `launchUrl with ACTIVITY_CLEAR_TOP adds clear top flag to Custom Tabs`() {
         val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
         val intent = customTabsIntent.intent
+        val returnUrlScheme = "example"
 
-        client.launchUrl(context, url, null, null, null, LaunchType.ACTIVITY_CLEAR_TOP)
+        // Force AuthTab not to be supported to fall back to Custom Tabs
+        every { CustomTabsClient.getPackageName(context, null) } returns null
+
+        client.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
     }

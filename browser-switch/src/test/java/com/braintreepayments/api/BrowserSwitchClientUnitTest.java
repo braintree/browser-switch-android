@@ -538,8 +538,11 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", null);
 
+        Intent mockIntent = mock(Intent.class);
+        when(mockIntent.getData()).thenReturn(null);
+
         BrowserSwitchFinalResult result =
-                sut.completeRequest(null, request.toBase64EncodedJSON());
+                sut.completeRequest(mockIntent, request.toBase64EncodedJSON());
         assertTrue(result instanceof BrowserSwitchFinalResult.NoResult);
     }
 }

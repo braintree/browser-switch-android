@@ -24,7 +24,6 @@ public class BrowserSwitchClient {
     private final AuthTabInternalClient authTabInternalClient;
     private ActivityResultLauncher<Intent> authTabLauncher;
     private BrowserSwitchRequest pendingAuthTabRequest;
-    private AuthTabCallback authTabCallback;
 
     /**
      * Construct a client that manages the logic for browser switching.
@@ -46,7 +45,6 @@ public class BrowserSwitchClient {
      */
     public void initializeAuthTabLauncher(@NonNull ComponentActivity activity,
                                           @NonNull AuthTabCallback callback) {
-        this.authTabCallback = callback;
         this.authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
                 activity,
                 result -> {
@@ -75,10 +73,7 @@ public class BrowserSwitchClient {
                         default:
                             finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
                     }
-
-                    if (this.authTabCallback != null) {
-                        this.authTabCallback.onResult(finalResult);
-                    }
+                    callback.onResult(finalResult);
                     pendingAuthTabRequest = null;
                 }
         );
@@ -126,22 +121,18 @@ public class BrowserSwitchClient {
                     appLinkUri
             );
 
-            // Check if we should use Auth Tab
-            boolean useAuthTab = authTabLauncher != null &&
-                    authTabInternalClient.isAuthTabSupported(activity);
+            boolean useAuthTab = authTabInternalClient.isAuthTabSupported(activity);
 
             if (useAuthTab) {
-                // Store the pending request for Auth Tab callback
                 this.pendingAuthTabRequest = request;
             }
 
-            // Launch using Auth Tab or Custom Tabs
             authTabInternalClient.launchUrl(
                     activity,
                     browserSwitchUrl,
                     returnUrlScheme,
                     appLinkUri,
-                    authTabLauncher,  // Will be null if not initialized or not supported
+                    authTabLauncher,
                     launchType
             );
 
@@ -205,7 +196,7 @@ public class BrowserSwitchClient {
      * @return a {@link BrowserSwitchFinalResult}
      */
     public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
-        if (intent != null && intent.getData() != null) {
+        if (intent.getData() != null) {
             Uri returnUrl = intent.getData();
 
             try {
@@ -221,9 +212,6 @@ public class BrowserSwitchClient {
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
     }
 
-    /**
-     * Check if Auth Tab is supported on the current device
-     */
     public boolean isAuthTabSupported(Context context) {
         return authTabInternalClient.isAuthTabSupported(context);
     }

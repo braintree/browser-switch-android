@@ -18,9 +18,6 @@ class AuthTabInternalClient @VisibleForTesting constructor(
 
     constructor() : this(AuthTabIntent.Builder(), CustomTabsIntent.Builder())
 
-    /**
-     * Checks if Auth Tab is supported by the current browser
-     */
     fun isAuthTabSupported(context: Context): Boolean {
         val packageName = CustomTabsClient.getPackageName(context, null)
         return when (packageName) {
@@ -38,12 +35,10 @@ class AuthTabInternalClient @VisibleForTesting constructor(
         url: Uri,
         returnUrlScheme: String?,
         appLinkUri: Uri?,
-        launcher: ActivityResultLauncher<Intent>?,
+        launcher: ActivityResultLauncher<Intent>,
         launchType: LaunchType?
     ) {
-        val useAuthTab = launcher != null &&
-                isAuthTabSupported(context) &&
-                (returnUrlScheme != null || appLinkUri?.host != null)
+        val useAuthTab = isAuthTabSupported(context)
 
         if (useAuthTab) {
             val authTabIntent = authTabIntentBuilder.build()
@@ -51,19 +46,22 @@ class AuthTabInternalClient @VisibleForTesting constructor(
             if (launchType == LaunchType.ACTIVITY_CLEAR_TOP) {
                 authTabIntent.intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
-
             when {
-                appLinkUri?.host != null -> {
-                    val host = appLinkUri.host!!
-                    val path = appLinkUri.path ?: "/"
-                    authTabIntent.launch(launcher!!, url, host, path)
+                appLinkUri != null -> {
+                    appLinkUri.host?.let { host ->
+                        val path = appLinkUri.path ?: "/"
+                        authTabIntent.launch(launcher, url, host, path)
+                    }
                 }
                 returnUrlScheme != null -> {
-                    authTabIntent.launch(launcher!!, url, returnUrlScheme)
+                    authTabIntent.launch(launcher, url, returnUrlScheme)
+                }
+                else -> {
+                    throw IllegalArgumentException("Either returnUrlScheme or appLinkUri must be provided")
                 }
             }
         } else {
-            //fallback to Custom Tabs
+            //fall back to Custom Tabs
             launchCustomTabs(context, url, launchType)
         }
     }

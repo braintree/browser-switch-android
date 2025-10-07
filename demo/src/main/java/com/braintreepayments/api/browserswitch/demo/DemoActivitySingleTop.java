@@ -37,12 +37,10 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         browserSwitchClient = new BrowserSwitchClient();
+        browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
 
-        // Initialize Auth Tab if supported
         if (browserSwitchClient.isAuthTabSupported(this)) {
             useAuthTab = true;
-            browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
-
             // Show a toast to indicate Auth Tab is being used
             Toast.makeText(this, "Using Auth Tab", Toast.LENGTH_SHORT).show();
         } else {
@@ -82,6 +80,7 @@ public class DemoActivitySingleTop extends AppCompatActivity {
                         browserSwitchClient.completeRequest(intent, pendingRequest);
                 handleBrowserSwitchResult(result);
                 PendingRequestStore.clear(this);
+                intent.setData(null);
             }
         }
     }
@@ -97,6 +96,7 @@ public class DemoActivitySingleTop extends AppCompatActivity {
                 Objects.requireNonNull(getDemoFragment())
                         .onBrowserSwitchError(new Exception("User did not complete browser switch"));
                 PendingRequestStore.clear(this);
+                getIntent().setData(null);
             }
         }
     }
