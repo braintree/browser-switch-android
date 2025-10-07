@@ -35,13 +35,13 @@ class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         browserSwitchClient = BrowserSwitchClient()
+
+        // Initialize Auth Tab if supported
         if (browserSwitchClient.isAuthTabSupported(this)) {
             useAuthTab = true
-
-        }
-        //Initialize Auth Tab launcher
-        browserSwitchClient.initializeAuthTabLauncher(this) { result ->
-            handleBrowserSwitchResult(result)
+            browserSwitchClient.initializeAuthTabLauncher(this) { result ->
+                handleBrowserSwitchResult(result)
+            }
         }
 
         setContent {
@@ -56,7 +56,7 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-         //Only handle Custom Tabs fallback case
+        // Only handle Custom Tabs fallback case
         if (!useAuthTab) {
             PendingRequestStore.get(this)?.let { startedRequest ->
                 val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)

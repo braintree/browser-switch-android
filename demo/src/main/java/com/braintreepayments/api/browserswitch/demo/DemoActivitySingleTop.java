@@ -3,6 +3,7 @@ package com.braintreepayments.api.browserswitch.demo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -36,10 +37,17 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         browserSwitchClient = new BrowserSwitchClient();
-        browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
 
+        // Initialize Auth Tab if supported
         if (browserSwitchClient.isAuthTabSupported(this)) {
             useAuthTab = true;
+            browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
+
+            // Show a toast to indicate Auth Tab is being used
+            Toast.makeText(this, "Using Auth Tab", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Using Custom Tabs (Auth Tab not supported)",
+                    Toast.LENGTH_SHORT).show();
         }
 
         FragmentManager fm = getSupportFragmentManager();

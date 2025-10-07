@@ -103,6 +103,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
 
         verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
                 eq(browserSwitchDestinationUrl),
                 eq("return-url-scheme"),
                 isNull(),
@@ -140,6 +141,7 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
 
         verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
                 eq(browserSwitchDestinationUrl),
                 isNull(),
                 eq(appLinkUri),
@@ -155,6 +157,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
         when(authTabInternalClient.isAuthTabSupported(any(Context.class))).thenReturn(false);
         doThrow(new ActivityNotFoundException()).when(authTabInternalClient).launchUrl(
+                eq(componentActivity),
                 eq(browserSwitchDestinationUrl),
                 eq("return-url-scheme"),
                 isNull(),
@@ -302,6 +305,7 @@ public class BrowserSwitchClientUnitTest {
             assertTrue(result instanceof BrowserSwitchStartResult.Started);
 
             verify(authTabInternalClient).launchUrl(
+                    eq(componentActivity),
                     eq(browserSwitchDestinationUrl),
                     eq("return-url-scheme"),
                     isNull(),
@@ -422,6 +426,7 @@ public class BrowserSwitchClientUnitTest {
         assertTrue(result instanceof BrowserSwitchStartResult.Started);
 
         verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
                 eq(browserSwitchDestinationUrl),
                 eq("return-url-scheme"),
                 isNull(),

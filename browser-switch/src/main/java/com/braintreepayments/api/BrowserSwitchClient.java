@@ -125,13 +125,23 @@ public class BrowserSwitchClient {
                     returnUrlScheme,
                     appLinkUri
             );
-            this.pendingAuthTabRequest = request;
 
+            // Check if we should use Auth Tab
+            boolean useAuthTab = authTabLauncher != null &&
+                    authTabInternalClient.isAuthTabSupported(activity);
+
+            if (useAuthTab) {
+                // Store the pending request for Auth Tab callback
+                this.pendingAuthTabRequest = request;
+            }
+
+            // Launch using Auth Tab or Custom Tabs
             authTabInternalClient.launchUrl(
+                    activity,
                     browserSwitchUrl,
                     returnUrlScheme,
                     appLinkUri,
-                    authTabLauncher,
+                    authTabLauncher,  // Will be null if not initialized or not supported
                     launchType
             );
 
@@ -194,7 +204,6 @@ public class BrowserSwitchClient {
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started}
      * @return a {@link BrowserSwitchFinalResult}
      */
-    // TO-DO -- ask if we can leave it
     public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
         if (intent != null && intent.getData() != null) {
             Uri returnUrl = intent.getData();
