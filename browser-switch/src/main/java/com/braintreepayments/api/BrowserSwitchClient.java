@@ -215,11 +215,4 @@ public class BrowserSwitchClient {
     public boolean isAuthTabSupported(Context context) {
         return authTabInternalClient.isAuthTabSupported(context);
     }
-
-    /**
-     * Callback interface for Auth Tab results
-     */
-    public interface AuthTabCallback {
-        void onResult(BrowserSwitchFinalResult result);
-    }
 }

@@ -252,7 +252,7 @@ public class BrowserSwitchClientUnitTest {
             )).thenReturn(mockLauncher);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            BrowserSwitchClient.AuthTabCallback callback = mock(BrowserSwitchClient.AuthTabCallback.class);
+            AuthTabCallback callback = mock(AuthTabCallback.class);
 
             sut.initializeAuthTabLauncher(componentActivity, callback);
 
@@ -290,7 +290,7 @@ public class BrowserSwitchClientUnitTest {
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
 
-            BrowserSwitchClient.AuthTabCallback callback = mock(BrowserSwitchClient.AuthTabCallback.class);
+            AuthTabCallback callback = mock(AuthTabCallback.class);
             sut.initializeAuthTabLauncher(componentActivity, callback);
 
             JSONObject metadata = new JSONObject();
@@ -341,7 +341,7 @@ public class BrowserSwitchClientUnitTest {
             when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            BrowserSwitchClient.AuthTabCallback mockCallback = mock(BrowserSwitchClient.AuthTabCallback.class);
+            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
 
             sut.initializeAuthTabLauncher(componentActivity, mockCallback);
 
@@ -385,7 +385,7 @@ public class BrowserSwitchClientUnitTest {
             )).thenReturn(mockLauncher);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            BrowserSwitchClient.AuthTabCallback mockCallback = mock(BrowserSwitchClient.AuthTabCallback.class);
+            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
 
             sut.initializeAuthTabLauncher(componentActivity, mockCallback);
 
