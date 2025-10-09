@@ -5,16 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
-import androidx.annotation.VisibleForTesting
 import androidx.browser.auth.AuthTabIntent
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 
-internal class AuthTabInternalClient @VisibleForTesting constructor(
+internal class AuthTabInternalClient (
     private val authTabIntentBuilder: AuthTabIntent.Builder = AuthTabIntent.Builder(),
     private val customTabsIntentBuilder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
 ) {
-
 
     fun isAuthTabSupported(context: Context): Boolean {
         val packageName = CustomTabsClient.getPackageName(context, null)

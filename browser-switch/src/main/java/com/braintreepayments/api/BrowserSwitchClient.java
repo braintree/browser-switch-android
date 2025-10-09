@@ -191,6 +191,9 @@ public class BrowserSwitchClient {
      * Completes the browser switch flow for Custom Tabs fallback scenarios.
      * This method is still needed for devices that don't support Auth Tab.
      *
+     * <p>See <a href="https://developer.chrome.com/docs/android/custom-tabs/guide-auth-tab#fallback_to_custom_tabs">
+     * Auth Tab Fallback Documentation</a> for details on when Custom Tabs fallback is required
+     *
      * @param intent         the intent to return to your application containing a deep link result
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started}
      * @return a {@link BrowserSwitchFinalResult}
