@@ -34,11 +34,10 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        browserSwitchClient = BrowserSwitchClient()
-        browserSwitchClient.initializeAuthTabLauncher(this) { result ->
+        // Initialize BrowserSwitchClient with the parameterized constructor
+        browserSwitchClient = BrowserSwitchClient(this) { result ->
             handleBrowserSwitchResult(result)
         }
-
         if (browserSwitchClient.isAuthTabSupported(this)) {
             useAuthTab = true
         }

@@ -36,8 +36,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
-        browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
+        // Initialize BrowserSwitchClient with the parameterized constructor
+        browserSwitchClient = new BrowserSwitchClient(this, this::handleBrowserSwitchResult);
 
         if (browserSwitchClient.isAuthTabSupported(this)) {
             useAuthTab = true;

@@ -26,10 +26,24 @@ public class BrowserSwitchClient {
     private BrowserSwitchRequest pendingAuthTabRequest;
 
     /**
-     * Construct a client that manages the logic for browser switching.
+     * Construct a client that manages browser switching with Chrome Custom Tabs fallback only.
+     * This constructor does not initialize Auth Tab support. For Auth Tab functionality,
+     * use {@link #BrowserSwitchClient(ComponentActivity, AuthTabCallback)} instead.
      */
     public BrowserSwitchClient() {
         this(new BrowserSwitchInspector(), new AuthTabInternalClient());
+    }
+
+    /**
+     * Construct a client that manages the logic for browser switching and automatically
+     * initializes the Auth Tab launcher.
+     *
+     * @param activity The component activity used to initialize the Auth Tab launcher
+     * @param callback The callback to be invoked when the Auth Tab result is available
+     */
+    public BrowserSwitchClient(@NonNull ComponentActivity activity, @NonNull AuthTabCallback callback) {
+        this(new BrowserSwitchInspector(), new AuthTabInternalClient());
+        initializeAuthTabLauncher(activity, callback);
     }
 
     @VisibleForTesting
@@ -121,7 +135,7 @@ public class BrowserSwitchClient {
                     appLinkUri
             );
 
-            boolean useAuthTab = authTabInternalClient.isAuthTabSupported(activity);
+            boolean useAuthTab = isAuthTabSupported(activity);
 
             if (useAuthTab) {
                 this.pendingAuthTabRequest = request;
@@ -215,7 +229,13 @@ public class BrowserSwitchClient {
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
     }
 
+    /**
+     * Checks if Auth Tab is supported on this device and if the launcher has been initialized.
+     * @param context The application context
+     * @return true if Auth Tab is supported by the browser AND the launcher has been initialized,
+     *         false otherwise
+     */
     public boolean isAuthTabSupported(Context context) {
-        return authTabInternalClient.isAuthTabSupported(context);
+        return authTabLauncher != null && authTabInternalClient.isAuthTabSupported(context);
     }
 }

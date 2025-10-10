@@ -1,6 +1,7 @@
 package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -436,7 +437,40 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void isAuthTabSupported_delegatesToInternalClient() {
+    public void start_whenAuthTabLauncherIsNull_fallsBackToCustomTabs() {
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
+                componentActivity.getApplicationContext(),
+                "return-url-scheme"
+        )).thenReturn(true);
+
+        // Explicitly ensure AuthTab is supported but we still fallback due to null launcher
+        when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+
+        BrowserSwitchStartResult result = sut.start(componentActivity, options);
+
+        assertTrue(result instanceof BrowserSwitchStartResult.Started);
+
+        verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                eq("return-url-scheme"),
+                isNull(),
+                isNull(),
+                isNull()
+        );
+    }
+
+    @Test
+    public void isAuthTabSupported_returnsFalseWhenLauncherNotInitialized() {
         when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
@@ -444,10 +478,72 @@ public class BrowserSwitchClientUnitTest {
 
         boolean result = sut.isAuthTabSupported(applicationContext);
 
-        assertTrue(result);
-        verify(authTabInternalClient).isAuthTabSupported(applicationContext);
+        assertFalse(result);
     }
 
+    @Test
+    public void isAuthTabSupported_returnsTrueWhenLauncherInitialized() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(true);
+
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ComponentActivity.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                    authTabInternalClient);
+
+            AuthTabCallback callback = mock(AuthTabCallback.class);
+            sut.initializeAuthTabLauncher(componentActivity, callback);
+
+            boolean result = sut.isAuthTabSupported(applicationContext);
+
+            assertTrue(result);
+            verify(authTabInternalClient).isAuthTabSupported(applicationContext);
+        }
+    }
+
+    @Test
+    public void isAuthTabSupported_returnsFalseWhenBrowserDoesNotSupportAuthTab() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(false);
+
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ComponentActivity.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                    authTabInternalClient);
+
+            AuthTabCallback callback = mock(AuthTabCallback.class);
+            sut.initializeAuthTabLauncher(componentActivity, callback);
+
+            boolean result = sut.isAuthTabSupported(applicationContext);
+
+            assertFalse(result);
+            verify(authTabInternalClient).isAuthTabSupported(applicationContext);
+        }
+    }
+
+    @Test
+    public void parameterizedConstructor_initializesAuthTabLauncher() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ComponentActivity.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
+            BrowserSwitchClient sut = new BrowserSwitchClient(componentActivity, mockCallback);
+
+            mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    any(ActivityResultCallback.class)
+            ));
+        }
+    }
 
     @Test
     public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() throws BrowserSwitchException, JSONException {

@@ -157,7 +157,6 @@ class AuthTabInternalClientUnitTest {
         }
     }
 
-
     @Test
     fun `launchUrl handles app link with no path`() {
         val appLinkUri = Uri.parse("https://example.com")
@@ -215,5 +214,21 @@ class AuthTabInternalClientUnitTest {
         client.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
+    }
+
+    @Test
+    fun `launchUrl with null launcher falls back to Custom Tabs even when Auth Tab is supported`() {
+        val packageName = "com.android.chrome"
+        every { CustomTabsClient.getPackageName(context, null) } returns packageName
+        every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
+
+        val client = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+        val returnUrlScheme = "example"
+
+        client.launchUrl(context, url, returnUrlScheme, null, null, null)
+
+        verify {
+            customTabsIntent.launchUrl(context, url)
+        }
     }
 }
