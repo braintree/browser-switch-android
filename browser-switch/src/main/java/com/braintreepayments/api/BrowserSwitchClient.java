@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.browser.auth.AuthTabIntent;
 
 import com.braintreepayments.api.browserswitch.R;
 
@@ -19,35 +21,76 @@ import org.json.JSONObject;
 public class BrowserSwitchClient {
 
     private final BrowserSwitchInspector browserSwitchInspector;
-
-    private final ChromeCustomTabsInternalClient customTabsInternalClient;
+    private final AuthTabInternalClient authTabInternalClient;
+    private ActivityResultLauncher<Intent> authTabLauncher;
+    private BrowserSwitchRequest pendingAuthTabRequest;
 
     /**
      * Construct a client that manages the logic for browser switching.
      */
     public BrowserSwitchClient() {
-        this(new BrowserSwitchInspector(), new ChromeCustomTabsInternalClient());
+        this(new BrowserSwitchInspector(), new AuthTabInternalClient());
     }
 
     @VisibleForTesting
     BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
-                        ChromeCustomTabsInternalClient customTabsInternalClient) {
+                        AuthTabInternalClient authTabInternalClient) {
         this.browserSwitchInspector = browserSwitchInspector;
-        this.customTabsInternalClient = customTabsInternalClient;
+        this.authTabInternalClient = authTabInternalClient;
     }
 
     /**
-     * Open a browser or <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>
-     * with a given set of {@link BrowserSwitchOptions} from an Android activity.
+     * Initialize the Auth Tab launcher. This should be called in the activity's onCreate()
+     * before the activity is started.
+     */
+    public void initializeAuthTabLauncher(@NonNull ComponentActivity activity,
+                                          @NonNull AuthTabCallback callback) {
+        this.authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
+                activity,
+                result -> {
+                    BrowserSwitchFinalResult finalResult;
+
+                    switch (result.resultCode) {
+                        case AuthTabIntent.RESULT_OK:
+                            if (result.resultUri != null && pendingAuthTabRequest != null) {
+                                finalResult = new BrowserSwitchFinalResult.Success(
+                                        result.resultUri,
+                                        pendingAuthTabRequest
+                                );
+                            } else {
+                                finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                            }
+                            break;
+                        case AuthTabIntent.RESULT_CANCELED:
+                            finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                            break;
+                        case AuthTabIntent.RESULT_VERIFICATION_FAILED:
+                            finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                            break;
+                        case AuthTabIntent.RESULT_VERIFICATION_TIMED_OUT:
+                            finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                            break;
+                        default:
+                            finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                    }
+                    callback.onResult(finalResult);
+                    pendingAuthTabRequest = null;
+                }
+        );
+    }
+
+    /**
+     * Open a browser or Auth Tab with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
      * @return a {@link BrowserSwitchStartResult.Started} that should be stored and passed to
-     * {@link BrowserSwitchClient#completeRequest(Intent, String)} upon return to the app,
+     * {@link BrowserSwitchClient#completeRequest(Intent, String)} upon return to the app (for Custom Tabs fallback),
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
-    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity, @NonNull BrowserSwitchOptions browserSwitchOptions) {
+    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity,
+                                          @NonNull BrowserSwitchOptions browserSwitchOptions) {
         try {
             assertCanPerformBrowserSwitch(activity, browserSwitchOptions);
         } catch (BrowserSwitchException e) {
@@ -58,29 +101,53 @@ public class BrowserSwitchClient {
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
         Uri appLinkUri = browserSwitchOptions.getAppLinkUri();
-
         JSONObject metadata = browserSwitchOptions.getMetadata();
 
         if (activity.isFinishing()) {
             String activityFinishingMessage =
                     "Unable to start browser switch while host Activity is finishing.";
             return new BrowserSwitchStartResult.Failure(new BrowserSwitchException(activityFinishingMessage));
-        } else {
-            LaunchType launchType = browserSwitchOptions.getLaunchType();
-            BrowserSwitchRequest request;
-            try {
-                request = new BrowserSwitchRequest(
-                        requestCode,
-                        browserSwitchUrl,
-                        metadata,
-                        returnUrlScheme,
-                        appLinkUri
-                );
-                customTabsInternalClient.launchUrl(activity, browserSwitchUrl, launchType);
-                return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
-            } catch (ActivityNotFoundException | BrowserSwitchException e) {
-                return new BrowserSwitchStartResult.Failure(new BrowserSwitchException("Unable to start browser switch without a web browser.", e));
+        }
+
+        LaunchType launchType = browserSwitchOptions.getLaunchType();
+        BrowserSwitchRequest request;
+
+        try {
+            request = new BrowserSwitchRequest(
+                    requestCode,
+                    browserSwitchUrl,
+                    metadata,
+                    returnUrlScheme,
+                    appLinkUri
+            );
+
+            boolean useAuthTab = authTabInternalClient.isAuthTabSupported(activity);
+
+            if (useAuthTab) {
+                this.pendingAuthTabRequest = request;
             }
+
+            authTabInternalClient.launchUrl(
+                    activity,
+                    browserSwitchUrl,
+                    returnUrlScheme,
+                    appLinkUri,
+                    authTabLauncher,
+                    launchType
+            );
+
+            return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
+
+        } catch (ActivityNotFoundException e) {
+            this.pendingAuthTabRequest = null;
+            return new BrowserSwitchStartResult.Failure(
+                    new BrowserSwitchException("Unable to start browser switch without a web browser.", e)
+            );
+        } catch (Exception e) {
+            this.pendingAuthTabRequest = null;
+            return new BrowserSwitchStartResult.Failure(
+                    new BrowserSwitchException("Unable to start browser switch: " + e.getMessage(), e)
+            );
         }
     }
 
@@ -121,20 +188,18 @@ public class BrowserSwitchClient {
     }
 
     /**
-     * Completes the browser switch flow and returns a browser switch result if a match is found for
-     * the given {@link BrowserSwitchRequest}
+     * Completes the browser switch flow for Custom Tabs fallback scenarios.
+     * This method is still needed for devices that don't support Auth Tab.
      *
-     * @param intent         the intent to return to your application containing a deep link result from the
-     *                       browser flow
-     * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started} via
-     *                       {@link BrowserSwitchClient#start(ComponentActivity, BrowserSwitchOptions)}
-     * @return a {@link BrowserSwitchFinalResult.Success} if the browser switch was successfully
-     * completed, or {@link BrowserSwitchFinalResult.NoResult} if no result can be found for the given
-     * pending request String. A {@link BrowserSwitchFinalResult.NoResult} will be
-     * returned if the user returns to the app without completing the browser switch flow.
+     * <p>See <a href="https://developer.chrome.com/docs/android/custom-tabs/guide-auth-tab#fallback_to_custom_tabs">
+     * Auth Tab Fallback Documentation</a> for details on when Custom Tabs fallback is required
+     *
+     * @param intent         the intent to return to your application containing a deep link result
+     * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started}
+     * @return a {@link BrowserSwitchFinalResult}
      */
     public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
-        if (intent != null && intent.getData() != null) {
+        if (intent.getData() != null) {
             Uri returnUrl = intent.getData();
 
             try {
@@ -148,5 +213,9 @@ public class BrowserSwitchClient {
             }
         }
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
+    }
+
+    public boolean isAuthTabSupported(Context context) {
+        return authTabInternalClient.isAuthTabSupported(context);
     }
 }
