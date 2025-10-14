@@ -44,7 +44,30 @@ public class BrowserSwitchClient {
      * Construct a client that manages the logic for browser switching and automatically
      * initializes the Auth Tab launcher.
      *
-     * @param activity The activity used to initialize the Auth Tab launcher
+     * <p>IMPORTANT: This constructor enables the AuthTab functionality, which has several caveats:
+     *
+     * <ul>
+     *   <li>The provided activity MUST implement {@link ActivityResultCaller}, which is true for all
+     *       instances of {@link androidx.activity.ComponentActivity}.
+     *   <li>{@link LaunchType#ACTIVITY_NEW_TASK} is not supported when using AuthTab and will be ignored.
+     *       Only {@link LaunchType#ACTIVITY_CLEAR_TOP} is supported with AuthTab.
+     *   <li>When using SingleTop activities, you must check for launcher results in {@code onResume()} as well
+     *       as in {@code onNewIntent()}, since the AuthTab activity result might be delivered during the
+     *       resuming phase.
+     *   <li>Care must be taken to avoid calling {@link #completeRequest(Intent, String)} multiple times
+     *       for the same result. Merchants should properly track their pending request state to ensure
+     *       the completeRequest method is only called once per browser switch session.
+     *   <li>AuthTab support is <strong>browser version dependent</strong>. It requires Chrome version 137
+     *       or higher on the user's device. On devices with older browser versions, the library will
+     *       automatically fall back to Custom Tabs. This means that enabling AuthTab is not guaranteed
+     *       to use the AuthTab flow if the user's browser version is too old.
+     * </ul>
+     *
+     * <p>Consider using the default constructor {@link #BrowserSwitchClient()} if these limitations
+     * are incompatible with your implementation.
+     *
+     * @param activity The activity used to initialize the Auth Tab launcher. Must implement
+     *                 {@link ActivityResultCaller}.
      */
     public BrowserSwitchClient(@NonNull Activity activity) {
         this(new BrowserSwitchInspector(), new AuthTabInternalClient());
@@ -215,6 +238,10 @@ public class BrowserSwitchClient {
      *
      * <p>See <a href="https://developer.chrome.com/docs/android/custom-tabs/guide-auth-tab#fallback_to_custom_tabs">
      * Auth Tab Fallback Documentation</a> for details on when Custom Tabs fallback is required
+     *
+     * <p><strong>IMPORTANT:</strong> When using Auth Tab with SingleTop activities, you must call this method
+     * in both {@code onNewIntent()} <em>and</em> {@code onResume()} to ensure the result is properly processed
+     * regardless of which launch mode is used.
      *
      * @param intent         the intent to return to your application containing a deep link result
      * @param pendingRequest the pending request string returned from {@link BrowserSwitchStartResult.Started}
