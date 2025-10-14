@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,8 +66,8 @@ public class BrowserSwitchClient {
      * @param activity The activity used to initialize the Auth Tab launcher
      */
     public void initializeAuthTabLauncher(@NonNull Activity activity) {
-        // Check if activity is ComponentActivity for Auth Tab support
-        if (!(activity instanceof ComponentActivity)) {
+
+        if (!(activity instanceof ActivityResultCaller)) {
             return;
         }
 
@@ -224,8 +225,7 @@ public class BrowserSwitchClient {
             BrowserSwitchFinalResult result = authTabCallbackResult;
             authTabCallbackResult = null;
             return result;
-        }
-        else if (intent.getData() != null) {
+        } else if (intent.getData() != null) {
             Uri returnUrl = intent.getData();
 
             try {
@@ -247,7 +247,8 @@ public class BrowserSwitchClient {
      * @return true if Auth Tab is supported by the browser AND the launcher has been initialized,
      *         false otherwise
      */
-    public boolean isAuthTabSupported(Context context) {
+    @VisibleForTesting
+    boolean isAuthTabSupported(Context context) {
         return authTabLauncher != null && authTabInternalClient.isAuthTabSupported(context);
     }
 }

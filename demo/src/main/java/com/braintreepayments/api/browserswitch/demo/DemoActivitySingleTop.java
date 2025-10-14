@@ -37,14 +37,6 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         // Initialize BrowserSwitchClient with the parameterized constructor
         browserSwitchClient = new BrowserSwitchClient(this);
 
-        if (browserSwitchClient.isAuthTabSupported(this)) {
-            // Show a toast to indicate Auth Tab is being used
-            Toast.makeText(this, "Using Auth Tab", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Using Chrome Custom Tabs",
-                    Toast.LENGTH_SHORT).show();
-        }
-
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
             fm.beginTransaction()

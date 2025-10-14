@@ -36,11 +36,6 @@ class ComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Initialize BrowserSwitchClient with the parameterized constructor
         browserSwitchClient = BrowserSwitchClient(this)
-        if (browserSwitchClient.isAuthTabSupported(this)) {
-            Toast.makeText(this, "Using Auth Tab", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Using Chrome Custom Tabs", Toast.LENGTH_LONG).show()
-        }
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {
                 BrowserSwitchButton {
