@@ -253,9 +253,8 @@ public class BrowserSwitchClientUnitTest {
             )).thenReturn(mockLauncher);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            AuthTabCallback callback = mock(AuthTabCallback.class);
 
-            sut.initializeAuthTabLauncher(componentActivity, callback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
                     eq(componentActivity),
@@ -291,8 +290,7 @@ public class BrowserSwitchClientUnitTest {
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
 
-            AuthTabCallback callback = mock(AuthTabCallback.class);
-            sut.initializeAuthTabLauncher(componentActivity, callback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             JSONObject metadata = new JSONObject();
             BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -324,7 +322,7 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
-    public void authTabCallback_withResultOK_callsCallbackWithSuccess() {
+    public void authTabCallback_withResultOK_setsInternalCallbackResult() {
         try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
 
             ArgumentCaptor<ActivityResultCallback<AuthTabIntent.AuthResult>> callbackCaptor =
@@ -334,7 +332,6 @@ public class BrowserSwitchClientUnitTest {
                     callbackCaptor.capture()
             )).thenReturn(mockLauncher);
 
-
             when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
                     componentActivity.getApplicationContext(),
                     "return-url-scheme"
@@ -342,9 +339,7 @@ public class BrowserSwitchClientUnitTest {
             when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
-
-            sut.initializeAuthTabLauncher(componentActivity, mockCallback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             JSONObject metadata = new JSONObject();
             BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -361,11 +356,8 @@ public class BrowserSwitchClientUnitTest {
 
             callbackCaptor.getValue().onActivityResult(mockAuthResult);
 
-            ArgumentCaptor<BrowserSwitchFinalResult> resultCaptor =
-                    ArgumentCaptor.forClass(BrowserSwitchFinalResult.class);
-            verify(mockCallback).onResult(resultCaptor.capture());
-
-            BrowserSwitchFinalResult capturedResult = resultCaptor.getValue();
+            Intent dummyIntent = new Intent();
+            BrowserSwitchFinalResult capturedResult = sut.completeRequest(dummyIntent, "dummyPendingRequest");
             assertTrue(capturedResult instanceof BrowserSwitchFinalResult.Success);
 
             BrowserSwitchFinalResult.Success successResult =
@@ -386,9 +378,8 @@ public class BrowserSwitchClientUnitTest {
             )).thenReturn(mockLauncher);
 
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
-            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
 
-            sut.initializeAuthTabLauncher(componentActivity, mockCallback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             AuthTabIntent.AuthResult mockAuthResult = mock(AuthTabIntent.AuthResult.class, withSettings()
                     .useConstructor(AuthTabIntent.RESULT_CANCELED, null)
@@ -396,11 +387,8 @@ public class BrowserSwitchClientUnitTest {
 
             callbackCaptor.getValue().onActivityResult(mockAuthResult);
 
-            ArgumentCaptor<BrowserSwitchFinalResult> resultCaptor =
-                    ArgumentCaptor.forClass(BrowserSwitchFinalResult.class);
-            verify(mockCallback).onResult(resultCaptor.capture());
-
-            BrowserSwitchFinalResult capturedResult = resultCaptor.getValue();
+            Intent dummyIntent = new Intent();
+            BrowserSwitchFinalResult capturedResult = sut.completeRequest(dummyIntent, "dummyPendingRequest");
             assertTrue(capturedResult instanceof BrowserSwitchFinalResult.NoResult);
         }
     }
@@ -494,8 +482,7 @@ public class BrowserSwitchClientUnitTest {
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                     authTabInternalClient);
 
-            AuthTabCallback callback = mock(AuthTabCallback.class);
-            sut.initializeAuthTabLauncher(componentActivity, callback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             boolean result = sut.isAuthTabSupported(applicationContext);
 
@@ -517,8 +504,7 @@ public class BrowserSwitchClientUnitTest {
             BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                     authTabInternalClient);
 
-            AuthTabCallback callback = mock(AuthTabCallback.class);
-            sut.initializeAuthTabLauncher(componentActivity, callback);
+            sut.initializeAuthTabLauncher(componentActivity);
 
             boolean result = sut.isAuthTabSupported(applicationContext);
 
@@ -535,8 +521,7 @@ public class BrowserSwitchClientUnitTest {
                     any(ActivityResultCallback.class)
             )).thenReturn(mockLauncher);
 
-            AuthTabCallback mockCallback = mock(AuthTabCallback.class);
-            BrowserSwitchClient sut = new BrowserSwitchClient(componentActivity, mockCallback);
+            BrowserSwitchClient sut = new BrowserSwitchClient(componentActivity);
 
             mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
                     eq(componentActivity),
