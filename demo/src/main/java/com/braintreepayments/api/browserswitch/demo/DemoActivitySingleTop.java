@@ -31,22 +31,11 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @VisibleForTesting
     BrowserSwitchClient browserSwitchClient = null;
 
-    private boolean useAuthTab = false;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
-        browserSwitchClient.initializeAuthTabLauncher(this, this::handleBrowserSwitchResult);
-
-        if (browserSwitchClient.isAuthTabSupported(this)) {
-            useAuthTab = true;
-            // Show a toast to indicate Auth Tab is being used
-            Toast.makeText(this, "Using Auth Tab", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Using Custom Tabs (Auth Tab not supported)",
-                    Toast.LENGTH_SHORT).show();
-        }
+        // Initialize BrowserSwitchClient with the parameterized constructor
+        browserSwitchClient = new BrowserSwitchClient(this);
 
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
@@ -71,28 +60,31 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
-        // Only handle Custom Tabs fallback case
-        if (!useAuthTab) {
-            String pendingRequest = PendingRequestStore.get(this);
-            if (pendingRequest != null) {
-                BrowserSwitchFinalResult result =
-                        browserSwitchClient.completeRequest(intent, pendingRequest);
-                handleBrowserSwitchResult(result);
-                PendingRequestStore.clear(this);
-                intent.setData(null);
-            }
+        String pendingRequest = PendingRequestStore.get(this);
+        if (pendingRequest != null) {
+            BrowserSwitchFinalResult result =
+                    browserSwitchClient.completeRequest(intent, pendingRequest);
+            handleBrowserSwitchResult(result);
+            PendingRequestStore.clear(this);
+            intent.setData(null);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        String pendingRequest = PendingRequestStore.get(this);
+        if (pendingRequest != null) {
+            // When using AuthTab, results come via the ActivityResultLauncher callback,
+            // so we need to check for results in onResume too, not just onNewIntent
+            BrowserSwitchFinalResult result = browserSwitchClient.completeRequest(getIntent(), pendingRequest);
 
-        // Only check for incomplete browser switch in Custom Tabs mode
-        if (!useAuthTab) {
-            String pendingRequest = PendingRequestStore.get(this);
-            if (pendingRequest != null) {
+            if (result instanceof BrowserSwitchFinalResult.Success) {
+                handleBrowserSwitchResult(result);
+                PendingRequestStore.clear(this);
+                getIntent().setData(null);
+            }
+            else {
                 Objects.requireNonNull(getDemoFragment())
                         .onBrowserSwitchError(new Exception("User did not complete browser switch"));
                 PendingRequestStore.clear(this);
@@ -117,11 +109,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         BrowserSwitchStartResult result = browserSwitchClient.start(this, options);
         if (result instanceof BrowserSwitchStartResult.Started) {
-            // Only store pending request for Custom Tabs fallback
-            if (!useAuthTab) {
-                PendingRequestStore.put(this,
-                        ((BrowserSwitchStartResult.Started) result).getPendingRequest());
-            }
+            PendingRequestStore.put(this,
+                    ((BrowserSwitchStartResult.Started) result).getPendingRequest());
         } else if (result instanceof BrowserSwitchStartResult.Failure) {
             Objects.requireNonNull(getDemoFragment())
                     .onBrowserSwitchError(((BrowserSwitchStartResult.Failure) result).getError());

@@ -26,15 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
         Button singleTopButton = findViewById(R.id.single_top_button);
         singleTopButton.setOnClickListener(this::launchSingleTopBrowserSwitch);
-
-        // Show Auth Tab support status via Toast
-        BrowserSwitchClient client = new BrowserSwitchClient();
-        if (client.isAuthTabSupported(this)) {
-            Toast.makeText(this, "Auth Tab is supported", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Using Custom Tabs fallback", Toast.LENGTH_LONG).show();
-        }
-
         // Support Edge-to-Edge layout in Android 15
         // Ref: https://developer.android.com/develop/ui/views/layout/edge-to-edge#cutout-insets
         View navHostView = findViewById(R.id.content);

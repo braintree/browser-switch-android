@@ -31,12 +31,12 @@ internal class AuthTabInternalClient (
         url: Uri,
         returnUrlScheme: String?,
         appLinkUri: Uri?,
-        launcher: ActivityResultLauncher<Intent>,
+        launcher: ActivityResultLauncher<Intent>?,
         launchType: LaunchType?
     ) {
         val useAuthTab = isAuthTabSupported(context)
 
-        if (useAuthTab) {
+        if (useAuthTab && launcher != null) {
             val authTabIntent = authTabIntentBuilder.build()
 
             if (launchType == LaunchType.ACTIVITY_CLEAR_TOP) {

@@ -2,6 +2,7 @@ package com.braintreepayments.api.browserswitch.demo
 
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -30,19 +31,11 @@ class ComposeActivity : ComponentActivity() {
 
     private val viewModel by viewModels<BrowserSwitchViewModel>()
     private lateinit var browserSwitchClient: BrowserSwitchClient
-    private var useAuthTab = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        browserSwitchClient = BrowserSwitchClient()
-        browserSwitchClient.initializeAuthTabLauncher(this) { result ->
-            handleBrowserSwitchResult(result)
-        }
-
-        if (browserSwitchClient.isAuthTabSupported(this)) {
-            useAuthTab = true
-        }
-
+        // Initialize BrowserSwitchClient with the parameterized constructor
+        browserSwitchClient = BrowserSwitchClient(this)
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {
                 BrowserSwitchButton {
@@ -55,14 +48,11 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Only handle Custom Tabs fall back case
-        if (!useAuthTab) {
-            PendingRequestStore.get(this)?.let { startedRequest ->
-                val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
-                handleBrowserSwitchResult(completeRequestResult)
-                PendingRequestStore.clear(this)
-                intent.data = null
-            }
+        PendingRequestStore.get(this)?.let { startedRequest ->
+            val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
+            handleBrowserSwitchResult(completeRequestResult)
+            PendingRequestStore.clear(this)
+            intent.data = null
         }
     }
 
@@ -90,10 +80,7 @@ class ComposeActivity : ComponentActivity() {
 
         when (val startResult = browserSwitchClient.start(this, browserSwitchOptions)) {
             is BrowserSwitchStartResult.Started -> {
-                // Only store for Custom Tabs fall back
-                if (!useAuthTab) {
                     PendingRequestStore.put(this, startResult.pendingRequest)
-                }
             }
             is BrowserSwitchStartResult.Failure ->
                 viewModel.browserSwitchError = startResult.error
