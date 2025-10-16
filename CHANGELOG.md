@@ -5,7 +5,6 @@
 * Add AuthTab Support
   * Upgrade `androidx.browser:browser` dependency version to 1.9.0
   * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
-  * Add `AuthTabCallback` interface
   * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
   * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
   * Maintain default constructor `BrowserSwitchClient()` (without AuthTab support) for backward compatibility
