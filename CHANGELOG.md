@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## 3.1.1
+## unreleased
 
 * Add AuthTab Support
   * Upgrade `androidx.browser:browser` dependency version to 1.9.0
