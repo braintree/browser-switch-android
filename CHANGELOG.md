@@ -1,5 +1,14 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add AuthTab Support
+  * Upgrade `androidx.browser:browser` dependency version to 1.9.0
+  * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
+  * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
+  * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
+  * Maintain default constructor `BrowserSwitchClient()` (without AuthTab support) for backward compatibility
+
 ## 3.1.0
 
 * Add `LaunchType` to `BrowserSwitchOptions` to specify how the browser switch should be launched

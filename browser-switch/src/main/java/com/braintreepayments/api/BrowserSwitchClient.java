@@ -1,6 +1,5 @@
 package com.braintreepayments.api;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +33,7 @@ public class BrowserSwitchClient {
     /**
      * Construct a client that manages browser switching with Chrome Custom Tabs fallback only.
      * This constructor does not initialize Auth Tab support. For Auth Tab functionality,
-     * use {@link #BrowserSwitchClient(Activity)} instead.
+     * use {@link #BrowserSwitchClient(ActivityResultCaller)} instead.
      */
     public BrowserSwitchClient() {
         this(new BrowserSwitchInspector(), new AuthTabInternalClient());
@@ -47,8 +46,9 @@ public class BrowserSwitchClient {
      * <p>IMPORTANT: This constructor enables the AuthTab functionality, which has several caveats:
      *
      * <ul>
-     *   <li>The provided activity MUST implement {@link ActivityResultCaller}, which is true for all
-     *       instances of {@link androidx.activity.ComponentActivity}.
+     *   <li><strong>This constructor must be called in the activity/fragment's {@code onCreate()} method</strong>
+     *       to properly register the activity result launcher before the activity/fragment is started.
+     *   <li>The caller must be an {@link ActivityResultCaller} to register for activity results.
      *   <li>{@link LaunchType#ACTIVITY_NEW_TASK} is not supported when using AuthTab and will be ignored.
      *       Only {@link LaunchType#ACTIVITY_CLEAR_TOP} is supported with AuthTab.
      *   <li>When using SingleTop activities, you must check for launcher results in {@code onResume()} as well
@@ -66,12 +66,11 @@ public class BrowserSwitchClient {
      * <p>Consider using the default constructor {@link #BrowserSwitchClient()} if these limitations
      * are incompatible with your implementation.
      *
-     * @param activity The activity used to initialize the Auth Tab launcher. Must implement
-     *                 {@link ActivityResultCaller}.
+     * @param caller The ActivityResultCaller used to initialize the Auth Tab launcher.
      */
-    public BrowserSwitchClient(@NonNull Activity activity) {
+    public BrowserSwitchClient(@NonNull ActivityResultCaller caller) {
         this(new BrowserSwitchInspector(), new AuthTabInternalClient());
-        initializeAuthTabLauncher(activity);
+        initializeAuthTabLauncher(caller);
     }
 
     @VisibleForTesting
@@ -79,25 +78,26 @@ public class BrowserSwitchClient {
                         AuthTabInternalClient authTabInternalClient) {
         this.browserSwitchInspector = browserSwitchInspector;
         this.authTabInternalClient = authTabInternalClient;
-        this.authTabCallbackResult = null;
+    }
+
+    @VisibleForTesting
+    BrowserSwitchClient(@NonNull ActivityResultCaller caller,
+                        BrowserSwitchInspector inspector,
+                        AuthTabInternalClient internal) {
+        this(inspector, internal);
+        initializeAuthTabLauncher(caller);
     }
 
     /**
-     * Initialize the Auth Tab launcher. This should be called in the activity's onCreate()
-     * before the activity is started.
+     * Initialize the Auth Tab launcher. This should be called in the activity/fragment's onCreate()
+     * before it is started.
      *
-     * @param activity The activity used to initialize the Auth Tab launcher
+     * @param caller The ActivityResultCaller (Activity or Fragment) used to initialize the Auth Tab launcher
      */
-    public void initializeAuthTabLauncher(@NonNull Activity activity) {
-
-        if (!(activity instanceof ActivityResultCaller)) {
-            return;
-        }
-
-        ComponentActivity componentActivity = (ComponentActivity) activity;
+   private void initializeAuthTabLauncher(@NonNull ActivityResultCaller caller) {
 
         this.authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
-                componentActivity,
+                caller,
                 result -> {
                     BrowserSwitchFinalResult finalResult;
                     switch (result.resultCode) {
