@@ -82,9 +82,9 @@ public class BrowserSwitchClient {
 
     @VisibleForTesting
     BrowserSwitchClient(@NonNull ActivityResultCaller caller,
-                        BrowserSwitchInspector inspector,
-                        AuthTabInternalClient internal) {
-        this(inspector, internal);
+                        BrowserSwitchInspector browserSwitchInspector,
+                        AuthTabInternalClient authTabInternalClient) {
+        this(browserSwitchInspector, authTabInternalClient);
         initializeAuthTabLauncher(caller);
     }
 
