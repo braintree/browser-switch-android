@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -130,7 +129,7 @@ public class BrowserSwitchClient {
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
-    public BrowserSwitchStartResult start(@NonNull ComponentActivity activity,
+    public BrowserSwitchStartResult start(@NonNull Activity activity,
                                           @NonNull BrowserSwitchOptions browserSwitchOptions) {
 
         this.authTabCallbackResult = null;
@@ -203,7 +202,7 @@ public class BrowserSwitchClient {
      * @throws BrowserSwitchException exception containing the error message on why browser switch cannot be started
      */
     public void assertCanPerformBrowserSwitch(
-            ComponentActivity activity,
+            Activity activity,
             BrowserSwitchOptions browserSwitchOptions
     ) throws BrowserSwitchException {
         Context appContext = activity.getApplicationContext();

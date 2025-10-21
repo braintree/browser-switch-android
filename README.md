@@ -12,7 +12,7 @@ Add the library to your dependencies in your `build.gradle`:
 
 ```groovy
 dependencies {
-  implementation 'com.braintreepayments.api:browser-switch:3.1.0'
+  implementation 'com.braintreepayments.api:browser-switch:3.2.0'
 }
 ```
 
@@ -20,7 +20,7 @@ To preview the latest work in progress builds, add the following SNAPSHOT depend
 
 ```groovy
 dependencies {
-  implementation 'com.braintreepayments.api:browser-switch:3.1.1-SNAPSHOT'
+  implementation 'com.braintreepayments.api:browser-switch:3.2.1-SNAPSHOT'
 }
 ```
 

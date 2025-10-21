@@ -3,11 +3,16 @@
 ## unreleased
 
 * Add AuthTab Support
-  * Upgrade `androidx.browser:browser` dependency version to 1.9.0
-  * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
-  * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
-  * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
-  * Maintain default constructor `BrowserSwitchClient()` (without AuthTab support) for backward compatibility
+    * Upgrade `androidx.browser:browser` dependency version to 1.9.0
+    * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
+    * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
+    * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
+    * Maintain default constructor `BrowserSwitchClient()` (without AuthTab support) for backward compatibility
+
+
+## 3.2.0
+
+* Widen BraintreeClient.start() activity reference from `ComponentActivity` to plain `Activity`
 
 ## 3.1.0
 
