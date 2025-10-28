@@ -33,8 +33,15 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize BrowserSwitchClient with the parameterized constructor
-        browserSwitchClient = BrowserSwitchClient(this)
+        // Check if there is a preserved pending request after the process kill
+        val pendingRequest = PendingRequestStore.get(this)
+        browserSwitchClient = if (pendingRequest != null) {
+            // Restore state after process kill
+            BrowserSwitchClient(this, pendingRequest)
+        } else {
+            // Normal initialization
+            BrowserSwitchClient(this)
+        }
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {
                 BrowserSwitchButton {

@@ -73,6 +73,27 @@ public class BrowserSwitchClient {
         initializeAuthTabLauncher(caller);
     }
 
+
+    /**
+     * Constructor to initialize BrowserSwitchClient with a pending request to handle process kill scenarios.
+     * <p>
+     * When an app is killed during a browser switch, the pending request is lost. To properly handle this:
+     * <ol>
+     *   <li>Store the pendingRequest string from {@link BrowserSwitchStartResult.Started} in persistent storage</li>
+     *   <li>In {@code onCreate()}, check if there's a stored pending request</li>
+     *   <li>If present, initialize {@code BrowserSwitchClient} with this constructor</li>
+     * </ol>
+     * </p>
+     *
+     * @param caller The ActivityResultCaller used to initialize the Auth Tab launcher
+     * @param pendingRequest The base64 encoded JSON string of the pending browser switch request retrieved from persistent storage
+     * @throws BrowserSwitchException if the pendingRequest cannot be parsed
+     */
+    public BrowserSwitchClient(@NonNull ActivityResultCaller caller, @NonNull String pendingRequest) throws BrowserSwitchException {
+        this(new BrowserSwitchInspector(), new AuthTabInternalClient());
+        initializeAuthTabLauncher(caller);
+        this.pendingAuthTabRequest = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
+    }
     @VisibleForTesting
     BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
                         AuthTabInternalClient authTabInternalClient) {
