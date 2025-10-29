@@ -33,20 +33,17 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        browserSwitchClient = new BrowserSwitchClient(this);
         // Check if there is a preserved pending request after the process kill
         String pendingRequest = PendingRequestStore.get(this);
-
         if (pendingRequest != null) {
-            // Restore state after process kill
+            // Restore pending request after process kill
             try {
-                browserSwitchClient = new BrowserSwitchClient(this, pendingRequest);
+                browserSwitchClient.restorePendingRequest(pendingRequest);
             } catch (BrowserSwitchException e) {
                 PendingRequestStore.clear(this);
-                browserSwitchClient = new BrowserSwitchClient(this);
             }
-        } else {
-            // Normal initialization
-            browserSwitchClient = new BrowserSwitchClient(this);
         }
 
         FragmentManager fm = getSupportFragmentManager();

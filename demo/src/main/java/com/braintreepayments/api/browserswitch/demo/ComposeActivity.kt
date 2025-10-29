@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.braintreepayments.api.BrowserSwitchClient
+import com.braintreepayments.api.BrowserSwitchException
 import com.braintreepayments.api.BrowserSwitchFinalResult
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchStartResult
@@ -33,14 +34,15 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        browserSwitchClient = BrowserSwitchClient(this)
         // Check if there is a preserved pending request after the process kill
-        val pendingRequest = PendingRequestStore.get(this)
-        browserSwitchClient = if (pendingRequest != null) {
-            // Restore state after process kill
-            BrowserSwitchClient(this, pendingRequest)
-        } else {
-            // Normal initialization
-            BrowserSwitchClient(this)
+        PendingRequestStore.get(this)?.let { pendingRequest ->
+            try {
+                // Restore pending request after process kill
+                browserSwitchClient.restorePendingRequest(pendingRequest)
+            } catch (e: BrowserSwitchException) {
+                PendingRequestStore.clear(this)
+            }
         }
         setContent {
             Column(modifier = Modifier.safeGesturesPadding()) {

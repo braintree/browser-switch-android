@@ -536,6 +536,34 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
+    public void restorePendingRequest_setsInternalPendingAuthTabRequest() throws BrowserSwitchException {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchRequest originalRequest = new BrowserSwitchRequest(
+                123,
+                browserSwitchDestinationUrl,
+                metadata,
+                "return-url-scheme",
+                null
+        );
+        String pendingRequestString = originalRequest.toBase64EncodedJSON();
+
+        sut.restorePendingRequest(pendingRequestString);
+
+        Uri deepLinkUrl = Uri.parse("return-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchFinalResult result = sut.completeRequest(intent, pendingRequestString);
+
+        assertTrue(result instanceof BrowserSwitchFinalResult.Success);
+        BrowserSwitchFinalResult.Success successResult = (BrowserSwitchFinalResult.Success) result;
+        assertEquals(deepLinkUrl, successResult.getReturnUrl());
+        assertEquals(123, successResult.getRequestCode());
+        assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
+    }
+
+    @Test
     public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() throws BrowserSwitchException, JSONException {
         Uri appLinkUri = Uri.parse("https://example.com");
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
