@@ -136,6 +136,9 @@ public class BrowserSwitchClient {
      * @throws BrowserSwitchException if the pending request cannot be parsed
      */
     public void restorePendingRequest(@NonNull String pendingRequest) throws BrowserSwitchException {
+        if (pendingRequest == null) {
+            throw new BrowserSwitchException("Pending request is null");
+        }
         this.pendingAuthTabRequest = BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
     }
 

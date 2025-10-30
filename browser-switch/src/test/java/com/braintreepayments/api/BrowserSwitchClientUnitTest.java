@@ -3,6 +3,7 @@ package com.braintreepayments.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -561,6 +562,18 @@ public class BrowserSwitchClientUnitTest {
         assertEquals(deepLinkUrl, successResult.getReturnUrl());
         assertEquals(123, successResult.getRequestCode());
         assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
+    }
+
+    @Test
+    public void restorePendingRequest_whenPendingRequestIsNull_throwsException() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        BrowserSwitchException exception = assertThrows(BrowserSwitchException.class, () -> {
+            sut.restorePendingRequest(null);
+        });
+
+        assertEquals("Pending request is null", exception.getMessage());
     }
 
     @Test
