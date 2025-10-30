@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
 import com.braintreepayments.api.demo.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button singleTopButton = findViewById(R.id.single_top_button);
         singleTopButton.setOnClickListener(this::launchSingleTopBrowserSwitch);
+
         // Support Edge-to-Edge layout in Android 15
         // Ref: https://developer.android.com/develop/ui/views/layout/edge-to-edge#cutout-insets
         View navHostView = findViewById(R.id.content);

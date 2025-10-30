@@ -7,7 +7,7 @@
     * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
     * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
     * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
-    * Maintain default constructor `BrowserSwitchClient()` (without AuthTab support) for backward compatibility
+    * Maintain default constructor `BrowserSwitchClient()` for backward compatibility
     * Add `restorePendingRequest()` method to handle process kill recovery
 
 

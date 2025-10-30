@@ -35,10 +35,8 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         browserSwitchClient = new BrowserSwitchClient(this);
-        // Check if there is a preserved pending request after the process kill
         String pendingRequest = PendingRequestStore.get(this);
         if (pendingRequest != null) {
-            // Restore pending request after process kill
             try {
                 browserSwitchClient.restorePendingRequest(pendingRequest);
             } catch (BrowserSwitchException e) {

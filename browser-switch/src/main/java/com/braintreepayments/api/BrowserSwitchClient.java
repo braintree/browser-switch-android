@@ -206,14 +206,16 @@ public class BrowserSwitchClient {
 
         } catch (ActivityNotFoundException e) {
             this.pendingAuthTabRequest = null;
-            return new BrowserSwitchStartResult.Failure(
-                    new BrowserSwitchException("Unable to start browser switch without a web browser.", e)
+            BrowserSwitchException exception = new BrowserSwitchException(
+                    "Unable to start browser switch without a web browser.", e
             );
+            return new BrowserSwitchStartResult.Failure(exception);
         } catch (Exception e) {
             this.pendingAuthTabRequest = null;
-            return new BrowserSwitchStartResult.Failure(
-                    new BrowserSwitchException("Unable to start browser switch: " + e.getMessage(), e)
+            BrowserSwitchException exception = new BrowserSwitchException(
+                    "Unable to start browser switch: " + e.getMessage(), e
             );
+            return new BrowserSwitchStartResult.Failure(exception);
         }
     }
 

@@ -35,10 +35,8 @@ class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         browserSwitchClient = BrowserSwitchClient(this)
-        // Check if there is a preserved pending request after the process kill
         PendingRequestStore.get(this)?.let { pendingRequest ->
             try {
-                // Restore pending request after process kill
                 browserSwitchClient.restorePendingRequest(pendingRequest)
             } catch (e: BrowserSwitchException) {
                 PendingRequestStore.clear(this)
