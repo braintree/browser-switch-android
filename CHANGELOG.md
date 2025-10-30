@@ -1,5 +1,16 @@
 # browser-switch-android Release Notes
 
+## unreleased
+
+* Add AuthTab Support
+    * Upgrade `androidx.browser:browser` dependency version to 1.9.0
+    * Upgrade `compileSdkVersion` and `targetSdkVersion` to API 36
+    * Replace `ChromeCustomTabsInternalClient.java` with `AuthTabInternalClient.kt`
+    * Add parameterized constructor `BrowserSwitchClient(ActivityResultCaller)` to initialize AuthTab support
+    * Maintain default constructor `BrowserSwitchClient()` for backward compatibility
+    * Add `restorePendingRequest()` method to handle process kill recovery
+
+
 ## 3.2.0
 
 * Widen BraintreeClient.start() activity reference from `ComponentActivity` to plain `Activity`

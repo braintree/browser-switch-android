@@ -50,15 +50,6 @@
                 <data android:scheme="https" />
                 <data android:host="mobile-sdk-demo-site-838cead5d3ab.herokuapp.com" />
             </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="mobile-sdk-demo-site-838cead5d3ab.herokuapp.com" />
-            </intent-filter>
         </activity>
     </application>
 

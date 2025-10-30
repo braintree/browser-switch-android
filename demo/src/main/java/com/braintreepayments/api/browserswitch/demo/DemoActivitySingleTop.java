@@ -19,7 +19,6 @@ import com.braintreepayments.api.BrowserSwitchException;
 import com.braintreepayments.api.BrowserSwitchOptions;
 import com.braintreepayments.api.BrowserSwitchStartResult;
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore;
-import com.braintreepayments.api.demo.R;
 
 import java.util.Objects;
 
@@ -34,7 +33,16 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        browserSwitchClient = new BrowserSwitchClient();
+
+        browserSwitchClient = new BrowserSwitchClient(this);
+        String pendingRequest = PendingRequestStore.get(this);
+        if (pendingRequest != null) {
+            try {
+                browserSwitchClient.restorePendingRequest(pendingRequest);
+            } catch (BrowserSwitchException e) {
+                PendingRequestStore.clear(this);
+            }
+        }
 
         FragmentManager fm = getSupportFragmentManager();
         if (getDemoFragment() == null) {
@@ -44,7 +52,6 @@ public class DemoActivitySingleTop extends AppCompatActivity {
         }
 
         // Support Edge-to-Edge layout in Android 15
-        // Ref: https://developer.android.com/develop/ui/views/layout/edge-to-edge#cutout-insets
         View navHostView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(navHostView, (v, insets) -> {
             @WindowInsetsCompat.Type.InsetsType int insetTypeMask =
@@ -60,34 +67,60 @@ public class DemoActivitySingleTop extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         String pendingRequest = PendingRequestStore.get(this);
         if (pendingRequest != null) {
-            BrowserSwitchFinalResult result = browserSwitchClient.completeRequest(intent, pendingRequest);
-            if (result instanceof BrowserSwitchFinalResult.Success) {
-                Objects.requireNonNull(getDemoFragment()).onBrowserSwitchResult((BrowserSwitchFinalResult.Success) result);
-            }
+            BrowserSwitchFinalResult result =
+                    browserSwitchClient.completeRequest(intent, pendingRequest);
+            handleBrowserSwitchResult(result);
             PendingRequestStore.clear(this);
+            intent.setData(null);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         String pendingRequest = PendingRequestStore.get(this);
         if (pendingRequest != null) {
-            Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(new Exception("User did not complete browser switch"));
-            PendingRequestStore.clear(this);
+            // When using AuthTab, results come via the ActivityResultLauncher callback,
+            // so we need to check for results in onResume too, not just onNewIntent
+            BrowserSwitchFinalResult result = browserSwitchClient.completeRequest(getIntent(), pendingRequest);
+
+            if (result instanceof BrowserSwitchFinalResult.Success) {
+                handleBrowserSwitchResult(result);
+                PendingRequestStore.clear(this);
+                getIntent().setData(null);
+            }
+            else {
+                Objects.requireNonNull(getDemoFragment())
+                        .onBrowserSwitchError(new Exception("User did not complete browser switch"));
+                PendingRequestStore.clear(this);
+                getIntent().setData(null);
+            }
+        }
+    }
+
+    private void handleBrowserSwitchResult(BrowserSwitchFinalResult result) {
+        if (result instanceof BrowserSwitchFinalResult.Success) {
+            Objects.requireNonNull(getDemoFragment())
+                    .onBrowserSwitchResult((BrowserSwitchFinalResult.Success) result);
+        } else if (result instanceof BrowserSwitchFinalResult.NoResult) {
+            Objects.requireNonNull(getDemoFragment())
+                    .onBrowserSwitchError(new Exception("User did not complete browser switch"));
+        } else if (result instanceof BrowserSwitchFinalResult.Failure) {
+            Objects.requireNonNull(getDemoFragment())
+                    .onBrowserSwitchError(((BrowserSwitchFinalResult.Failure) result).getError());
         }
     }
 
     public void startBrowserSwitch(BrowserSwitchOptions options) throws BrowserSwitchException {
         BrowserSwitchStartResult result = browserSwitchClient.start(this, options);
         if (result instanceof BrowserSwitchStartResult.Started) {
-            PendingRequestStore.put(this, ((BrowserSwitchStartResult.Started) result).getPendingRequest());
+            PendingRequestStore.put(this,
+                    ((BrowserSwitchStartResult.Started) result).getPendingRequest());
         } else if (result instanceof BrowserSwitchStartResult.Failure) {
-            Objects.requireNonNull(getDemoFragment()).onBrowserSwitchError(((BrowserSwitchStartResult.Failure) result).getError());
+            Objects.requireNonNull(getDemoFragment())
+                    .onBrowserSwitchError(((BrowserSwitchStartResult.Failure) result).getError());
         }
     }
 

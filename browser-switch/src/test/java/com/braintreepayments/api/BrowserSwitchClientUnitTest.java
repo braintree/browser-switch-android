@@ -1,16 +1,21 @@
 package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -18,12 +23,18 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultCaller;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.browser.auth.AuthTabIntent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -33,8 +44,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 public class BrowserSwitchClientUnitTest {
 
     private BrowserSwitchInspector browserSwitchInspector;
-
-    private ChromeCustomTabsInternalClient customTabsInternalClient;
+    private AuthTabInternalClient authTabInternalClient;
+    private ActivityResultLauncher mockLauncher;
 
     private Uri browserSwitchDestinationUrl;
     private Context applicationContext;
@@ -44,7 +55,8 @@ public class BrowserSwitchClientUnitTest {
     @Before
     public void beforeEach() {
         browserSwitchInspector = mock(BrowserSwitchInspector.class);
-        customTabsInternalClient = mock(ChromeCustomTabsInternalClient.class);
+        authTabInternalClient = mock(AuthTabInternalClient.class);
+        mockLauncher = mock(ActivityResultLauncher.class);
 
         browserSwitchDestinationUrl = Uri.parse("https://example.com/browser_switch_destination");
 
@@ -62,7 +74,7 @@ public class BrowserSwitchClientUnitTest {
         when(componentActivity.isFinishing()).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -73,7 +85,8 @@ public class BrowserSwitchClientUnitTest {
 
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Unable to start browser switch while host Activity is finishing.");
+        assertEquals("Unable to start browser switch while host Activity is finishing.",
+                ((BrowserSwitchStartResult.Failure) request).getError().getMessage());
     }
 
     @Test
@@ -81,7 +94,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -92,7 +105,14 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
 
-        verify(customTabsInternalClient).launchUrl(componentActivity, browserSwitchDestinationUrl, LaunchType.ACTIVITY_CLEAR_TOP);
+        verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                eq("return-url-scheme"),
+                isNull(),
+                isNull(),
+                eq(LaunchType.ACTIVITY_CLEAR_TOP)
+        );
 
         assertNotNull(browserSwitchPendingRequest);
         assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Started);
@@ -102,18 +122,54 @@ public class BrowserSwitchClientUnitTest {
         BrowserSwitchRequest browserSwitchRequest =
                 BrowserSwitchRequest.fromBase64EncodedJSON(pendingRequest);
 
-        assertEquals(browserSwitchRequest.getRequestCode(), 123);
-        assertEquals(browserSwitchRequest.getUrl(), browserSwitchDestinationUrl);
+        assertEquals(123, browserSwitchRequest.getRequestCode());
+        assertEquals(browserSwitchDestinationUrl, browserSwitchRequest.getUrl());
         JSONAssert.assertEquals(browserSwitchRequest.getMetadata(), metadata, false);
+    }
+
+    @Test
+    public void start_withAppLinkUri_passesItToAuthTab() {
+        Uri appLinkUri = Uri.parse("https://example.com/auth");
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .appLinkUri(appLinkUri)
+                .metadata(metadata);
+
+        BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
+
+        verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                isNull(),
+                eq(appLinkUri),
+                isNull(),
+                isNull()
+        );
+
+        assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Started);
     }
 
     @Test
     public void start_whenNoBrowserAvailable_returnsFailure() {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
-        doThrow(new ActivityNotFoundException()).when(customTabsInternalClient).launchUrl(any(Context.class), any(Uri.class), eq(null));
+        when(authTabInternalClient.isAuthTabSupported(any(Context.class))).thenReturn(false);
+        doThrow(new ActivityNotFoundException()).when(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                eq("return-url-scheme"),
+                isNull(),
+                isNull(),
+                isNull()
+        );
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -121,9 +177,11 @@ public class BrowserSwitchClientUnitTest {
                 .url(browserSwitchDestinationUrl)
                 .returnUrlScheme("return-url-scheme")
                 .metadata(metadata);
+
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Unable to start browser switch without a web browser.");
+        assertEquals("Unable to start browser switch without a web browser.",
+                ((BrowserSwitchStartResult.Failure) request).getError().getMessage());
     }
 
     @Test
@@ -131,7 +189,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -141,7 +199,8 @@ public class BrowserSwitchClientUnitTest {
                 .metadata(metadata);
         BrowserSwitchStartResult request = sut.start(componentActivity, options);
         assertTrue(request instanceof BrowserSwitchStartResult.Failure);
-        assertEquals(((BrowserSwitchStartResult.Failure) request).getError().getMessage(), "Request code cannot be Integer.MIN_VALUE");
+        assertEquals("Request code cannot be Integer.MIN_VALUE",
+                ((BrowserSwitchStartResult.Failure) request).getError().getMessage());
     }
 
     @Test
@@ -149,7 +208,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(false);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -171,7 +230,7 @@ public class BrowserSwitchClientUnitTest {
         when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(applicationContext, "return-url-scheme")).thenReturn(true);
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject metadata = new JSONObject();
         BrowserSwitchOptions options = new BrowserSwitchOptions()
@@ -186,10 +245,342 @@ public class BrowserSwitchClientUnitTest {
     }
 
     @Test
+    public void initializeAuthTabLauncher_registersLauncherWithActivity() {
+
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ComponentActivity.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    any(ActivityResultCallback.class)
+            ));
+
+            ArgumentCaptor<ActivityResultCallback<AuthTabIntent.AuthResult>> callbackCaptor =
+                    ArgumentCaptor.forClass(ActivityResultCallback.class);
+            mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    callbackCaptor.capture()
+            ));
+
+            assertNotNull(callbackCaptor.getValue());
+        }
+    }
+
+    @Test
+    public void start_withAuthTabLauncherInitialized_usesPendingAuthTabRequest() throws BrowserSwitchException {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
+                    componentActivity.getApplicationContext(),
+                    "return-url-scheme"
+            )).thenReturn(true);
+            when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
+            ArgumentCaptor<ActivityResultCallback<AuthTabIntent.AuthResult>> callbackCaptor =
+                    ArgumentCaptor.forClass(ActivityResultCallback.class);
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    callbackCaptor.capture()
+            )).thenReturn(mockLauncher);
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            mockedAuthTab.verify(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    any(ActivityResultCallback.class)
+            ));
+
+            JSONObject metadata = new JSONObject();
+            BrowserSwitchOptions options = new BrowserSwitchOptions()
+                    .requestCode(123)
+                    .url(browserSwitchDestinationUrl)
+                    .returnUrlScheme("return-url-scheme")
+                    .metadata(metadata);
+            BrowserSwitchStartResult result = sut.start(componentActivity, options);
+            assertTrue(result instanceof BrowserSwitchStartResult.Started);
+
+            verify(authTabInternalClient).launchUrl(
+                    eq(componentActivity),
+                    eq(browserSwitchDestinationUrl),
+                    eq("return-url-scheme"),
+                    isNull(),
+                    eq(mockLauncher),
+                    isNull()
+            );
+
+            String pendingRequestString = ((BrowserSwitchStartResult.Started) result).getPendingRequest();
+            assertNotNull(pendingRequestString);
+        }
+    }
+
+    @Test
+    public void authTabCallback_withResultOK_setsInternalCallbackResult() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+
+            ArgumentCaptor<ActivityResultCallback<AuthTabIntent.AuthResult>> callbackCaptor =
+                    ArgumentCaptor.forClass(ActivityResultCallback.class);
+
+            when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
+                    componentActivity.getApplicationContext(),
+                    "return-url-scheme"
+            )).thenReturn(true);
+            when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
+
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    callbackCaptor.capture()
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            JSONObject metadata = new JSONObject();
+            BrowserSwitchOptions options = new BrowserSwitchOptions()
+                    .requestCode(123)
+                    .url(browserSwitchDestinationUrl)
+                    .returnUrlScheme("return-url-scheme")
+                    .metadata(metadata);
+
+            BrowserSwitchStartResult startResult = sut.start(componentActivity, options);
+            String pendingRequest = ((BrowserSwitchStartResult.Started) startResult).getPendingRequest();
+
+            Uri resultUri = Uri.parse("return-url-scheme://success");
+            AuthTabIntent.AuthResult mockAuthResult = mock(AuthTabIntent.AuthResult.class, withSettings()
+                    .useConstructor(AuthTabIntent.RESULT_OK, resultUri)
+                    .defaultAnswer(CALLS_REAL_METHODS));
+
+            callbackCaptor.getValue().onActivityResult(mockAuthResult);
+
+            Intent dummyIntent = new Intent();
+            BrowserSwitchFinalResult capturedResult = sut.completeRequest(dummyIntent, pendingRequest);
+            assertTrue(capturedResult instanceof BrowserSwitchFinalResult.Success);
+
+            BrowserSwitchFinalResult.Success successResult =
+                    (BrowserSwitchFinalResult.Success) capturedResult;
+            assertEquals(resultUri, successResult.getReturnUrl());
+            assertEquals(123, successResult.getRequestCode());
+        }
+    }
+
+    @Test
+    public void authTabCallback_withResultCanceled_callsCallbackWithNoResult() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            ArgumentCaptor<ActivityResultCallback<AuthTabIntent.AuthResult>> callbackCaptor =
+                    ArgumentCaptor.forClass(ActivityResultCallback.class);
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    eq(componentActivity),
+                    callbackCaptor.capture()
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            AuthTabIntent.AuthResult mockAuthResult = mock(AuthTabIntent.AuthResult.class, withSettings()
+                    .useConstructor(AuthTabIntent.RESULT_CANCELED, null)
+                    .defaultAnswer(CALLS_REAL_METHODS));
+
+            callbackCaptor.getValue().onActivityResult(mockAuthResult);
+
+            Intent dummyIntent = new Intent();
+            BrowserSwitchFinalResult capturedResult = sut.completeRequest(dummyIntent, "dummyPendingRequest");
+            assertTrue(capturedResult instanceof BrowserSwitchFinalResult.NoResult);
+        }
+    }
+
+    @Test
+    public void start_withoutAuthTabLauncher_fallsBackToCustomTabs() {
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
+                componentActivity.getApplicationContext(),
+                "return-url-scheme"
+        )).thenReturn(true);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+
+        BrowserSwitchStartResult result = sut.start(componentActivity, options);
+
+        assertTrue(result instanceof BrowserSwitchStartResult.Started);
+
+        verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                eq("return-url-scheme"),
+                isNull(),
+                isNull(),
+                isNull()
+        );
+    }
+
+    @Test
+    public void start_whenAuthTabLauncherIsNull_fallsBackToCustomTabs() {
+        when(browserSwitchInspector.isDeviceConfiguredForDeepLinking(
+                componentActivity.getApplicationContext(),
+                "return-url-scheme"
+        )).thenReturn(true);
+
+        when(authTabInternalClient.isAuthTabSupported(componentActivity)).thenReturn(true);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchOptions options = new BrowserSwitchOptions()
+                .requestCode(123)
+                .url(browserSwitchDestinationUrl)
+                .returnUrlScheme("return-url-scheme")
+                .metadata(metadata);
+
+        BrowserSwitchStartResult result = sut.start(componentActivity, options);
+
+        assertTrue(result instanceof BrowserSwitchStartResult.Started);
+
+        verify(authTabInternalClient).launchUrl(
+                eq(componentActivity),
+                eq(browserSwitchDestinationUrl),
+                eq("return-url-scheme"),
+                isNull(),
+                isNull(),
+                isNull()
+        );
+    }
+
+    @Test
+    public void isAuthTabSupported_returnsFalseWhenLauncherNotInitialized() {
+        when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(true);
+
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        boolean result = sut.isAuthTabSupported(applicationContext);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isAuthTabSupported_returnsTrueWhenLauncherInitialized() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(true);
+
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ComponentActivity.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            boolean result = sut.isAuthTabSupported(applicationContext);
+
+            assertTrue(result);
+            verify(authTabInternalClient).isAuthTabSupported(applicationContext);
+        }
+    }
+
+    @Test
+    public void isAuthTabSupported_returnsFalseWhenBrowserDoesNotSupportAuthTab() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            mockedAuthTab.when(() -> AuthTabIntent.registerActivityResultLauncher(
+                    any(ActivityResultCaller.class),
+                    any(ActivityResultCallback.class)
+            )).thenReturn(mockLauncher);
+
+            when(authTabInternalClient.isAuthTabSupported(any())).thenReturn(false);
+
+            BrowserSwitchClient sut = new BrowserSwitchClient(
+                    componentActivity,
+                    browserSwitchInspector,
+                    authTabInternalClient
+            );
+
+            boolean result = sut.isAuthTabSupported(componentActivity);
+
+            assertFalse(result);
+        }
+    }
+
+    @Test
+    public void defaultConstructor_doesNotInitializeAuthTabLauncher() {
+        try (MockedStatic<AuthTabIntent> mockedAuthTab = mockStatic(AuthTabIntent.class)) {
+            BrowserSwitchClient sut = new BrowserSwitchClient();
+
+            mockedAuthTab.verifyNoInteractions();
+
+            when(authTabInternalClient.isAuthTabSupported(applicationContext)).thenReturn(true);
+            boolean result = sut.isAuthTabSupported(applicationContext);
+            assertFalse(result);
+        }
+    }
+
+    @Test
+    public void restorePendingRequest_setsInternalPendingAuthTabRequest() throws BrowserSwitchException {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        JSONObject metadata = new JSONObject();
+        BrowserSwitchRequest originalRequest = new BrowserSwitchRequest(
+                123,
+                browserSwitchDestinationUrl,
+                metadata,
+                "return-url-scheme",
+                null
+        );
+        String pendingRequestString = originalRequest.toBase64EncodedJSON();
+
+        sut.restorePendingRequest(pendingRequestString);
+
+        Uri deepLinkUrl = Uri.parse("return-url-scheme://success");
+        Intent intent = new Intent(Intent.ACTION_VIEW, deepLinkUrl);
+        BrowserSwitchFinalResult result = sut.completeRequest(intent, pendingRequestString);
+
+        assertTrue(result instanceof BrowserSwitchFinalResult.Success);
+        BrowserSwitchFinalResult.Success successResult = (BrowserSwitchFinalResult.Success) result;
+        assertEquals(deepLinkUrl, successResult.getReturnUrl());
+        assertEquals(123, successResult.getRequestCode());
+        assertEquals(browserSwitchDestinationUrl, successResult.getRequestUrl());
+    }
+
+    @Test
+    public void restorePendingRequest_whenPendingRequestIsNull_throwsException() {
+        BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
+                authTabInternalClient);
+
+        BrowserSwitchException exception = assertThrows(BrowserSwitchException.class, () -> {
+            sut.restorePendingRequest(null);
+        });
+
+        assertEquals("Pending request is null", exception.getMessage());
+    }
+
+    @Test
     public void completeRequest_whenAppLinkMatches_successReturnedWithAppLink() throws BrowserSwitchException, JSONException {
         Uri appLinkUri = Uri.parse("https://example.com");
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request = new BrowserSwitchRequest(
@@ -217,7 +608,7 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void completeRequest_whenActiveRequestMatchesDeepLinkResultURLScheme_returnsBrowserSwitchSuccessResult() throws BrowserSwitchException, JSONException {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request = new BrowserSwitchRequest(
@@ -246,7 +637,7 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void completeRequest_whenDeepLinkResultURLSchemeDoesntMatch_returnsNoResult() throws BrowserSwitchException {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request = new BrowserSwitchRequest(
@@ -268,14 +659,17 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void completeRequest_whenIntentIsNull_returnsNoResult() throws BrowserSwitchException {
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
-                customTabsInternalClient);
+                authTabInternalClient);
 
         JSONObject requestMetadata = new JSONObject();
         BrowserSwitchRequest request =
                 new BrowserSwitchRequest(123, browserSwitchDestinationUrl, requestMetadata, "fake-url-scheme", null);
 
+        Intent mockIntent = mock(Intent.class);
+        when(mockIntent.getData()).thenReturn(null);
+
         BrowserSwitchFinalResult result =
-                sut.completeRequest(null, request.toBase64EncodedJSON());
+                sut.completeRequest(mockIntent, request.toBase64EncodedJSON());
         assertTrue(result instanceof BrowserSwitchFinalResult.NoResult);
     }
 }
