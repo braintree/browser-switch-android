@@ -167,6 +167,8 @@ public class BrowserSwitchClient {
         int requestCode = browserSwitchOptions.getRequestCode();
         String returnUrlScheme = browserSwitchOptions.getReturnUrlScheme();
         Uri appLinkUri = browserSwitchOptions.getAppLinkUri();
+        Uri successAppLinkUri = browserSwitchOptions.getSuccessAppLinkUri();
+
         JSONObject metadata = browserSwitchOptions.getMetadata();
 
         if (activity.isFinishing()) {
@@ -198,6 +200,7 @@ public class BrowserSwitchClient {
                     browserSwitchUrl,
                     returnUrlScheme,
                     appLinkUri,
+                    successAppLinkUri,
                     authTabLauncher,
                     launchType
             );

@@ -17,6 +17,7 @@ public class BrowserSwitchOptions {
     private Uri url;
     private String returnUrlScheme;
     private Uri appLinkUri;
+    private Uri successAppLinkUri;
 
     private boolean launchAsNewTask;
     private LaunchType launchType;
@@ -79,6 +80,11 @@ public class BrowserSwitchOptions {
         return this;
     }
 
+    public BrowserSwitchOptions successAppLinkUri(@Nullable Uri successAppLinkUri) {
+        this.successAppLinkUri = successAppLinkUri;
+        return this;
+    }
+
     /**
      * @return The metadata associated with the browser switch request
      */
@@ -116,6 +122,11 @@ public class BrowserSwitchOptions {
     @Nullable
     public Uri getAppLinkUri() {
         return appLinkUri;
+    }
+
+    @Nullable
+    public Uri getSuccessAppLinkUri() {
+        return successAppLinkUri;
     }
 
     /**
