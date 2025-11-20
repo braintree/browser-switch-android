@@ -33,9 +33,10 @@ internal class AuthTabInternalClient (
         appLinkUri: Uri?,
         successAppLinkUri: Uri?,
         launcher: ActivityResultLauncher<Intent>?,
-        launchType: LaunchType?
+        launchType: LaunchType?,
+        forceChromeCustomTab: Boolean = false
     ) {
-        val useAuthTab = isAuthTabSupported(context)
+        val useAuthTab = isAuthTabSupported(context) && !forceChromeCustomTab
 
         if (useAuthTab && launcher != null) {
             val authTabIntent = authTabIntentBuilder.build()

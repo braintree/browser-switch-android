@@ -143,17 +143,27 @@ public class BrowserSwitchClient {
     }
 
     /**
+     * A method to provide backwards compatibility
+     */
+    @NonNull
+    public BrowserSwitchStartResult start(@NonNull Activity activity,
+                                          @NonNull BrowserSwitchOptions browserSwitchOptions) {
+        return start(activity, browserSwitchOptions, false);
+    }
+    /**
      * Open a browser or Auth Tab with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
      * @param activity             the activity used to start browser switch
      * @param browserSwitchOptions {@link BrowserSwitchOptions} the options used to configure the browser switch
+     * @param forceChromeCustomTabs boolean to ensure correct flow for applications that need to support sending users to another app and back
      * @return a {@link BrowserSwitchStartResult.Started} that should be stored and passed to
      * {@link BrowserSwitchClient#completeRequest(Intent, String)} upon return to the app (for Custom Tabs fallback),
      * or {@link BrowserSwitchStartResult.Failure} if browser could not be launched.
      */
     @NonNull
     public BrowserSwitchStartResult start(@NonNull Activity activity,
-                                          @NonNull BrowserSwitchOptions browserSwitchOptions) {
+                                          @NonNull BrowserSwitchOptions browserSwitchOptions,
+                                          boolean forceChromeCustomTabs) {
 
         this.authTabCallbackResult = null;
 
@@ -189,7 +199,7 @@ public class BrowserSwitchClient {
                     appLinkUri
             );
 
-            boolean useAuthTab = isAuthTabSupported(activity);
+            boolean useAuthTab = isAuthTabSupported(activity) && forceChromeCustomTabs;
 
             if (useAuthTab) {
                 this.pendingAuthTabRequest = request;
@@ -202,7 +212,8 @@ public class BrowserSwitchClient {
                     appLinkUri,
                     successAppLinkUri,
                     authTabLauncher,
-                    launchType
+                    launchType,
+                    forceChromeCustomTabs
             );
 
             return new BrowserSwitchStartResult.Started(request.toBase64EncodedJSON());
