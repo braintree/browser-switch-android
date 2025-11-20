@@ -3,9 +3,9 @@
 ## Unreleased
 
 * Add `forceChromeCustomTabs` boolean parameter to `BrowserSwitchClient.start()`
-    * Provides control over browser switch flow when there is a need to support switching between applications
+    * Provide control over browser switch flow when there is a need to support switching between applications
 * Add `successAppLinkUri` to `BrowserSwitchOptions`
-    * Fixes App Link return URL by providing a dedicated URI with full path for returning to the application
+    * Fix App Link return URL by providing a dedicated URI with full path for returning to the application
 
 ## 3.3.0
 
