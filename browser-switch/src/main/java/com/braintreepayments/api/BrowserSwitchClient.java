@@ -199,7 +199,7 @@ public class BrowserSwitchClient {
                     appLinkUri
             );
 
-            boolean useAuthTab = isAuthTabSupported(activity) && forceChromeCustomTabs;
+            boolean useAuthTab = isAuthTabSupported(activity) && !forceChromeCustomTabs;
 
             if (useAuthTab) {
                 this.pendingAuthTabRequest = request;
