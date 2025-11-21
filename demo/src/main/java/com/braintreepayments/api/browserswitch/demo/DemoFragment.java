@@ -86,6 +86,9 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
             browserSwitchOptions.appLinkUri(
                     Uri.parse("https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com")
             );
+            browserSwitchOptions.successAppLinkUri(
+                    Uri.parse("https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com")
+            );
         } else {
             browserSwitchOptions.returnUrlScheme(getReturnUrlScheme());
         }

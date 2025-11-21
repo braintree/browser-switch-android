@@ -77,6 +77,7 @@ class AuthTabInternalClientUnitTest {
     @Test
     fun `launchUrl uses Auth Tab with app link when supported`() {
         val appLinkUri = Uri.parse("https://example.com/auth")
+        val successAppLinkUri = Uri.parse("https://example.com/auth")
         val packageName = "com.android.chrome"
         customTabsIntent = mockk(relaxed = true)
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
@@ -84,7 +85,7 @@ class AuthTabInternalClientUnitTest {
 
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
 
-        sut.launchUrl(context, url, null, appLinkUri, launcher, null)
+        sut.launchUrl(context, url, null, appLinkUri, successAppLinkUri, launcher, null, false)
 
         verify {
             authTabIntent.launch(launcher, url, "example.com", "/auth")
@@ -104,7 +105,7 @@ class AuthTabInternalClientUnitTest {
 
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, null)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, null, false)
 
         verify {
             authTabIntent.launch(launcher, url, returnUrlScheme)
@@ -125,7 +126,7 @@ class AuthTabInternalClientUnitTest {
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
         val intent = authTabIntent.intent
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP, false)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
 
@@ -147,7 +148,31 @@ class AuthTabInternalClientUnitTest {
 
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, null)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, null, false)
+
+        verify {
+            customTabsIntent.launchUrl(context, url)
+        }
+        verify(exactly = 0) {
+            authTabIntent.launch(any(), any(), any<String>())
+        }
+    }
+
+    @Test
+    fun `launchUrl falls back to Custom Tabs when forceChromeCustomTab is true`() {
+        val appLinkUri = Uri.parse("https://example.com/auth")
+        val successAppLinkUri = Uri.parse("https://example.com/auth")
+        val packageName = "com.android.chrome"
+        val returnUrlScheme = "example"
+        authTabIntent = mockk(relaxed = true)
+        every { authTabBuilder.build() } returns authTabIntent
+
+        every { CustomTabsClient.getPackageName(context, null) } returns packageName
+        every { CustomTabsClient.isAuthTabSupported(context, packageName) } returns true
+
+        val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
+
+        sut.launchUrl(context, url, returnUrlScheme, appLinkUri, successAppLinkUri, launcher, null, true)
 
         verify {
             customTabsIntent.launchUrl(context, url)
@@ -160,6 +185,7 @@ class AuthTabInternalClientUnitTest {
     @Test
     fun `launchUrl handles app link with no path`() {
         val appLinkUri = Uri.parse("https://example.com")
+        val successAppLinkUri = Uri.parse("https://example.com")
         val packageName = "com.android.chrome"
 
         every { CustomTabsClient.getPackageName(context, null) } returns packageName
@@ -167,7 +193,7 @@ class AuthTabInternalClientUnitTest {
 
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
 
-        sut.launchUrl(context, url, null, appLinkUri, launcher, null)
+        sut.launchUrl(context, url, null, appLinkUri, successAppLinkUri, launcher, null, false)
 
         verify {
             authTabIntent.launch(launcher, url, "example.com", "/")
@@ -183,7 +209,7 @@ class AuthTabInternalClientUnitTest {
         // Force AuthTab not to be supported to fall back to Custom Tabs
         every { CustomTabsClient.getPackageName(context, null) } returns null
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, null)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, null, false)
 
         assertEquals(0, intent.flags)
     }
@@ -197,7 +223,7 @@ class AuthTabInternalClientUnitTest {
         // Force AuthTab not to be supported to fall back to Custom Tabs
         every { CustomTabsClient.getPackageName(context, null) } returns null
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_NEW_TASK)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, LaunchType.ACTIVITY_NEW_TASK, false)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0)
     }
@@ -211,7 +237,7 @@ class AuthTabInternalClientUnitTest {
         // Force AuthTab not to be supported to fall back to Custom Tabs
         every { CustomTabsClient.getPackageName(context, null) } returns null
 
-        sut.launchUrl(context, url, returnUrlScheme, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, launcher, LaunchType.ACTIVITY_CLEAR_TOP, false)
 
         assertTrue(intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP != 0)
     }
@@ -225,7 +251,7 @@ class AuthTabInternalClientUnitTest {
         val sut = AuthTabInternalClient(authTabBuilder, customTabsBuilder)
         val returnUrlScheme = "example"
 
-        sut.launchUrl(context, url, returnUrlScheme, null, null, null)
+        sut.launchUrl(context, url, returnUrlScheme, null, null, null, null, false)
 
         verify {
             customTabsIntent.launchUrl(context, url)

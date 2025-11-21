@@ -17,6 +17,7 @@ public class BrowserSwitchOptions {
     private Uri url;
     private String returnUrlScheme;
     private Uri appLinkUri;
+    private Uri successAppLinkUri;
 
     private boolean launchAsNewTask;
     private LaunchType launchType;
@@ -78,6 +79,17 @@ public class BrowserSwitchOptions {
         this.appLinkUri = appLinkUri;
         return this;
     }
+    /**
+     * Set Success App Link [Uri].
+     *
+     * @param successAppLinkUri The [Uri] containing the App Link URL with full success path
+     *                          used for navigating back into the application after browser switch
+     * @return {@link BrowserSwitchOptions} reference to instance to allow setter invocations to be chained
+     */
+    public BrowserSwitchOptions successAppLinkUri(@Nullable Uri successAppLinkUri) {
+        this.successAppLinkUri = successAppLinkUri;
+        return this;
+    }
 
     /**
      * @return The metadata associated with the browser switch request
@@ -116,6 +128,15 @@ public class BrowserSwitchOptions {
     @Nullable
     public Uri getAppLinkUri() {
         return appLinkUri;
+    }
+
+    /**
+     * @return The Success App Link [Uri] set for navigating back into the application
+     *                              after browser switch containing the full path back
+     */
+    @Nullable
+    public Uri getSuccessAppLinkUri() {
+        return successAppLinkUri;
     }
 
     /**
