@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## Unreleased
+## unreleased
 
 * Add `forceChromeCustomTabs` boolean parameter to `BrowserSwitchClient.start()`
     * Provide control over browser switch flow when there is a need to support switching between applications
