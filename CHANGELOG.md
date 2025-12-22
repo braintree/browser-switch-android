@@ -1,5 +1,12 @@
 # browser-switch-android Release Notes
 
+## 3.4.0
+
+* Add `forceChromeCustomTabs` boolean parameter to `BrowserSwitchClient.start()`
+    * Provide control over browser switch flow when there is a need to support switching between applications
+* Add `successAppLinkUri` to `BrowserSwitchOptions`
+    * Fix App Link return URL by providing a dedicated URI with full path for returning to the application
+
 ## 3.3.0
 
 * Add AuthTab Support

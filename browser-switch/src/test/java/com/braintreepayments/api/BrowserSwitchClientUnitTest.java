@@ -111,7 +111,9 @@ public class BrowserSwitchClientUnitTest {
                 eq("return-url-scheme"),
                 isNull(),
                 isNull(),
-                eq(LaunchType.ACTIVITY_CLEAR_TOP)
+                isNull(),
+                eq(LaunchType.ACTIVITY_CLEAR_TOP),
+                eq(false)
         );
 
         assertNotNull(browserSwitchPendingRequest);
@@ -130,7 +132,7 @@ public class BrowserSwitchClientUnitTest {
     @Test
     public void start_withAppLinkUri_passesItToAuthTab() {
         Uri appLinkUri = Uri.parse("https://example.com/auth");
-
+        Uri successAppLinkUri = Uri.parse("https://example.com/auth");
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
                 authTabInternalClient);
 
@@ -139,6 +141,7 @@ public class BrowserSwitchClientUnitTest {
                 .requestCode(123)
                 .url(browserSwitchDestinationUrl)
                 .appLinkUri(appLinkUri)
+                .successAppLinkUri(successAppLinkUri)
                 .metadata(metadata);
 
         BrowserSwitchStartResult browserSwitchPendingRequest = sut.start(componentActivity, options);
@@ -148,8 +151,10 @@ public class BrowserSwitchClientUnitTest {
                 eq(browserSwitchDestinationUrl),
                 isNull(),
                 eq(appLinkUri),
+                eq(successAppLinkUri),
                 isNull(),
-                isNull()
+                isNull(),
+                eq(false)
         );
 
         assertTrue(browserSwitchPendingRequest instanceof BrowserSwitchStartResult.Started);
@@ -165,7 +170,9 @@ public class BrowserSwitchClientUnitTest {
                 eq("return-url-scheme"),
                 isNull(),
                 isNull(),
-                isNull()
+                isNull(),
+                isNull(),
+                eq(false)
         );
 
         BrowserSwitchClient sut = new BrowserSwitchClient(browserSwitchInspector,
@@ -315,8 +322,10 @@ public class BrowserSwitchClientUnitTest {
                     eq(browserSwitchDestinationUrl),
                     eq("return-url-scheme"),
                     isNull(),
+                    isNull(),
                     eq(mockLauncher),
-                    isNull()
+                    isNull(),
+                    eq(false)
             );
 
             String pendingRequestString = ((BrowserSwitchStartResult.Started) result).getPendingRequest();
@@ -430,7 +439,9 @@ public class BrowserSwitchClientUnitTest {
                 eq("return-url-scheme"),
                 isNull(),
                 isNull(),
-                isNull()
+                isNull(),
+                isNull(),
+                eq(false)
         );
     }
 
@@ -462,7 +473,9 @@ public class BrowserSwitchClientUnitTest {
                 eq("return-url-scheme"),
                 isNull(),
                 isNull(),
-                isNull()
+                isNull(),
+                isNull(),
+                eq(false)
         );
     }
 
