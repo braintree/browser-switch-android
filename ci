@@ -15,6 +15,7 @@ case $command_name in
     ;;
   lint)
     ./gradlew clean lint
+    ./gradlew detekt --auto-correct
     ;;
   unit_tests)
     ./gradlew --stacktrace testRelease

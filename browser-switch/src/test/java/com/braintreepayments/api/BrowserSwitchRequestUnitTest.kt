@@ -8,6 +8,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
+@Suppress("LibraryEntitiesShouldNotBePublic")
 class BrowserSwitchRequestUnitTest {
 
     @Test
