@@ -2,6 +2,7 @@ package com.braintreepayments.api.browserswitch.demo
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -39,6 +40,7 @@ class ComposeActivity : ComponentActivity() {
             try {
                 browserSwitchClient.restorePendingRequest(pendingRequest)
             } catch (e: BrowserSwitchException) {
+                Log.e("ComposeActivity", "Failed to restore pending request", e)
                 PendingRequestStore.clear(this)
             }
         }
@@ -115,7 +117,6 @@ fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
         BrowserSwitchSuccess(result = it)
     }
     uiState.browserSwitchError?.let { BrowserSwitchError(exception = it) }
-
 }
 
 @Composable

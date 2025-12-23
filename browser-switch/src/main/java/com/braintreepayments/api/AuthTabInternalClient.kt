@@ -9,7 +9,7 @@ import androidx.browser.auth.AuthTabIntent
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 
-internal class AuthTabInternalClient (
+internal class AuthTabInternalClient(
     private val authTabIntentBuilder: AuthTabIntent.Builder = AuthTabIntent.Builder(),
     private val customTabsIntentBuilder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
 ) {
@@ -30,7 +30,7 @@ internal class AuthTabInternalClient (
         context: Context,
         url: Uri,
         returnUrlScheme: String?,
-        appLinkUri: Uri?,
+        @Suppress("UnusedParameter") appLinkUri: Uri?,
         successAppLinkUri: Uri?,
         launcher: ActivityResultLauncher<Intent>?,
         launchType: LaunchType?,

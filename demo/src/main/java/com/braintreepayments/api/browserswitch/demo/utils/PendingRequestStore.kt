@@ -3,6 +3,7 @@ package com.braintreepayments.api.browserswitch.demo.utils
 import android.content.Context
 import android.content.SharedPreferences
 
+@Suppress("UtilityClassWithPublicConstructor")
 class PendingRequestStore {
 
     companion object {
