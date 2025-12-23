@@ -86,6 +86,7 @@ case $command_name in
     ;;
   android_lint)
     ./gradlew lint
+    ./gradlew detekt
     ;;
 
 esac
