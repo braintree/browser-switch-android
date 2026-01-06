@@ -567,6 +567,12 @@ potential-bugs:
   WrongEqualsTypeParameter:
     active: true
 
+libraries:
+  active: true
+  LibraryEntitiesShouldNotBePublic:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**','**/demo/**']
+
 style:
   active: true
   ClassOrdering:
