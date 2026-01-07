@@ -6,6 +6,7 @@ import org.json.JSONObject
 /**
  * The result of a browser switch obtained from [BrowserSwitchClient.completeRequest]
  */
+@Suppress("LibraryEntitiesShouldNotBePublic")
 sealed class BrowserSwitchFinalResult {
 
     /**

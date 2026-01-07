@@ -3,6 +3,7 @@ package com.braintreepayments.api
 /**
  * The result of a browser switch obtained from [BrowserSwitchClient.start]
  */
+@Suppress("LibraryEntitiesShouldNotBePublic")
 sealed class BrowserSwitchStartResult {
 
     /**
