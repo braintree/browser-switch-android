@@ -47,7 +47,7 @@ fun MainContent() {
     val context = LocalContext.current
     val activity = context.findActivity()
 
-    LaunchedEffect(true) {
+    LifecycleEventEffect(Lifecycle.Event.ON_CREATE) {
         PendingRequestStore.get(context)?.let { pendingRequest ->
             try {
                 browserSwitchClient.restorePendingRequest(pendingRequest)

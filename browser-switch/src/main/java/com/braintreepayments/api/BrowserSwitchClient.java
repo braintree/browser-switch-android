@@ -34,28 +34,35 @@ public class BrowserSwitchClient {
     @Nullable
     private BrowserSwitchFinalResult authTabCallbackResult;
 
+    @Nullable
+    private AuthTabIntent.AuthResult authTabResult;
+
     ActivityResultCallback<AuthTabIntent.AuthResult> authTabCallback = new ActivityResultCallback<>() {
         @Override
         public void onActivityResult(AuthTabIntent.AuthResult result) {
-            BrowserSwitchFinalResult finalResult;
-            switch (result.resultCode) {
-                case AuthTabIntent.RESULT_OK:
-                    if (result.resultUri != null && pendingAuthTabRequest != null) {
-                        finalResult = new BrowserSwitchFinalResult.Success(
-                                result.resultUri,
-                                pendingAuthTabRequest
-                        );
-                    } else {
-                        finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                    }
-                    break;
-                default:
-                    finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-            }
-            authTabCallbackResult = finalResult;
-            pendingAuthTabRequest = null;
+            authTabResult = result;
         }
     };
+
+    void onAuthTabResult(AuthTabIntent.AuthResult result) {
+        BrowserSwitchFinalResult finalResult;
+        switch (result.resultCode) {
+            case AuthTabIntent.RESULT_OK:
+                if (result.resultUri != null && pendingAuthTabRequest != null) {
+                    finalResult = new BrowserSwitchFinalResult.Success(
+                            result.resultUri,
+                            pendingAuthTabRequest
+                    );
+                } else {
+                    finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                }
+                break;
+            default:
+                finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+        }
+        authTabCallbackResult = finalResult;
+        pendingAuthTabRequest = null;
+    }
 
     /**
      * Construct a client that manages browser switching with Chrome Custom Tabs fallback only.
@@ -126,11 +133,11 @@ public class BrowserSwitchClient {
      *
      * @param caller The ActivityResultCaller (Activity or Fragment) used to initialize the Auth Tab launcher
      */
-   private void initializeAuthTabLauncher(@NonNull ActivityResultCaller caller) {
-       authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
-           caller,
-           authTabCallback
-       );
+    private void initializeAuthTabLauncher(@NonNull ActivityResultCaller caller) {
+        authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
+                caller,
+                authTabCallback
+        );
     }
 
     private void initializeAuthTabLauncher(@NonNull ActivityResultRegistry registry) {
@@ -307,6 +314,10 @@ public class BrowserSwitchClient {
      * @return a {@link BrowserSwitchFinalResult}
      */
     public BrowserSwitchFinalResult completeRequest(@NonNull Intent intent, @NonNull String pendingRequest) {
+        if (authTabResult != null) {
+            onAuthTabResult(authTabResult);
+            authTabResult = null;
+        }
         if (authTabCallbackResult != null) {
             BrowserSwitchFinalResult result = authTabCallbackResult;
             authTabCallbackResult = null;
