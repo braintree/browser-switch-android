@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.net.Uri
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braintreepayments.api.BrowserSwitchClient
+import com.braintreepayments.api.BrowserSwitchException
 import com.braintreepayments.api.BrowserSwitchFinalResult
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchStartResult
@@ -41,14 +43,14 @@ fun MainContent() {
 
     val context = LocalContext.current
     val activity = context.findActivity()
-//    PendingRequestStore.get(context)?.let { pendingRequest ->
-//        try {
-//            browserSwitchClient.restorePendingRequest(pendingRequest)
-//        } catch (e: BrowserSwitchException) {
-//            Log.e("ComposeActivity", "Failed to restore pending request", e)
-//            PendingRequestStore.clear(context)
-//        }
-//    }
+    PendingRequestStore.get(context)?.let { pendingRequest ->
+        try {
+            browserSwitchClient.restorePendingRequest(pendingRequest)
+        } catch (e: BrowserSwitchException) {
+            Log.e("ComposeActivity", "Failed to restore pending request", e)
+            PendingRequestStore.clear(context)
+        }
+    }
 
     Column(modifier = Modifier.safeGesturesPadding()) {
         BrowserSwitchButton {
