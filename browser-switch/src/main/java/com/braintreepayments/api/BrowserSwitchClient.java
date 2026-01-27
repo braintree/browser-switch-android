@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.ActivityResultRegistry;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -27,8 +29,33 @@ public class BrowserSwitchClient {
     private ActivityResultLauncher<Intent> authTabLauncher;
     private BrowserSwitchRequest pendingAuthTabRequest;
 
+    final String registryKey = "BrowserSwitchActivityRegistryKey";
+
     @Nullable
     private BrowserSwitchFinalResult authTabCallbackResult;
+
+    ActivityResultCallback<AuthTabIntent.AuthResult> authTabCallback = new ActivityResultCallback<>() {
+        @Override
+        public void onActivityResult(AuthTabIntent.AuthResult result) {
+            BrowserSwitchFinalResult finalResult;
+            switch (result.resultCode) {
+                case AuthTabIntent.RESULT_OK:
+                    if (result.resultUri != null && pendingAuthTabRequest != null) {
+                        finalResult = new BrowserSwitchFinalResult.Success(
+                                result.resultUri,
+                                pendingAuthTabRequest
+                        );
+                    } else {
+                        finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                    }
+                    break;
+                default:
+                    finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+            }
+            authTabCallbackResult = finalResult;
+            pendingAuthTabRequest = null;
+        }
+    };
 
     /**
      * Construct a client that manages browser switching with Chrome Custom Tabs fallback only.
@@ -73,6 +100,11 @@ public class BrowserSwitchClient {
         initializeAuthTabLauncher(caller);
     }
 
+    public BrowserSwitchClient(@NonNull ActivityResultRegistry registry) {
+        this(new BrowserSwitchInspector(), new AuthTabInternalClient());
+        initializeAuthTabLauncher(registry);
+    }
+
     @VisibleForTesting
     BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
                         AuthTabInternalClient authTabInternalClient) {
@@ -95,31 +127,51 @@ public class BrowserSwitchClient {
      * @param caller The ActivityResultCaller (Activity or Fragment) used to initialize the Auth Tab launcher
      */
    private void initializeAuthTabLauncher(@NonNull ActivityResultCaller caller) {
-
-        this.authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
-                caller,
-                result -> {
-                    BrowserSwitchFinalResult finalResult;
-                    switch (result.resultCode) {
-                        case AuthTabIntent.RESULT_OK:
-                            if (result.resultUri != null && pendingAuthTabRequest != null) {
-                                finalResult = new BrowserSwitchFinalResult.Success(
-                                        result.resultUri,
-                                        pendingAuthTabRequest
-                                );
-                            } else {
-                                finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                            }
-                            break;
-                        default:
-                            finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                    }
-                    this.authTabCallbackResult = finalResult;
-                    pendingAuthTabRequest = null;
-                }
-        );
+       authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
+               caller,
+               result -> {
+                   BrowserSwitchFinalResult finalResult;
+                   switch (result.resultCode) {
+                       case AuthTabIntent.RESULT_OK:
+                           if (result.resultUri != null && pendingAuthTabRequest != null) {
+                               finalResult = new BrowserSwitchFinalResult.Success(
+                                       result.resultUri,
+                                       pendingAuthTabRequest
+                               );
+                           } else {
+                               finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                           }
+                           break;
+                       default:
+                           finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                   }
+                   authTabCallbackResult = finalResult;
+                   pendingAuthTabRequest = null;
+               }
+       );
     }
 
+    private void initializeAuthTabLauncher(@NonNull ActivityResultRegistry registry) {
+        authTabLauncher = registry.register(registryKey, new AuthTabIntent.AuthenticateUserResultContract(), result -> {
+            BrowserSwitchFinalResult finalResult;
+            switch (result.resultCode) {
+                case AuthTabIntent.RESULT_OK:
+                    if (result.resultUri != null && pendingAuthTabRequest != null) {
+                        finalResult = new BrowserSwitchFinalResult.Success(
+                                result.resultUri,
+                                pendingAuthTabRequest
+                        );
+                    } else {
+                        finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+                    }
+                    break;
+                default:
+                    finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
+            }
+            authTabCallbackResult = finalResult;
+            pendingAuthTabRequest = null;
+        });
+    }
 
     /**
      * Restores a pending request after process kill or app restart.
@@ -150,6 +202,7 @@ public class BrowserSwitchClient {
                                           @NonNull BrowserSwitchOptions browserSwitchOptions) {
         return start(activity, browserSwitchOptions, false);
     }
+
     /**
      * Open a browser or Auth Tab with a given set of {@link BrowserSwitchOptions} from an Android activity.
      *
@@ -304,6 +357,10 @@ public class BrowserSwitchClient {
             }
         }
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
+    }
+
+    void cleanup() {
+        authTabLauncher.unregister();
     }
 
     /**

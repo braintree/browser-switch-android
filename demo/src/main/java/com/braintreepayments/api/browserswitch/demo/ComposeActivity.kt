@@ -25,8 +25,9 @@ import com.braintreepayments.api.BrowserSwitchFinalResult
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.BrowserSwitchStartResult
 import com.braintreepayments.api.browserswitch.demo.utils.PendingRequestStore
-import com.braintreepayments.api.demo.viewmodel.BrowserSwitchViewModel
+import com.braintreepayments.api.browserswitch.demo.viewmodel.BrowserSwitchViewModel
 import org.json.JSONObject
+import androidx.core.net.toUri
 
 class ComposeActivity : ComponentActivity() {
 
@@ -35,6 +36,20 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContent {
+            Column(modifier = Modifier.safeGesturesPadding()) {
+//                BrowserSwitchButton {
+//                    startBrowserSwitch()
+//                }
+//                BrowserSwitchResult(viewModel = viewModel)
+
+                MainContent()
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
         browserSwitchClient = BrowserSwitchClient(this)
         PendingRequestStore.get(this)?.let { pendingRequest ->
             try {
@@ -44,24 +59,16 @@ class ComposeActivity : ComponentActivity() {
                 PendingRequestStore.clear(this)
             }
         }
-        setContent {
-            Column(modifier = Modifier.safeGesturesPadding()) {
-                BrowserSwitchButton {
-                    startBrowserSwitch()
-                }
-                BrowserSwitchResult(viewModel = viewModel)
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        PendingRequestStore.get(this)?.let { startedRequest ->
-            val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
-            handleBrowserSwitchResult(completeRequestResult)
-            PendingRequestStore.clear(this)
-            intent.data = null
-        }
+//        PendingRequestStore.get(this)?.let { startedRequest ->
+//            val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
+//            handleBrowserSwitchResult(completeRequestResult)
+//            PendingRequestStore.clear(this)
+//            intent.data = null
+//        }
     }
 
     private fun handleBrowserSwitchResult(result: BrowserSwitchFinalResult) {
@@ -98,7 +105,7 @@ class ComposeActivity : ComponentActivity() {
     private fun buildBrowserSwitchUrl(): Uri? {
         val url = "https://braintree.github.io/popup-bridge-example/" +
                 "this_launches_in_popup.html?popupBridgeReturnUrlPrefix=$RETURN_URL_SCHEME://"
-        return Uri.parse(url)
+        return url.toUri()
     }
 
     private fun buildMetadataObject(): JSONObject? {
@@ -111,7 +118,7 @@ class ComposeActivity : ComponentActivity() {
 }
 
 @Composable
-fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
+private fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
     val uiState = viewModel.uiState.collectAsState().value
     (uiState.browserSwitchFinalResult as? BrowserSwitchFinalResult.Success)?.let {
         BrowserSwitchSuccess(result = it)
@@ -120,7 +127,7 @@ fun BrowserSwitchResult(viewModel: BrowserSwitchViewModel) {
 }
 
 @Composable
-fun BrowserSwitchButton(onClick: () -> Unit) {
+private fun BrowserSwitchButton(onClick: () -> Unit) {
     Button(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick
@@ -130,7 +137,7 @@ fun BrowserSwitchButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
+private fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
     val color = result.returnUrl.getQueryParameter("color")
     val selectedColorString = "Selected color: $color"
     val metadataOutput = result.requestMetadata?.getString("test_key")?.let { "test_key=$it" }
@@ -149,7 +156,7 @@ fun BrowserSwitchSuccess(result: BrowserSwitchFinalResult.Success) {
 }
 
 @Composable
-fun BrowserSwitchError(exception: Exception) {
+private fun BrowserSwitchError(exception: Exception) {
     Column(modifier = Modifier.padding(10.dp)) {
         Text(
             fontSize = 20.sp,
