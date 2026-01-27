@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braintreepayments.api.BrowserSwitchClient
@@ -43,12 +46,15 @@ fun MainContent() {
 
     val context = LocalContext.current
     val activity = context.findActivity()
-    PendingRequestStore.get(context)?.let { pendingRequest ->
-        try {
-            browserSwitchClient.restorePendingRequest(pendingRequest)
-        } catch (e: BrowserSwitchException) {
-            Log.e("ComposeActivity", "Failed to restore pending request", e)
-            PendingRequestStore.clear(context)
+
+    LaunchedEffect(true) {
+        PendingRequestStore.get(context)?.let { pendingRequest ->
+            try {
+                browserSwitchClient.restorePendingRequest(pendingRequest)
+            } catch (e: BrowserSwitchException) {
+                Log.e("ComposeActivity", "Failed to restore pending request", e)
+                PendingRequestStore.clear(context)
+            }
         }
     }
 
@@ -60,12 +66,14 @@ fun MainContent() {
     }
 
     LifecycleResumeEffect(Unit) {
-        val intent = (context as ComponentActivity).intent
+        val context = (context as ComponentActivity)
         PendingRequestStore.get(context)?.let { startedRequest ->
+            val intent = context.intent
             val completeRequestResult = browserSwitchClient.completeRequest(intent, startedRequest)
             handleBrowserSwitchResult(viewModel, completeRequestResult)
             PendingRequestStore.clear(context)
             intent.data = null
+            browserSwitchClient.cleanup()
         }
 
         onPauseOrDispose { lifecycle }
