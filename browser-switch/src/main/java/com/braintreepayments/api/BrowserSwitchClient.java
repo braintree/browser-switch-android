@@ -128,49 +128,17 @@ public class BrowserSwitchClient {
      */
    private void initializeAuthTabLauncher(@NonNull ActivityResultCaller caller) {
        authTabLauncher = AuthTabIntent.registerActivityResultLauncher(
-               caller,
-               result -> {
-                   BrowserSwitchFinalResult finalResult;
-                   switch (result.resultCode) {
-                       case AuthTabIntent.RESULT_OK:
-                           if (result.resultUri != null && pendingAuthTabRequest != null) {
-                               finalResult = new BrowserSwitchFinalResult.Success(
-                                       result.resultUri,
-                                       pendingAuthTabRequest
-                               );
-                           } else {
-                               finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                           }
-                           break;
-                       default:
-                           finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                   }
-                   authTabCallbackResult = finalResult;
-                   pendingAuthTabRequest = null;
-               }
+           caller,
+           authTabCallback
        );
     }
 
     private void initializeAuthTabLauncher(@NonNull ActivityResultRegistry registry) {
-        authTabLauncher = registry.register(registryKey, new AuthTabIntent.AuthenticateUserResultContract(), result -> {
-            BrowserSwitchFinalResult finalResult;
-            switch (result.resultCode) {
-                case AuthTabIntent.RESULT_OK:
-                    if (result.resultUri != null && pendingAuthTabRequest != null) {
-                        finalResult = new BrowserSwitchFinalResult.Success(
-                                result.resultUri,
-                                pendingAuthTabRequest
-                        );
-                    } else {
-                        finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-                    }
-                    break;
-                default:
-                    finalResult = BrowserSwitchFinalResult.NoResult.INSTANCE;
-            }
-            authTabCallbackResult = finalResult;
-            pendingAuthTabRequest = null;
-        });
+        authTabLauncher = registry.register(
+            registryKey,
+            new AuthTabIntent.AuthenticateUserResultContract(),
+            authTabCallback
+        );
     }
 
     /**
