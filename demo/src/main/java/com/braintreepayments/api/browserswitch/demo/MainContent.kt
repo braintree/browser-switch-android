@@ -40,7 +40,8 @@ private const val RETURN_URL_SCHEME = "my-custom-url-scheme-standard"
 @Composable
 fun MainContent() {
     val viewModel: BrowserSwitchViewModel = viewModel { BrowserSwitchViewModel() }
-    val browserSwitchClient: BrowserSwitchClient = LocalActivityResultRegistryOwner.current?.let { BrowserSwitchClient(it.activityResultRegistry) }
+    val browserSwitchClient: BrowserSwitchClient =
+        LocalActivityResultRegistryOwner.current?.let { BrowserSwitchClient(it.activityResultRegistry) }
             ?: BrowserSwitchClient()
 
     val context = LocalContext.current
