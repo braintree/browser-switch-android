@@ -73,7 +73,6 @@ fun MainContent() {
             handleBrowserSwitchResult(viewModel, completeRequestResult)
             PendingRequestStore.clear(context)
             intent.data = null
-            browserSwitchClient.cleanup()
         }
 
         onPauseOrDispose { lifecycle }
