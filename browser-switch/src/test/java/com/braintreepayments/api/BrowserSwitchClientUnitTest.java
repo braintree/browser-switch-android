@@ -26,6 +26,7 @@ import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.ActivityResultRegistry;
 import androidx.browser.auth.AuthTabIntent;
 
 import org.json.JSONException;
@@ -281,6 +282,18 @@ public class BrowserSwitchClientUnitTest {
 
             assertNotNull(callbackCaptor.getValue());
         }
+    }
+
+    @Test
+    public void initializeAuthTabLauncher_withActivityResultRegistry_callsRegister() {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+        BrowserSwitchClient sut = new BrowserSwitchClient(registry, browserSwitchInspector, authTabInternalClient);
+
+        verify(registry).register(
+                eq(sut.registryKey),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                eq(sut.authTabCallback)
+        );
     }
 
     @Test
