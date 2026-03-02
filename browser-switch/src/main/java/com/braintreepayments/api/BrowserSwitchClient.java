@@ -373,10 +373,6 @@ public class BrowserSwitchClient {
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
     }
 
-    public void cleanUp() {
-        authTabLauncher.unregister();
-    }
-
     /**
      * Checks if Auth Tab is supported on this device and if the launcher has been initialized.
      * @param context The application context
