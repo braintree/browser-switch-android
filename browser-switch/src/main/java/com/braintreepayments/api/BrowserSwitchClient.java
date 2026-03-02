@@ -373,7 +373,7 @@ public class BrowserSwitchClient {
         return BrowserSwitchFinalResult.NoResult.INSTANCE;
     }
 
-    public void cleanup() {
+    public void cleanUp() {
         authTabLauncher.unregister();
     }
 
