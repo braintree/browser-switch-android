@@ -55,6 +55,7 @@ internal class AuthTabInternalClient(
             launchCustomTabs(context, url, launchType)
         }
     }
+
     private fun launchCustomTabs(context: Context, url: Uri, launchType: LaunchType?) {
         val customTabsIntent = customTabsIntentBuilder.build()
         when (launchType) {
