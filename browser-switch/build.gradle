@@ -36,6 +36,13 @@ android {
             includeAndroidResources = true
         }
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
