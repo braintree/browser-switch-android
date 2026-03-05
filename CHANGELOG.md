@@ -1,5 +1,8 @@
 # browser-switch-android Release Notes
 
+## unreleased
+  * Add parameterized constructor `BrowserSwitchClient(ActivityResultRegistry)` for AuthTab support on Jetpack Compose 
+
 ## 3.4.0
 
 * Add `forceChromeCustomTabs` boolean parameter to `BrowserSwitchClient.start()`
