@@ -1,7 +1,8 @@
 # browser-switch-android Release Notes
 
 ## unreleased
-  * Add parameterized constructor `BrowserSwitchClient(ActivityResultRegistry)` for AuthTab support on Jetpack Compose 
+  * Add parameterized constructor `BrowserSwitchClient(ActivityResultRegistry)` for AuthTab support on Jetpack Compose
+  * Bump `androidx.browser` to `1.10.0-alpha02`
 
 ## 3.4.0
 
