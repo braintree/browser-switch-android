@@ -1,5 +1,10 @@
 # browser-switch-android Release Notes
 
+## unreleased
+  * Add a UUID to `BrowserSwitchActivityRegistryKey` used to start AuthTab flows to allow for multiple instances of 
+    BrowserSwitchClient to have separate keys to deliver results to. Fixes an issue where multiple 
+    BrowserSwitchClient instances are not supported.
+
 ## 3.5.0
   * Add parameterized constructor `BrowserSwitchClient(ActivityResultRegistry)` for AuthTab support on Jetpack Compose
   * Bump `androidx.browser` to `1.10.0-alpha02`
