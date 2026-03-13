@@ -19,6 +19,8 @@ import com.braintreepayments.api.browserswitch.R;
 
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 /**
  * Client that manages the logic for browser switching.
  */
@@ -29,7 +31,7 @@ public class BrowserSwitchClient {
     private ActivityResultLauncher<Intent> authTabLauncher;
     private BrowserSwitchRequest pendingAuthTabRequest;
 
-    final String registryKey = "BrowserSwitchActivityRegistryKey";
+    final String registryKey = "BrowserSwitchActivityRegistryKey"+ UUID.randomUUID();
 
     @Nullable
     private BrowserSwitchFinalResult authTabCallbackResult;
