@@ -42,13 +42,13 @@ plugins {
     id 'io.gitlab.arturbosch.detekt' version '1.23.6'
 }
 
-version = '3.5.1'
+version = '3.5.2-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
     compileSdkVersion = 36
     minSdkVersion = 23
     targetSdkVersion = 36
-    versionCode = 77
+    versionCode = 78
     versionName = version
 }
 
