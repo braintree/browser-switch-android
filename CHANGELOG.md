@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 3.5.1
   * Add a UUID to `BrowserSwitchActivityRegistryKey` used to start AuthTab flows to allow for multiple instances of 
     BrowserSwitchClient to have separate keys to deliver results to. Fixes an issue where multiple 
     BrowserSwitchClient instances are not supported.
