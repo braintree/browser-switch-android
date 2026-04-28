@@ -50,5 +50,5 @@ Published to Maven Central via Sonatype OSSRH. Requires env vars `SONATYPE_NEXUS
 
 ### Versions
 
+- Current major version: v3.x; v2.x deprecated March 2026
 - compileSdk 36, minSdk 23, Java 11, Kotlin 1.9.20
-- Current: `3.5.2-SNAPSHOT`; v2.x deprecated March 2026
