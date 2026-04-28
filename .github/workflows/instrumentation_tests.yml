@@ -7,7 +7,15 @@ jobs:
       fail-fast: false
       matrix:
         api-level: [ 31, 35 ]
-        target: [ default ]
+        target: [ default, google_apis ]
+        profile: [ pixel_7_pro ]
+        include:
+          - api-level: 23
+            target: default
+            profile: Nexus 6
+          - api-level: 23
+            target: google_apis
+            profile: Nexus 6
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -26,8 +34,11 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: x86_64
-          profile: pixel_7_pro
-          script: ./gradlew :demo:connectedCheck --stacktrace
+          profile: ${{ matrix.profile }}
+          script: |
+            adb shell 'echo "_ --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line'
+            adb shell chmod 777 /data/local/tmp/chrome-command-line
+            ./gradlew :demo:connectedCheck --stacktrace
 
       - name: retry tests
         if: steps.run_tests.outcome == 'failure'
@@ -36,5 +47,8 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: x86_64
-          profile: pixel_7_pro
-          script: ./gradlew :demo:connectedCheck --stacktrace
+          profile: ${{ matrix.profile }}
+          script: |
+            adb shell 'echo "_ --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line'
+            adb shell chmod 777 /data/local/tmp/chrome-command-line
+            ./gradlew :demo:connectedCheck --stacktrace
