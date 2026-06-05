@@ -105,6 +105,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
       - name: Setup Java
         uses: ./.github/actions/setup_java
       - name: Set GitHub User
