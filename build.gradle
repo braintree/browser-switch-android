@@ -28,7 +28,7 @@ buildscript {
     ]
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.1'
+        classpath 'com.android.tools.build:gradle:8.13.2'
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.9.10'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
         classpath 'io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.6'
@@ -45,9 +45,9 @@ plugins {
 version = '3.5.2-SNAPSHOT'
 group = "com.braintreepayments"
 ext {
-    compileSdkVersion = 36
+    compileSdkVersion = 37
     minSdkVersion = 23
-    targetSdkVersion = 36
+    targetSdkVersion = 37
     versionCode = 78
     versionName = version
 }
