@@ -2,6 +2,7 @@ package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -294,6 +295,28 @@ public class BrowserSwitchClientUnitTest {
                 any(AuthTabIntent.AuthenticateUserResultContract.class),
                 eq(sut.authTabCallback)
         );
+    }
+
+    @Test
+    public void initializeAuthTabLauncher_withActivityResultRegistryAndKey_registersUnderProvidedKey() {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+        BrowserSwitchClient sut = new BrowserSwitchClient(
+                registry, "stable-key", browserSwitchInspector, authTabInternalClient);
+
+        assertEquals("stable-key", sut.registryKey);
+        verify(registry).register(
+                eq("stable-key"),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                eq(sut.authTabCallback)
+        );
+    }
+
+    @Test
+    public void registryKey_withoutProvidedKey_isDifferentForEachClient() {
+        BrowserSwitchClient first = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+        BrowserSwitchClient second = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+
+        assertNotEquals(first.registryKey, second.registryKey);
     }
 
     @Test

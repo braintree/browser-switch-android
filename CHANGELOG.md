@@ -1,5 +1,11 @@
 # browser-switch-android Release Notes
 
+## unreleased
+  * Add `BrowserSwitchClient(ActivityResultRegistry, String)` constructor that registers the Auth Tab launcher under
+    a caller-provided key. Registering under a key that is stable across activity recreation, for example one saved
+    with `rememberSaveable` in Jetpack Compose, lets the registry deliver an Auth Tab result that arrives while the
+    activity is being recreated.
+
 ## 3.6.0
   * Upgrade `compileSdkVersion` and `targetSdkVersion` to 37
   * Upgrade Android Gradle Plugin version to 8.13.2
