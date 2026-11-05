@@ -2,7 +2,9 @@ package com.braintreepayments.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -294,6 +297,94 @@ public class BrowserSwitchClientUnitTest {
                 any(AuthTabIntent.AuthenticateUserResultContract.class),
                 eq(sut.authTabCallback)
         );
+    }
+
+    @Test
+    public void initializeAuthTabLauncher_withActivityResultRegistryAndKey_registersUnderProvidedKey() {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+        BrowserSwitchClient sut = new BrowserSwitchClient(
+                registry, "stable-key", browserSwitchInspector, authTabInternalClient);
+
+        assertEquals("stable-key", sut.registryKey);
+        verify(registry).register(
+                eq("stable-key"),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                eq(sut.authTabCallback)
+        );
+    }
+
+    @Test
+    public void registryKey_withoutProvidedKey_isDifferentForEachClient() {
+        BrowserSwitchClient first = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+        BrowserSwitchClient second = new BrowserSwitchClient(browserSwitchInspector, authTabInternalClient);
+
+        assertNotEquals(first.registryKey, second.registryKey);
+    }
+
+    @Test
+    public void registryKey_withDifferentProvidedKeys_registersEachClientUnderItsOwnKey() {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+
+        BrowserSwitchClient first = new BrowserSwitchClient(
+                registry, "first-key", browserSwitchInspector, authTabInternalClient);
+        BrowserSwitchClient second = new BrowserSwitchClient(
+                registry, "second-key", browserSwitchInspector, authTabInternalClient);
+
+        verify(registry).register(
+                eq("first-key"),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                eq(first.authTabCallback)
+        );
+        verify(registry).register(
+                eq("second-key"),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                eq(second.authTabCallback)
+        );
+        assertNotSame(first.authTabCallback, second.authTabCallback);
+    }
+
+    @Test
+    public void registryKey_withProvidedKeyAndDefaultKey_doNotCollide() {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+
+        new BrowserSwitchClient(registry, browserSwitchInspector, authTabInternalClient);
+        new BrowserSwitchClient(registry, "provided-key", browserSwitchInspector, authTabInternalClient);
+
+        ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+        verify(registry, times(2)).register(
+                keyCaptor.capture(),
+                any(AuthTabIntent.AuthenticateUserResultContract.class),
+                any()
+        );
+        assertEquals("provided-key", keyCaptor.getAllValues().get(1));
+        assertNotEquals(keyCaptor.getAllValues().get(0), keyCaptor.getAllValues().get(1));
+    }
+
+    @Test
+    public void authTabResult_withTwoClientsOnSameRegistry_isOnlyDeliveredToItsOwnClient()
+            throws BrowserSwitchException {
+        ActivityResultRegistry registry = mock(ActivityResultRegistry.class);
+        BrowserSwitchClient first = new BrowserSwitchClient(
+                registry, "first-key", browserSwitchInspector, authTabInternalClient);
+        BrowserSwitchClient second = new BrowserSwitchClient(
+                registry, "second-key", browserSwitchInspector, authTabInternalClient);
+
+        BrowserSwitchRequest request = new BrowserSwitchRequest(
+                123, browserSwitchDestinationUrl, new JSONObject(), "return-url-scheme", null);
+        String pendingRequest = request.toBase64EncodedJSON();
+        first.restorePendingRequest(pendingRequest);
+        second.restorePendingRequest(pendingRequest);
+
+        Uri resultUri = Uri.parse("return-url-scheme://success");
+        AuthTabIntent.AuthResult authResult = mock(AuthTabIntent.AuthResult.class, withSettings()
+                .useConstructor(AuthTabIntent.RESULT_OK, resultUri)
+                .defaultAnswer(CALLS_REAL_METHODS));
+
+        // the registry hands a result to the callback registered under "first-key" only
+        first.authTabCallback.onActivityResult(authResult);
+
+        assertTrue(first.completeRequest(new Intent(), pendingRequest) instanceof BrowserSwitchFinalResult.Success);
+        assertTrue(second.completeRequest(new Intent(), pendingRequest) instanceof BrowserSwitchFinalResult.NoResult);
     }
 
     @Test

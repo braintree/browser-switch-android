@@ -31,7 +31,7 @@ public class BrowserSwitchClient {
     private ActivityResultLauncher<Intent> authTabLauncher;
     private BrowserSwitchRequest pendingAuthTabRequest;
 
-    final String registryKey = "BrowserSwitchActivityRegistryKey"+ UUID.randomUUID();
+    final String registryKey;
 
     @Nullable
     private BrowserSwitchFinalResult authTabCallbackResult;
@@ -134,6 +134,10 @@ public class BrowserSwitchClient {
      * <p>Consider using the default constructor {@link #BrowserSwitchClient()} if these limitations
      * are incompatible with your implementation.
      *
+     * <p>The launcher is registered under a random key, so an Auth Tab result that arrives while the host
+     * activity is being recreated cannot be delivered to the new client. Use
+     * {@link #BrowserSwitchClient(ActivityResultRegistry, String)} when the result must survive recreation.
+     *
      * @param registry The ActivityResultRegistry used to initialize the Auth Tab launcher
      */
     public BrowserSwitchClient(@NonNull ActivityResultRegistry registry) {
@@ -141,11 +145,64 @@ public class BrowserSwitchClient {
         initializeAuthTabLauncher(registry);
     }
 
+    /**
+     * Construct a client that manages the logic for browser switching and initializes the Auth Tab launcher on the
+     * given {@link ActivityResultRegistry} under a caller-provided key.
+     *
+     * <p>Use this constructor, instead of {@link #BrowserSwitchClient(ActivityResultRegistry)}, when the client is
+     * created outside of an activity's {@code onCreate()}, for example in Jetpack Compose. If the activity is
+     * destroyed while the browser is open, the registry stores the Auth Tab result under the key the launcher was
+     * registered with. Registering the new client's launcher under the same key lets the registry deliver that
+     * result.
+     *
+     * <p>The key must:
+     *
+     * <ul>
+     *   <li>be the same value each time the client is recreated for the same flow, for example a value saved with
+     *       {@code rememberSaveable}.
+     *   <li>be unique for each {@code BrowserSwitchClient} that uses the same registry, otherwise results for one
+     *       client could be delivered to another.
+     * </ul>
+     *
+     * <p>After the activity is recreated, call {@link #restorePendingRequest(String)} before calling
+     * {@link #completeRequest(Intent, String)}, because the pending request is only kept in memory.
+     *
+     * <p>The same Auth Tab caveats as {@link #BrowserSwitchClient(ActivityResultRegistry)} apply.
+     *
+     * @param registry    The ActivityResultRegistry used to initialize the Auth Tab launcher
+     * @param registryKey The key the Auth Tab launcher is registered under
+     */
+    public BrowserSwitchClient(@NonNull ActivityResultRegistry registry, @NonNull String registryKey) {
+        this(new BrowserSwitchInspector(), new AuthTabInternalClient(), registryKey);
+        initializeAuthTabLauncher(registry);
+    }
+
     @VisibleForTesting
     BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
                         AuthTabInternalClient authTabInternalClient) {
+        this(browserSwitchInspector, authTabInternalClient, generateRegistryKey());
+    }
+
+    @VisibleForTesting
+    BrowserSwitchClient(BrowserSwitchInspector browserSwitchInspector,
+                        AuthTabInternalClient authTabInternalClient,
+                        String registryKey) {
         this.browserSwitchInspector = browserSwitchInspector;
         this.authTabInternalClient = authTabInternalClient;
+        this.registryKey = registryKey;
+    }
+
+    @VisibleForTesting
+    BrowserSwitchClient(@NonNull ActivityResultRegistry registry,
+                        String registryKey,
+                        BrowserSwitchInspector browserSwitchInspector,
+                        AuthTabInternalClient authTabInternalClient) {
+        this(browserSwitchInspector, authTabInternalClient, registryKey);
+        initializeAuthTabLauncher(registry);
+    }
+
+    private static String generateRegistryKey() {
+        return "BrowserSwitchActivityRegistryKey" + UUID.randomUUID();
     }
 
     @VisibleForTesting
