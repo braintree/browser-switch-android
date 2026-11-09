@@ -1,6 +1,6 @@
 # browser-switch-android Release Notes
 
-## unreleased
+## 3.7.0
   * Add `BrowserSwitchClient(ActivityResultRegistry, String)` constructor that registers the Auth Tab launcher under a caller-provided key, to allow for result delivery on Activity recreation
 
 ## 3.6.0
